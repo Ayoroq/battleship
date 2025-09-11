@@ -1,0 +1,23 @@
+{
+  "name": "battleship",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "webpack serve --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "dev": "npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ayoroq/battleship.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ayoroq/battleship/issues"
+  },
+  "homepage": "https://github.com/Ayoroq/battleship#readme"
+}
