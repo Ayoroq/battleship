@@ -21,4 +21,48 @@ class Ship {
   }
 }
 
-module.exports = Ship;
+class Gameboard {
+  constructor() {
+    this.board = Array.from({ length: 10 }, () => Array(10).fill(null));
+    this.ships = [];
+  }
+
+  placeShip(ship, x, y, direction) {
+    // Place the ship on the game board
+    this.ships.push(ship); 
+    if (direction === "horizontal") {
+      if (x + ship.length > 10) {
+        throw new Error("Ship does not fit horizontally");
+      }
+      for (let i = 0; i < ship.length; i++) {
+        this.board[x + i][y] = ship;
+      }
+    } else if (direction === "vertical") {
+      if (y + ship.length > 10) {
+        throw new Error("Ship does not fit vertically");
+      }
+      for (let i = 0; i < ship.length; i++) {
+        this.board[x][y + i] = ship;
+      }
+    }
+  }
+
+  receiveAttack(x, y) {
+    // Receive an attack on the game board
+    if (this.board[x][y] !== null) {
+      this.board[x][y].hit();
+      return true; // Hit
+    }
+    return false; // Miss
+  }
+
+  allShipsSunk() {
+    // Check if all ships on the game board are sunk
+    return this.ships.every((ship) => ship.isSunk());
+  }
+}
+
+module.exports = {
+  Ship,
+  Gameboard,
+};
