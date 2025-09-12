@@ -1,4 +1,4 @@
-import Ship from "./game";
+import { Ship, Gameboard } from "./game";
 
 describe("Ship class", () => {
   test("initializes with correct properties", () => {
@@ -36,5 +36,67 @@ describe("Ship class", () => {
     ship.hit();
     expect(ship.isSunk()).toBe(true);
     expect(ship.sunk).toBe(true);
+  });
+});
+
+describe("Gameboard class", () => {
+  test("initializes with empty board", () => {
+    const gameboard = new Gameboard();
+    expect(gameboard.board).toEqual(
+      Array.from({ length: 10 }, () => Array(10).fill(null))
+    );
+    expect(gameboard.ships).toEqual([]);
+  });
+
+  test("places ship on board", () => {
+    const gameboard = new Gameboard();
+    const ship = new Ship("Destroyer", 3);
+    gameboard.placeShip(ship, 0, 0, "horizontal");
+    expect(gameboard.board[0][0]).toBe(ship);
+    expect(gameboard.board[1][0]).toBe(ship);
+    expect(gameboard.board[2][0]).toBe(ship);
+    expect(gameboard.ships).toContain(ship);
+  });
+
+  test("receiveAttack() hits a ship", () => {
+    const gameboard = new Gameboard();
+    const ship = new Ship("Submarine", 2);
+    gameboard.placeShip(ship, 0, 0, "horizontal");
+    expect(gameboard.receiveAttack(0, 0)).toBe(true);
+    expect(ship.hits).toBe(1);
+    expect(gameboard.board[0][0]).toBe(ship);
+    expect(gameboard.board[1][0]).toBe(ship);
+  });
+
+  test("receiveAttack() misses", () => {
+    const gameboard = new Gameboard();
+    expect(gameboard.receiveAttack(0, 0)).toBe(false);
+    expect(gameboard.board[0][0]).toBe(null);
+  });
+
+  test("allShipsSunk() returns false when not all ships are sunk", () => {
+    const gameboard = new Gameboard();
+    const ship1 = new Ship("Destroyer", 3);
+    const ship2 = new Ship("Submarine", 2);
+    gameboard.placeShip(ship1, 0, 0, "horizontal");
+    gameboard.placeShip(ship2, 2, 2, "vertical");
+    gameboard.receiveAttack(0, 0);
+    gameboard.receiveAttack(1, 0);
+    gameboard.receiveAttack(2, 2);
+    expect(gameboard.allShipsSunk()).toBe(false);
+  });
+
+  test("allShipsSunk() returns true when all ships are sunk", () => {
+    const gameboard = new Gameboard();
+    const ship1 = new Ship("Destroyer", 3);
+    const ship2 = new Ship("Submarine", 2);
+    gameboard.placeShip(ship1, 0, 0, "horizontal");
+    gameboard.placeShip(ship2, 2, 2, "vertical");
+    gameboard.receiveAttack(0, 0);
+    gameboard.receiveAttack(1, 0);
+    gameboard.receiveAttack(2, 0);
+    gameboard.receiveAttack(2, 2);
+    gameboard.receiveAttack(3, 2);
+    expect(gameboard.allShipsSunk()).toBe(true);
   });
 });
