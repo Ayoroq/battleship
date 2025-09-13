@@ -25,12 +25,34 @@ class Gameboard {
   constructor(boardSize = 10) {
     // Initialize game board with empty cells
     this.boardSize = boardSize;
-    this.board = Array.from({ length: this.boardSize }, () => Array(this.boardSize).fill(null));
+    this.board = Array.from({ length: this.boardSize }, () =>
+      Array(this.boardSize).fill(null)
+    );
     this.ships = [];
+  }
+
+  validateShip(ship) {
+    //check if ship is valid
+    if (ship.length < 1) {
+      throw new Error("Ship length must be at least 1");
+    }
+    if (typeof ship.length !== "number") {
+      throw new Error("Ship length must be a number");
+    }
+    if (typeof ship.name !== "string" || ship.name.length === 0) {
+      throw new Error("Ship must have a valid name and it must be a string");
+    }
+    if (ship.length > 4) {
+      throw new Error("Ship length must be at most 4");
+    }
+    return true;
   }
 
   validatePlacement(ship, x, y, direction) {
     //check if ship placement is valid
+    if (!this.validateShip(ship)) {
+      throw new Error("Invalid ship");
+    }
     if (x < 0 || x > 9 || y < 0 || y > 9) {
       throw new Error("Ship placement out of bounds");
     }
