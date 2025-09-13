@@ -29,26 +29,25 @@ class Gameboard {
 
   placeShip(ship, x, y, direction) {
     // Place the ship on the game board
-    this.ships.push(ship); 
+    this.ships.push(ship);
     if (direction === "horizontal") {
       if (x + ship.length > 10) {
-        throw new Error("Ship does not fit horizontally");
-      }
-      for (let i = 0; i < ship.length; i++) {
-        this.board[x + i][y] = ship;
-      }
-    } else if (direction === "vertical") {
-      if (y + ship.length > 10) {
-        throw new Error("Ship does not fit vertically");
+        throw new Error("Ship placement out of bounds");
       }
       for (let i = 0; i < ship.length; i++) {
         this.board[x][y + i] = ship;
+      }
+    } else {
+      if (y + ship.length > 10) {
+        throw new Error("Ship placement out of bounds");
+      }
+      for (let i = 0; i < ship.length; i++) {
+        this.board[x + i][y] = ship;
       }
     }
   }
 
   receiveAttack(x, y) {
-    // Receive an attack on the game board
     if (this.board[x][y] !== null) {
       this.board[x][y].hit();
       return true; // Hit
