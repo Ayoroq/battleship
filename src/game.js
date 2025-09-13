@@ -25,6 +25,7 @@ class Gameboard {
   constructor(boardSize = 10) {
     // Initialize game board with empty cells
     this.boardSize = boardSize;
+    this.MAX_SHIP_LENGTH = 4;
     this.board = Array.from({ length: this.boardSize }, () =>
       Array(this.boardSize).fill(null)
     );
@@ -33,17 +34,17 @@ class Gameboard {
 
   validateShip(ship) {
     //check if ship is valid
-    if (ship.length < 1) {
-      throw new Error("Ship length must be at least 1");
-    }
     if (typeof ship.length !== "number") {
       throw new Error("Ship length must be a number");
+    }
+    if (ship.length < 1) {
+      throw new Error("Ship length must be at least 1");
     }
     if (typeof ship.name !== "string" || ship.name.length === 0) {
       throw new Error("Ship must have a valid name and it must be a string");
     }
-    if (ship.length > 4) {
-      throw new Error("Ship length must be at most 4");
+    if (ship.length > this.MAX_SHIP_LENGTH) {
+      throw new Error(`Ship length must be at most ${this.MAX_SHIP_LENGTH}`);
     }
     return true;
   }
@@ -53,7 +54,7 @@ class Gameboard {
     if (!this.validateShip(ship)) {
       throw new Error("Invalid ship");
     }
-    if (x < 0 || x > 9 || y < 0 || y > 9) {
+    if (x < 0 || x >= this.boardSize || y < 0 || y >= this.boardSize) {
       throw new Error("Ship placement out of bounds");
     }
     if (direction !== "horizontal" && direction !== "vertical") {
@@ -61,7 +62,7 @@ class Gameboard {
     }
     // Check if the ship can be placed at the given coordinates
     if (direction === "horizontal") {
-      if (x + ship.length > 10) {
+      if (x + ship.length > this.boardSize) {
         throw new Error("Ship placement out of bounds");
       }
       for (let i = 0; i < ship.length; i++) {
@@ -70,7 +71,7 @@ class Gameboard {
         }
       }
     } else {
-      if (y + ship.length > 10) {
+      if (y + ship.length > this.boardSize) {
         throw new Error("Ship placement out of bounds");
       }
       for (let i = 0; i < ship.length; i++) {
@@ -108,7 +109,7 @@ class Gameboard {
 
   allShipsSunk() {
     // Check if all ships on the game board are sunk
-    return this.ships.every((ship) => ship.isSunk());
+    return this.ships.length > 0 && this.ships.every((ship) => ship.isSunk());
   }
 }
 
