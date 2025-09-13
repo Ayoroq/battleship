@@ -113,15 +113,20 @@ class Gameboard {
   }
 }
 
-
 class Player {
   constructor(name) {
     this.name = name;
     this.gameboard = new Gameboard();
+  }
+
+  // Attack opponent's gameboard at given coordinates
+  attack(enemy, x, y) {
+    return enemy.gameboard.receiveAttack(x, y);
   }
 }
 
 module.exports = {
   Ship,
   Gameboard,
+  Player,
 };

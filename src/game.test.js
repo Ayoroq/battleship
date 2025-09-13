@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from "./game";
+import { Ship, Gameboard, Player } from "./game";
 
 describe("Ship class", () => {
   test("initializes with correct properties", () => {
@@ -137,5 +137,29 @@ describe("Gameboard class", () => {
     
     // Test invalid ship length type
     expect(() => gameboard.placeShip({ name: "Test", length: "invalid" }, 0, 0, "horizontal")).toThrow("Ship length must be a number");
+  });
+});
+
+describe("Player class", () => {
+  test("initializes with name and gameboard", () => {
+    // Test that player is created with correct name and gameboard instance
+    const player = new Player("Alice");
+    expect(player.name).toBe("Alice");
+    expect(player.gameboard).toBeInstanceOf(Gameboard);
+  });
+
+  test("can attack enemy player", () => {
+    // Test player attack functionality
+    const player1 = new Player("Alice");
+    const player2 = new Player("Bob");
+    const ship = new Ship("Destroyer", 2);
+    
+    // Place ship on player2's board
+    player2.gameboard.placeShip(ship, 0, 0, "horizontal");
+    
+    // Player1 attacks player2
+    expect(player1.attack(player2, 0, 0)).toBe(true); // Hit
+    expect(ship.hits).toBe(1);
+    expect(player1.attack(player2, 5, 5)).toBe(false); // Miss
   });
 });
