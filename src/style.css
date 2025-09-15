@@ -1,39 +1,46 @@
-:root{
-    --primary-colour: #D50202;
+:root {
+  --primary-colour: #d50202;
 }
 
-.loading-screen{
-    background-color: rgb(0, 0, 0);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    height: 100vh;
-    width: 100vw;
-    animation: fadeOut 1s ease-in-out 5s forwards;
+.loading-screen {
+  background-color: rgb(0, 0, 0);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  height: 100vh;
+  width: 100vw;
+  animation: fadeOut 1s ease-in-out 5s forwards;
 }
 
 @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; visibility: hidden; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: none;
+  }
 }
 
-.game-name{
-    color: var(--primary-colour);
-    font-size: 8rem;
+.game-name {
+  color: var(--primary-colour);
+  font-size: 8rem;
 }
 
-.loading{
-    color: var(--primary-colour);
-    font-size: 2rem;
-    width: fit-content;
-    font-weight: bold;
-    padding-bottom: 8px;
-    background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
-    animation: l2 5s linear forwards;
+.loading {
+  color: var(--primary-colour);
+  font-size: 2rem;
+  width: fit-content;
+  font-weight: bold;
+  padding-bottom: 8px;
+  background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
+  animation: l2 5s linear forwards;
 }
 
 @keyframes l2 {
-    to { background-size: 100% 3px }
+  to {
+    background-size: 100% 3px;
+  }
 }
