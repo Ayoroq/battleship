@@ -2,6 +2,7 @@
   --primary-colour: #d50202;
 }
 
+/* Loading Screen Styling*/
 .loading-screen {
   background-color: rgb(0, 0, 0);
   display: none;
@@ -43,4 +44,12 @@
   to {
     background-size: 100% 3px;
   }
+}
+
+/* Rules Dialog Styling */
+.game-title {
+  color: var(--primary-colour);
+  font-size: 4rem;
+  margin: 0 0 1rem 0;
+  font-weight: bold;
 }
