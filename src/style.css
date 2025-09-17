@@ -47,6 +47,13 @@
 }
 
 /* Rules Dialog Styling */
+.ship-placement-header{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .game-title {
   color: var(--primary-colour);
   font-size: 4rem;
