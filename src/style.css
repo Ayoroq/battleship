@@ -47,6 +47,12 @@
 }
 
 /* Rules Dialog Styling */
+.ship-placement-screen{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .ship-placement-header{
   display: flex;
   flex-direction: column;
@@ -59,4 +65,20 @@
   font-size: 4rem;
   margin: 0 0 1rem 0;
   font-weight: bold;
+}
+
+.placement-grid{
+    background-color: blue
+
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 2rem repeat(10, 3rem);
+  grid-template-rows: 3rem repeat(10, 3rem);
+  padding: 1rem;
+}
+
+.grid-cell{
+  border: 1px solid black;
 }
