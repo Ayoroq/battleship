@@ -1,8 +1,9 @@
 import "./reset.css";
 import "./style.css";
-import { Ship, Gameboard, Player } from "./game";
-import { createGrid, clearGrid } from "./grid";
+import { Ship, Gameboard, Player } from "./game.js";
+import { renderBoard, renderShips } from "./grid.js";
 
-clearGrid();
-createGrid();
+const gameboard = new Gameboard();
+const grid = document.querySelector(".grid-container-1");
 
+renderBoard(gameboard, grid);

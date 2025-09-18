@@ -125,8 +125,4 @@ class Player {
   }
 }
 
-module.exports = {
-  Ship,
-  Gameboard,
-  Player,
-};
+export { Ship, Gameboard, Player };
