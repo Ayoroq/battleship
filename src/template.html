@@ -17,18 +17,24 @@
           <button class="close-btn" type="button">&times;</button>
           <h2 class="rules-title">🌌 Galactic Siege - Rules</h2>
         </header>
-        
+
         <main class="rules-content">
           <section class="rule-section">
             <h3 class="rule-heading">1. Objective</h3>
-            <p class="rule-text">Destroy all enemy starships before your fleet is destroyed.</p>
+            <p class="rule-text">
+              Destroy all enemy starships before your fleet is destroyed.
+            </p>
           </section>
 
           <section class="rule-section">
             <h3 class="rule-heading">2. Fleet Setup</h3>
             <ul class="rule-list">
-              <li class="rule-item">Each commander places ships secretly in their starfield grid.</li>
-              <li class="rule-item">Ships must be straight (horizontal or vertical).</li>
+              <li class="rule-item">
+                Each commander places ships secretly in their starfield grid.
+              </li>
+              <li class="rule-item">
+                Ships must be straight (horizontal or vertical).
+              </li>
               <li class="rule-item">No overlapping ships.</li>
             </ul>
           </section>
@@ -38,15 +44,21 @@
             <p class="rule-text">On your turn, choose one action:</p>
             <ul class="rule-list action-list">
               <li class="rule-item action-item">
-                <span class="action-icon">🔫</span> <strong class="action-name">Attack</strong> - Fire at a coordinate.<br />
+                <span class="action-icon">🔫</span>
+                <strong class="action-name">Attack</strong> - Fire at a
+                coordinate.<br />
                 <div class="action-details">
-                  - <em class="result-hit">Direct Hit!</em> → You struck an enemy ship.<br />
-                  - <em class="result-near">Near Miss!</em> → No hit, but a ship is nearby.<br />
+                  - <em class="result-hit">Direct Hit!</em> → You struck an
+                  enemy ship.<br />
+                  - <em class="result-near">Near Miss!</em> → No hit, but a ship
+                  is nearby.<br />
                   - <em class="result-void">Void!</em> → Nothing in range.
                 </div>
               </li>
               <li class="rule-item action-item">
-                <span class="action-icon">🛡️</span> <strong class="action-name">Defend</strong> - Reposition one ship.<br />
+                <span class="action-icon">🛡️</span>
+                <strong class="action-name">Defend</strong> - Reposition one
+                ship.<br />
                 <div class="action-details">
                   - Cannot move into attacked squares.<br />
                   - Cannot overlap another ship.<br />
@@ -58,22 +70,30 @@
 
           <section class="rule-section">
             <h3 class="rule-heading">4. Sinking Ships</h3>
-            <p class="rule-text">When all parts of a ship are hit, it is destroyed and revealed.</p>
+            <p class="rule-text">
+              When all parts of a ship are hit, it is destroyed and revealed.
+            </p>
           </section>
 
           <section class="rule-section">
             <h3 class="rule-heading">5. Victory</h3>
-            <p class="rule-text">The first commander to destroy all enemy ships wins the battle.</p>
-            <p class="rule-text"><strong>Turn Limit:</strong> If both fleets survive after 50 turns (25 turns per commander), the commander with more ships remaining wins the battle.</p>
+            <p class="rule-text">
+              The first commander to destroy all enemy ships wins the battle.
+            </p>
+            <p class="rule-text">
+              <strong>Turn Limit:</strong> If both fleets survive after 50 turns
+              (25 turns per commander), the commander with more ships remaining
+              wins the battle.
+            </p>
           </section>
         </main>
-        
+
         <footer class="rules-footer">
           <button class="continue-btn" type="button">Begin Mission</button>
         </footer>
       </div>
     </dialog>
-    
+
     <div class="ship-placement-screen">
       <div class="ship-placement-header">
         <h1 class="game-title">GALACTIC SIEGE</h1>
@@ -83,6 +103,9 @@
 
       <div class="placement-grid">
         <div class="grid-container"></div>
+        <div class="available-ships">
+          <img src="/assets/test-ship.svg" alt="Image of a ship" width="50%" draggable="true" />
+        </div>
       </div>
     </div>
   </body>

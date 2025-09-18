@@ -47,13 +47,13 @@
 }
 
 /* Rules Dialog Styling */
-.ship-placement-screen{
+.ship-placement-screen {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.ship-placement-header{
+.ship-placement-header {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -67,9 +67,8 @@
   font-weight: bold;
 }
 
-.placement-grid{
-    background-color: blue
-
+.placement-grid {
+  display: flex;
 }
 
 .grid-container {
@@ -77,8 +76,9 @@
   grid-template-columns: 2rem repeat(10, 3rem);
   grid-template-rows: 3rem repeat(10, 3rem);
   padding: 1rem;
+  background-color: red;
 }
 
-.grid-cell{
+.grid-cell {
   border: 1px solid black;
 }
