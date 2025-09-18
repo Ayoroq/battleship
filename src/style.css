@@ -70,15 +70,3 @@
 .placement-grid {
   display: flex;
 }
-
-.grid-container {
-  display: grid;
-  grid-template-columns: 2rem repeat(10, 3rem);
-  grid-template-rows: 3rem repeat(10, 3rem);
-  padding: 1rem;
-  background-color: red;
-}
-
-.grid-cell {
-  border: 1px solid black;
-}
