@@ -29,4 +29,18 @@ function renderBoard(gameboard, gameboardContainer) {
   }
 }
 
-export { renderBoard };
+// render ships on the board if the gameboard contains a ship
+function renderShips(gameboard, gameboardContainer) {
+  const cells = gameboardContainer.querySelectorAll('.cell');
+  
+  cells.forEach(cell => {
+    const x = parseInt(cell.dataset.x);
+    const y = parseInt(cell.dataset.y);
+    
+    if (gameboard.board[x][y] !== null) {
+      cell.classList.add('ship');
+    }
+  });
+}
+
+export { renderBoard, renderShips };

@@ -93,3 +93,11 @@
 .cell:hover {
   background-color: #5F9EA0;
 }
+
+.cell.ship {
+  background-color: #666;
+}
+
+.cell.ship:hover {
+  background-color: #555;
+}
