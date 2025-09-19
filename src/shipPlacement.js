@@ -6,6 +6,7 @@ function initShipPlacement(gameboard, grid) {
   const orientation = document.querySelector(".orientation");
 
   let shipSize = parseInt(shipSelect.value) || 0;
+  let shipName = ''
   let orientationValue = orientation.value || "horizontal";
 
   function clearHover() {
@@ -18,7 +19,13 @@ function initShipPlacement(gameboard, grid) {
     clearHover();
 
     try {
-      if (x < 0 || y < 0 || x >= gameboard.boardSize || y >= gameboard.boardSize) return;
+      if (
+        x < 0 ||
+        y < 0 ||
+        x >= gameboard.boardSize ||
+        y >= gameboard.boardSize
+      )
+        return;
 
       const endX = orientationValue === "vertical" ? x + shipSize - 1 : x;
       const endY = orientationValue === "horizontal" ? y + shipSize - 1 : y;
@@ -34,7 +41,9 @@ function initShipPlacement(gameboard, grid) {
       for (let i = 0; i < shipSize; i++) {
         const cellX = orientationValue === "vertical" ? x + i : x;
         const cellY = orientationValue === "horizontal" ? y + i : y;
-        const cell = document.querySelector(`[data-x="${cellX}"][data-y="${cellY}"]`);
+        const cell = document.querySelector(
+          `[data-x="${cellX}"][data-y="${cellY}"]`
+        );
         if (cell) cell.classList.add("hover");
       }
     } catch (error) {}
@@ -42,8 +51,8 @@ function initShipPlacement(gameboard, grid) {
 
   function placeShip(x, y) {
     try {
-      const ship = new Ship(`Ship-${shipSize}`, shipSize);
-      console.log(`x is ${x}, y is ${y}, orientationValue is ${orientationValue},ship length is ${ship.length}, gameboard size is ${gameboard.boardSize}`)
+      const ship = new Ship(`${shipName}`, shipSize);
+      console.log(`ship name is ${ship.name} and length is ${ship.length}`);
       gameboard.placeShip(ship, x, y, orientationValue);
       renderShips(gameboard, grid);
       clearHover();
@@ -52,9 +61,14 @@ function initShipPlacement(gameboard, grid) {
     }
   }
 
+  function removePlacedShip() {}
+
   // Event listeners
   shipSelect.addEventListener("change", (e) => {
     shipSize = parseInt(e.target.value);
+    const selectedIndex = e.target.selectedIndex;
+    const fullText = e.target.options[selectedIndex].text;
+    shipName = fullText.replace(/\s*\(\d+\)$/, '');
   });
 
   orientation.addEventListener("change", (e) => {
