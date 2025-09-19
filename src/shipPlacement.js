@@ -6,6 +6,7 @@ function initShipPlacement(gameboard, grid) {
   const orientation = document.querySelector(".orientation");
 
   let shipSize = parseInt(shipSelect.value) || 0;
+  let selectedIndex = 0
   let shipName = ''
   let orientationValue = orientation.value || "horizontal";
 
@@ -61,12 +62,14 @@ function initShipPlacement(gameboard, grid) {
     }
   }
 
-  function removePlacedShip() {}
+  function removePlacedShip() {
+    shipSelect.remove(selectedIndex)
+  }
 
   // Event listeners
   shipSelect.addEventListener("change", (e) => {
     shipSize = parseInt(e.target.value);
-    const selectedIndex = e.target.selectedIndex;
+    selectedIndex = e.target.selectedIndex;
     const fullText = e.target.options[selectedIndex].text;
     shipName = fullText.replace(/\s*\(\d+\)$/, '');
   });
@@ -90,6 +93,7 @@ function initShipPlacement(gameboard, grid) {
       const x = parseInt(e.target.dataset.x);
       const y = parseInt(e.target.dataset.y);
       placeShip(x, y);
+      removePlacedShip();
     }
   });
 }
