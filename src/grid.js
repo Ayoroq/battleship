@@ -29,16 +29,14 @@ function renderBoard(gameboard, gameboardContainer) {
 
 // render ships on the board if the gameboard contains a ship
 function renderShips(gameboard, gameboardContainer) {
-  const cells = gameboardContainer.querySelectorAll('.cell');
-  
-  cells.forEach(cell => {
-    const x = parseInt(cell.dataset.x);
-    const y = parseInt(cell.dataset.y);
-    
-    if (gameboard.board[x][y] !== null) {
-      cell.classList.add('ship');
+  for (let x = 0; x < gameboard.boardSize; x++) {
+    for (let y = 0; y < gameboard.boardSize; y++) {
+      if (gameboard.board[x][y] !== null) {
+        const cell = gameboardContainer.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+        if (cell) cell.classList.add('ship');
+      }
     }
-  });
+  }
 }
 
 export { renderBoard, renderShips };
