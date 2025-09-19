@@ -43,6 +43,7 @@ function initShipPlacement(gameboard, grid) {
   function placeShip(x, y) {
     try {
       const ship = new Ship(`Ship-${shipSize}`, shipSize);
+      console.log(`x is ${x}, y is ${y}, orientationValue is ${orientationValue},ship length is ${ship.length}, gameboard size is ${gameboard.boardSize}`)
       gameboard.placeShip(ship, x, y, orientationValue);
       renderShips(gameboard, grid);
       clearHover();

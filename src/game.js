@@ -25,7 +25,7 @@ class Gameboard {
   constructor(boardSize = 10) {
     // Initialize game board with empty cells
     this.boardSize = boardSize;
-    this.MAX_SHIP_LENGTH = 4;
+    this.MAX_SHIP_LENGTH = 5;
     this.board = Array.from({ length: this.boardSize }, () =>
       Array(this.boardSize).fill(null)
     );
@@ -62,7 +62,7 @@ class Gameboard {
     }
     // Check if the ship can be placed at the given coordinates
     if (direction === "horizontal") {
-      if (x + ship.length > this.boardSize) {
+      if (y + ship.length > this.boardSize) {
         throw new Error("Ship placement out of bounds");
       }
       for (let i = 0; i < ship.length; i++) {
@@ -71,7 +71,7 @@ class Gameboard {
         }
       }
     } else {
-      if (y + ship.length > this.boardSize) {
+      if (x + ship.length > this.boardSize) {
         throw new Error("Ship placement out of bounds");
       }
       for (let i = 0; i < ship.length; i++) {
