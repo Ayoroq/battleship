@@ -84,6 +84,7 @@
   width: 30rem;
   height: 30rem;
   border: 1px solid #333;
+  background-color: red;
 }
 
 .cell {

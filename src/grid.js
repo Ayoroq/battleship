@@ -12,8 +12,6 @@ function renderBoard(gameboard, gameboardContainer) {
   if (!gameboardContainer) {
     console.error("Grid container not found");
     return;
-  }else{
-        console.log("Grid container found");
   }
   
   clearGrid(gameboardContainer);
