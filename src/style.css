@@ -91,14 +91,10 @@
   border: 1px solid #333;
 }
 
-.cell:hover {
-  background-color: #5F9EA0;
-}
-
 .cell.ship {
   background-color: #666;
 }
 
-.cell.ship:hover {
-  background-color: #555;
+.cell.hover {
+  background-color: #90EE90;
 }
