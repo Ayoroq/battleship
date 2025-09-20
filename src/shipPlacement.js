@@ -1,25 +1,30 @@
 import { Ship } from "./game.js";
 import { renderShips } from "./grid.js";
 
+// Initialize ship placement functionality
 function initShipPlacement(gameboard, grid) {
   const shipSelect = document.querySelector(".ship-selector");
   const orientation = document.querySelector(".orientation");
 
+  // Track current ship selection
   let shipSize = parseInt(shipSelect.value) || 0;
   let selectedIndex = 0
   let shipName = ''
   let orientationValue = orientation.value || "horizontal";
 
+  // Remove green hover effects from all cells
   function clearHover() {
     document.querySelectorAll(".cell.hover").forEach((cell) => {
       cell.classList.remove("hover");
     });
   }
 
+  // Show green preview of where ship will be placed
   function highlightShipPlacement(x, y) {
     clearHover();
 
     try {
+      // Check if starting position is valid
       if (
         x < 0 ||
         y < 0 ||
@@ -28,17 +33,21 @@ function initShipPlacement(gameboard, grid) {
       )
         return;
 
+      // Calculate ship end position
       const endX = orientationValue === "vertical" ? x + shipSize - 1 : x;
       const endY = orientationValue === "horizontal" ? y + shipSize - 1 : y;
 
+      // Check if ship fits within board
       if (endX >= gameboard.boardSize || endY >= gameboard.boardSize) return;
 
+      // Check for overlaps with existing ships
       for (let i = 0; i < shipSize; i++) {
         const checkX = orientationValue === "vertical" ? x + i : x;
         const checkY = orientationValue === "horizontal" ? y + i : y;
         if (gameboard.board[checkX][checkY] !== null) return;
       }
 
+      // Highlight valid placement with green hover effect
       for (let i = 0; i < shipSize; i++) {
         const cellX = orientationValue === "vertical" ? x + i : x;
         const cellY = orientationValue === "horizontal" ? y + i : y;
@@ -50,20 +59,21 @@ function initShipPlacement(gameboard, grid) {
     } catch (error) {}
   }
 
+  // Place ship on board and render it
   function placeShip(x, y) {
     try {
       const ship = new Ship(`${shipName}`, shipSize);
-      console.log(`ship name is ${ship.name} and length is ${ship.length}`);
       gameboard.placeShip(ship, x, y, orientationValue);
       renderShips(gameboard, grid);
       clearHover();
-      return true;
+      return true; // Success
     } catch (error) {
       console.error(error.message);
-      return false;
+      return false; // Failed
     }
   }
 
+  // Remove placed ship from dropdown and update selection
   function removePlacedShip() {
     shipSelect.remove(selectedIndex);
     
@@ -72,27 +82,29 @@ function initShipPlacement(gameboard, grid) {
       shipSize = parseInt(shipSelect.value) || 0;
       selectedIndex = shipSelect.selectedIndex;
       const fullText = shipSelect.options[selectedIndex].text;
-      shipName = fullText.replace(/\s*\(\d+\)$/, '');
+      shipName = fullText.replace(/\s*\(\d+\)$/, ''); // Remove size from name
     } else {
+      // All ships placed - hide placement interface
       shipSize = 0;
       shipName = '';
-      // Hide ship placement div when all ships are placed
       document.querySelector('.ship-placement').style.display = 'none';
     }
   }
 
-  // Event listeners
+  // Update ship selection when dropdown changes
   shipSelect.addEventListener("change", (e) => {
     shipSize = parseInt(e.target.value);
     selectedIndex = e.target.selectedIndex;
     const fullText = e.target.options[selectedIndex].text;
-    shipName = fullText.replace(/\s*\(\d+\)$/, '');
+    shipName = fullText.replace(/\s*\(\d+\)$/, ''); // Clean ship name
   });
 
+  // Update orientation when dropdown changes
   orientation.addEventListener("change", (e) => {
     orientationValue = e.target.value;
   });
 
+  // Show placement preview on hover
   grid.addEventListener("mouseover", (e) => {
     if (e.target.classList.contains("cell") && shipSize > 0) {
       const x = parseInt(e.target.dataset.x);
@@ -101,14 +113,16 @@ function initShipPlacement(gameboard, grid) {
     }
   });
 
+  // Clear preview when mouse leaves grid
   grid.addEventListener("mouseleave", clearHover);
 
+  // Place ship on click
   grid.addEventListener("click", (e) => {
     if (e.target.classList.contains("cell") && shipSize > 0) {
       const x = parseInt(e.target.dataset.x);
       const y = parseInt(e.target.dataset.y);
       if (placeShip(x, y)) {
-        removePlacedShip();
+        removePlacedShip(); // Remove from dropdown if placement successful
       }
     }
   });
