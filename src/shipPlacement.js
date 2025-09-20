@@ -76,6 +76,8 @@ function initShipPlacement(gameboard, grid) {
     } else {
       shipSize = 0;
       shipName = '';
+      // Hide ship placement div when all ships are placed
+      document.querySelector('.ship-placement').style.display = 'none';
     }
   }
 
