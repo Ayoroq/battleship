@@ -94,7 +94,7 @@ function initShipPlacement(gameboard, grid) {
   // Get all valid positions for a ship of given size
   function getValidPositions(size) {
     const validPositions = [];
-    
+
     for (let x = 0; x < gameboard.boardSize; x++) {
       for (let y = 0; y < gameboard.boardSize; y++) {
         // Check horizontal placement
@@ -106,9 +106,10 @@ function initShipPlacement(gameboard, grid) {
               break;
             }
           }
-          if (canPlace) validPositions.push({x, y, orientation: "horizontal"});
+          if (canPlace)
+            validPositions.push({ x, y, orientation: "horizontal" });
         }
-        
+
         // Check vertical placement
         if (x + size <= gameboard.boardSize) {
           let canPlace = true;
@@ -118,11 +119,11 @@ function initShipPlacement(gameboard, grid) {
               break;
             }
           }
-          if (canPlace) validPositions.push({x, y, orientation: "vertical"});
+          if (canPlace) validPositions.push({ x, y, orientation: "vertical" });
         }
       }
     }
-    
+
     return validPositions;
   }
 
@@ -141,15 +142,23 @@ function initShipPlacement(gameboard, grid) {
     Object.entries(remainingShips).forEach(([name, size]) => {
       const validPositions = getValidPositions(size);
       if (validPositions.length > 0) {
-        const randomPos = validPositions[Math.floor(Math.random() * validPositions.length)];
+        const randomPos =
+          validPositions[Math.floor(Math.random() * validPositions.length)];
         const ship = new Ship(name, size);
-        gameboard.placeShip(ship, randomPos.x, randomPos.y, randomPos.orientation);
+        gameboard.placeShip(
+          ship,
+          randomPos.x,
+          randomPos.y,
+          randomPos.orientation
+        );
       }
     });
 
     // Clear dropdown and hide interface
     shipSelect.innerHTML =
       '<option value="" selected disabled>All ships deployed</option>';
+    shipSize = 0;
+    shipName = "";
     renderShips(gameboard, grid);
     document.querySelector(".ship-placement").style.display = "none";
   }
