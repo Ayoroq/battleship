@@ -99,6 +99,11 @@ class Gameboard {
     }
   }
 
+  getShipAt(x, y) {
+    // Get the ship at the given coordinates
+    return this.board[x][y];
+  }
+
   resetBoard() {
     // Reset the game board
     this.board = Array.from({ length: this.boardSize }, () =>
