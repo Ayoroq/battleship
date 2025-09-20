@@ -1,5 +1,5 @@
 import { Ship } from "./game.js";
-import { renderShips } from "./grid.js";
+import { renderBoard, renderShips } from "./grid.js";
 
 // Initialize ship placement functionality
 function initShipPlacement(gameboard, grid) {
@@ -87,7 +87,7 @@ function initShipPlacement(gameboard, grid) {
       // All ships placed - hide placement interface
       shipSize = 0;
       shipName = "";
-      document.querySelector(".ship-placement").style.display = "none";
+      // document.querySelector(".ship-placement").style.display = "none";
     }
   }
 
@@ -127,40 +127,52 @@ function initShipPlacement(gameboard, grid) {
     return validPositions;
   }
 
-  // Randomly place all remaining ships
-  function randomPlacement() {
-    // Get the remaining ships in the select
-    let remainingShips = {};
-    const remainingShipsArray = Array.from(shipSelect.options).slice(1);
-    remainingShipsArray.forEach((ship) => {
-      const shipName = ship.text.replace(/\s*\(\d+\)$/, "");
-      const shipSize = parseInt(ship.value);
-      remainingShips[shipName] = shipSize;
-    });
-
-    // Place each remaining ship using valid positions
-    Object.entries(remainingShips).forEach(([name, size]) => {
+  // Helper function to place ships randomly
+  function placeShipsRandomly(ships) {
+    Object.entries(ships).forEach(([name, size]) => {
       const validPositions = getValidPositions(size);
       if (validPositions.length > 0) {
-        const randomPos =
-          validPositions[Math.floor(Math.random() * validPositions.length)];
+        const randomPos = validPositions[Math.floor(Math.random() * validPositions.length)];
         const ship = new Ship(name, size);
-        gameboard.placeShip(
-          ship,
-          randomPos.x,
-          randomPos.y,
-          randomPos.orientation
-        );
+        gameboard.placeShip(ship, randomPos.x, randomPos.y, randomPos.orientation);
       }
     });
+  }
 
-    // Clear dropdown and hide interface
-    shipSelect.innerHTML =
-      '<option value="" selected disabled>All ships deployed</option>';
+  // Randomly place all remaining ships
+  function randomPlacement() {
+    let shipsToPlace = {};
+
+    if (shipSelect.options.length <= 1) {
+      // Reset and place all ships
+      gameboard.resetBoard();
+      renderBoard(gameboard, grid);
+      shipsToPlace = {
+        "Dreadnought": 5,
+        "Battlecruiser": 4,
+        "Heavy Cruiser": 3,
+        "Stealth Frigate": 3,
+        "Interceptor": 2
+      };
+    } else {
+      // Get remaining ships from dropdown
+      const remainingShipsArray = Array.from(shipSelect.options).slice(1);
+      remainingShipsArray.forEach((ship) => {
+        const shipName = ship.text.replace(/\s*\(\d+\)$/, "");
+        const shipSize = parseInt(ship.value);
+        shipsToPlace[shipName] = shipSize;
+      });
+    }
+
+    // Place the ships
+    placeShipsRandomly(shipsToPlace);
+
+    // Update UIB
+    shipSelect.innerHTML = '<option value="" selected disabled>All ships deployed</option>';
     shipSize = 0;
     shipName = "";
     renderShips(gameboard, grid);
-    document.querySelector(".ship-placement").style.display = "none";
+    // document.querySelector(".ship-placement").style.display = "none";
   }
 
   // Update ship selection when dropdown changes

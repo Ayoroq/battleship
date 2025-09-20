@@ -99,6 +99,14 @@ class Gameboard {
     }
   }
 
+  resetBoard() {
+    // Reset the game board
+    this.board = Array.from({ length: this.boardSize }, () =>
+      Array(this.boardSize).fill(null)
+    );
+    this.ships = [];
+  }
+
   receiveAttack(x, y) {
     if (this.board[x][y] !== null) {
       this.board[x][y].hit();
