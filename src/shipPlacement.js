@@ -57,13 +57,26 @@ function initShipPlacement(gameboard, grid) {
       gameboard.placeShip(ship, x, y, orientationValue);
       renderShips(gameboard, grid);
       clearHover();
+      return true;
     } catch (error) {
       console.error(error.message);
+      return false;
     }
   }
 
   function removePlacedShip() {
-    shipSelect.remove(selectedIndex)
+    shipSelect.remove(selectedIndex);
+    
+    // Update to new selection after removal
+    if (shipSelect.options.length > 1) {
+      shipSize = parseInt(shipSelect.value) || 0;
+      selectedIndex = shipSelect.selectedIndex;
+      const fullText = shipSelect.options[selectedIndex].text;
+      shipName = fullText.replace(/\s*\(\d+\)$/, '');
+    } else {
+      shipSize = 0;
+      shipName = '';
+    }
   }
 
   // Event listeners
@@ -92,8 +105,9 @@ function initShipPlacement(gameboard, grid) {
     if (e.target.classList.contains("cell") && shipSize > 0) {
       const x = parseInt(e.target.dataset.x);
       const y = parseInt(e.target.dataset.y);
-      placeShip(x, y);
-      removePlacedShip();
+      if (placeShip(x, y)) {
+        removePlacedShip();
+      }
     }
   });
 }
