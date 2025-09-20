@@ -91,9 +91,44 @@ function initShipPlacement(gameboard, grid) {
     }
   }
 
+  // Get all valid positions for a ship of given size
+  function getValidPositions(size) {
+    const validPositions = [];
+    
+    for (let x = 0; x < gameboard.boardSize; x++) {
+      for (let y = 0; y < gameboard.boardSize; y++) {
+        // Check horizontal placement
+        if (y + size <= gameboard.boardSize) {
+          let canPlace = true;
+          for (let i = 0; i < size; i++) {
+            if (gameboard.board[x][y + i] !== null) {
+              canPlace = false;
+              break;
+            }
+          }
+          if (canPlace) validPositions.push({x, y, orientation: "horizontal"});
+        }
+        
+        // Check vertical placement
+        if (x + size <= gameboard.boardSize) {
+          let canPlace = true;
+          for (let i = 0; i < size; i++) {
+            if (gameboard.board[x + i][y] !== null) {
+              canPlace = false;
+              break;
+            }
+          }
+          if (canPlace) validPositions.push({x, y, orientation: "vertical"});
+        }
+      }
+    }
+    
+    return validPositions;
+  }
+
   // Randomly place all remaining ships
   function randomPlacement() {
-    //first get the remaining ships in the select
+    // Get the remaining ships in the select
     let remainingShips = {};
     const remainingShipsArray = Array.from(shipSelect.options).slice(1);
     remainingShipsArray.forEach((ship) => {
@@ -102,23 +137,13 @@ function initShipPlacement(gameboard, grid) {
       remainingShips[shipName] = shipSize;
     });
 
-    // Place each remaining ship randomly
+    // Place each remaining ship using valid positions
     Object.entries(remainingShips).forEach(([name, size]) => {
-      let placed = false;
-      let attempts = 0;
-
-      while (!placed && attempts < 100) {
-        const x = Math.floor(Math.random() * gameboard.boardSize);
-        const y = Math.floor(Math.random() * gameboard.boardSize);
-        const orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
-
-        try {
-          const ship = new Ship(name, size);
-          gameboard.placeShip(ship, x, y, orientation);
-          placed = true;
-        } catch (error) {
-          attempts++;
-        }
+      const validPositions = getValidPositions(size);
+      if (validPositions.length > 0) {
+        const randomPos = validPositions[Math.floor(Math.random() * validPositions.length)];
+        const ship = new Ship(name, size);
+        gameboard.placeShip(ship, randomPos.x, randomPos.y, randomPos.orientation);
       }
     });
 
