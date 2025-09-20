@@ -8,8 +8,8 @@ function initShipPlacement(gameboard, grid) {
 
   // Track current ship selection
   let shipSize = parseInt(shipSelect.value) || 0;
-  let selectedIndex = 0
-  let shipName = ''
+  let selectedIndex = 0;
+  let shipName = "";
   let orientationValue = orientation.value || "horizontal";
 
   // Remove green hover effects from all cells
@@ -76,19 +76,57 @@ function initShipPlacement(gameboard, grid) {
   // Remove placed ship from dropdown and update selection
   function removePlacedShip() {
     shipSelect.remove(selectedIndex);
-    
+
     // Update to new selection after removal
     if (shipSelect.options.length > 1) {
       shipSize = parseInt(shipSelect.value) || 0;
       selectedIndex = shipSelect.selectedIndex;
       const fullText = shipSelect.options[selectedIndex].text;
-      shipName = fullText.replace(/\s*\(\d+\)$/, ''); // Remove size from name
+      shipName = fullText.replace(/\s*\(\d+\)$/, ""); // Remove size from name
     } else {
       // All ships placed - hide placement interface
       shipSize = 0;
-      shipName = '';
-      document.querySelector('.ship-placement').style.display = 'none';
+      shipName = "";
+      document.querySelector(".ship-placement").style.display = "none";
     }
+  }
+
+  // Randomly place all remaining ships
+  function randomPlacement() {
+    //first get the remaining ships in the select
+    let remainingShips = {};
+    const remainingShipsArray = Array.from(shipSelect.options).slice(1);
+    remainingShipsArray.forEach((ship) => {
+      const shipName = ship.text.replace(/\s*\(\d+\)$/, "");
+      const shipSize = parseInt(ship.value);
+      remainingShips[shipName] = shipSize;
+    });
+
+    // Place each remaining ship randomly
+    Object.entries(remainingShips).forEach(([name, size]) => {
+      let placed = false;
+      let attempts = 0;
+
+      while (!placed && attempts < 100) {
+        const x = Math.floor(Math.random() * gameboard.boardSize);
+        const y = Math.floor(Math.random() * gameboard.boardSize);
+        const orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
+
+        try {
+          const ship = new Ship(name, size);
+          gameboard.placeShip(ship, x, y, orientation);
+          placed = true;
+        } catch (error) {
+          attempts++;
+        }
+      }
+    });
+
+    // Clear dropdown and hide interface
+    shipSelect.innerHTML =
+      '<option value="" selected disabled>All ships deployed</option>';
+    renderShips(gameboard, grid);
+    document.querySelector(".ship-placement").style.display = "none";
   }
 
   // Update ship selection when dropdown changes
@@ -96,7 +134,7 @@ function initShipPlacement(gameboard, grid) {
     shipSize = parseInt(e.target.value);
     selectedIndex = e.target.selectedIndex;
     const fullText = e.target.options[selectedIndex].text;
-    shipName = fullText.replace(/\s*\(\d+\)$/, ''); // Clean ship name
+    shipName = fullText.replace(/\s*\(\d+\)$/, ""); // Clean ship name
   });
 
   // Update orientation when dropdown changes
@@ -126,6 +164,10 @@ function initShipPlacement(gameboard, grid) {
       }
     }
   });
+
+  // Random placement button
+  const randomBtn = document.querySelector(".random-placement-btn");
+  randomBtn.addEventListener("click", randomPlacement);
 }
 
 export { initShipPlacement };
