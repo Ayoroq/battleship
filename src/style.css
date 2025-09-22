@@ -98,3 +98,17 @@
 .cell.hover {
   background-color: #90EE90;
 }
+
+
+/* Ship styling */
+.ship {
+  background-color: rgb(131, 233, 6);
+  cursor: grab;
+  margin: 1rem;
+}
+
+
+.ship[data-ship-size="2"] { width: 6rem; height: 3rem; }
+.ship[data-ship-size="3"] { width: 9rem; height: 3rem; }
+.ship[data-ship-size="4"] { width: 12rem; height: 3rem; }
+.ship[data-ship-size="5"] { width: 15rem; height: 3rem; }

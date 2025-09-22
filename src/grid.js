@@ -39,6 +39,7 @@ function renderShips(gameboard, gameboardContainer) {
         if (cell) {
           cell.classList.add("ship");
           cell.dataset.shipName = ship.name;
+          cell.dataset.shipLength = ship.length;
           cell.setAttribute("draggable", "true");
         }
       }

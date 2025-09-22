@@ -132,9 +132,15 @@ function initShipPlacement(gameboard, grid) {
     Object.entries(ships).forEach(([name, size]) => {
       const validPositions = getValidPositions(size);
       if (validPositions.length > 0) {
-        const randomPos = validPositions[Math.floor(Math.random() * validPositions.length)];
+        const randomPos =
+          validPositions[Math.floor(Math.random() * validPositions.length)];
         const ship = new Ship(name, size);
-        gameboard.placeShip(ship, randomPos.x, randomPos.y, randomPos.orientation);
+        gameboard.placeShip(
+          ship,
+          randomPos.x,
+          randomPos.y,
+          randomPos.orientation
+        );
       }
     });
   }
@@ -148,11 +154,11 @@ function initShipPlacement(gameboard, grid) {
       gameboard.resetBoard();
       renderBoard(gameboard, grid);
       shipsToPlace = {
-        "Dreadnought": 5,
-        "Battlecruiser": 4,
+        Dreadnought: 5,
+        Battlecruiser: 4,
         "Heavy Cruiser": 3,
         "Stealth Frigate": 3,
-        "Interceptor": 2
+        Interceptor: 2,
       };
     } else {
       // Get remaining ships from dropdown
@@ -168,7 +174,8 @@ function initShipPlacement(gameboard, grid) {
     placeShipsRandomly(shipsToPlace);
 
     // Update UIB
-    shipSelect.innerHTML = '<option value="" selected disabled>All ships deployed</option>';
+    shipSelect.innerHTML =
+      '<option value="" selected disabled>All ships deployed</option>';
     shipSize = 0;
     shipName = "";
     renderShips(gameboard, grid);
@@ -213,7 +220,22 @@ function initShipPlacement(gameboard, grid) {
 
   // Random placement button
   const randomBtn = document.querySelector(".random-placement-btn");
-  randomBtn.addEventListener("click", randomPlacement);
+  if (randomBtn) {
+    randomBtn.addEventListener("click", randomPlacement);
+  }
+
+  // Drag and drop functionality
+  grid.addEventListener("dragstart", (e) => {
+    const shipName = e.target.dataset.shipName;
+    if (!shipName) return; // only act on ship cells
+
+    // Store the ship name in the drag data
+    e.dataTransfer.setData("text/plain", shipName);
+  });
+
+  grid.addEventListener("dragover", (e) => {
+    e.preventDefault();
+  });
 }
 
 export { initShipPlacement };
