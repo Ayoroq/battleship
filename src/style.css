@@ -108,7 +108,28 @@
 }
 
 
-.ship[data-ship-size="2"] { width: 6rem; height: 3rem; }
-.ship[data-ship-size="3"] { width: 9rem; height: 3rem; }
-.ship[data-ship-size="4"] { width: 12rem; height: 3rem; }
-.ship[data-ship-size="5"] { width: 15rem; height: 3rem; }
+/* Horizontal ships*/
+.ship[data-ship-size="2"][data-ship-direction="horizontal"] { width: 6rem; height: 3rem; }
+.ship[data-ship-size="3"][data-ship-direction="horizontal"] { width: 9rem; height: 3rem; }
+.ship[data-ship-size="4"][data-ship-direction="horizontal"] { width: 12rem; height: 3rem; }
+.ship[data-ship-size="5"][data-ship-direction="horizontal"] { width: 15rem; height: 3rem; }
+
+/* Vertical ships */
+.ship[data-ship-size="2"][data-ship-direction="vertical"] { width: 3rem; height: 6rem; }
+.ship[data-ship-size="3"][data-ship-direction="vertical"] { width: 3rem; height: 9rem; }
+.ship[data-ship-size="4"][data-ship-direction="vertical"] { width: 3rem; height: 12rem; }
+.ship[data-ship-size="5"][data-ship-direction="vertical"] { width: 3rem; height: 15rem; }
+
+/* Vertical text orientation */
+.ship[data-ship-direction="vertical"] {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Smooth rotation transition */
+.ship {
+  transition: all 0.3s ease;
+}
