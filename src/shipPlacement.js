@@ -224,6 +224,19 @@ function initShipPlacement(gameboard, grid) {
     randomBtn.addEventListener("click", randomPlacement);
   }
 
+  // Adding the option to rotate the ships
+  document.querySelectorAll(".rotate-ship").forEach((button) => {
+    button.addEventListener("click", () => {
+      const ship = button.previousElementSibling; // the .ship div
+      const currentDirection = ship.dataset.shipDirection;
+
+      // Toggle direction
+      const newDirection =
+        currentDirection === "horizontal" ? "vertical" : "horizontal";
+      ship.dataset.shipDirection = newDirection;
+    });
+  });
+
   // Drag and drop functionality
   grid.addEventListener("dragstart", (e) => {
     const shipName = e.target.dataset.shipName;
