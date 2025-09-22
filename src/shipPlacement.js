@@ -112,12 +112,9 @@ function initShipPlacement(gameboard, grid) {
       
       if (placeShip(x, y, draggedShip)) {
         // Remove ship from spaceport
-        const shipElement = document.querySelector(`[data-ship-name="${draggedShip.name}"]`);
+        const shipElement = spacePort.querySelector(`[data-ship-name="${draggedShip.name}"]`);
         if (shipElement) {
-          const container = shipElement.closest('.ship-class');
-          if (container) {
-            container.remove();
-          }
+          shipElement.parentElement.remove();
         }
       }
     }
