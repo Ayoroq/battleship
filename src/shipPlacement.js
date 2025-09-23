@@ -133,6 +133,10 @@ function shipPlacement(gameboard, grid) {
       const ship = new Ship(shipName, shipLength);
       if (validatePlacement(ship, startX, startY, shipDirection)) {
         placeShipOnGrid(ship, startX, startY, shipDirection);
+        currentDragData = null;
+        const shipElement = document.querySelector(`.ship[data-ship-name="${shipName}"]`);
+        const shipClass = shipElement.parentElement
+        shipClass.style.display = "none";
       }
     }
   });
