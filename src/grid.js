@@ -51,6 +51,7 @@ function renderShips(gameboard, gameboardContainer) {
         // Create ship element
         const shipElement = document.createElement('div');
         shipElement.className = 'ship-element';
+        //shipElement.classList.add('ship');
         shipElement.draggable = true;
         shipElement.dataset.shipName = ship.name;
         shipElement.dataset.shipSize = ship.length;

@@ -61,14 +61,15 @@ function shipPlacement(gameboard, grid) {
     if (e.target.classList.contains("random-placement-btn")) {
       gameboard.resetBoard();
       const ships = [
-        new Ship("Carrier", 5),
-        new Ship("Battleship", 4),
-        new Ship("Destroyer", 3),
-        new Ship("Submarine", 3),
-        new Ship("Patrol Boat", 2),
+        new Ship("Dreadnought", 5),
+        new Ship("Battlecruiser", 4),
+        new Ship("Heavy Cruiser", 3),
+        new Ship("Stealth Frigate", 3),
+        new Ship("Interceptor", 2),
       ];
 
       gameboard.placeShipsRandomly(ships);
+      document.querySelector('.space-port').style.display = "none";
       renderBoard(gameboard, grid);
       renderShips(gameboard, grid);
     }
