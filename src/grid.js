@@ -27,24 +27,5 @@ function renderBoard(gameboard, gameboardContainer) {
   }
 }
 
-// render ships on the board if the gameboard contains a ship
-function renderShips(gameboard, gameboardContainer) {
-  for (let x = 0; x < gameboard.boardSize; x++) {
-    for (let y = 0; y < gameboard.boardSize; y++) {
-      if (gameboard.board[x][y] !== null) {
-        const ship = gameboard.getShipAt(x, y);
-        const cell = gameboardContainer.querySelector(
-          `[data-x="${x}"][data-y="${y}"]`
-        );
-        if (cell) {
-          cell.classList.add("ship");
-          cell.dataset.shipName = ship.name;
-          cell.dataset.shipLength = ship.length;
-          cell.setAttribute("draggable", "true");
-        }
-      }
-    }
-  }
-}
 
-export { renderBoard, renderShips };
+export { renderBoard };
