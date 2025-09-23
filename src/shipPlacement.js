@@ -1,7 +1,9 @@
 import { Ship } from "./game.js";
-import { renderBoard } from "./grid.js";
+import { renderBoard, renderShips } from "./grid.js";
 
 function shipPlacement(gameboard, grid) {
+  let currentDragData = null;
+
   function validatePlacement(ship, x, y, direction) {
     //check if ship placement is valid
     if (!gameboard.validatePlacement(ship, x, y, direction)) return false;
@@ -11,6 +13,38 @@ function shipPlacement(gameboard, grid) {
   function placeShipOnGrid(ship, x, y, direction) {
     gameboard.placeShip(ship, x, y, direction);
     renderShips(gameboard, grid);
+  }
+
+  function showShipPreview(cellX, cellY, shipLength, shipDirection, grabbedIndex) {
+    // Calculate ship start position based on grabbed segment
+    let startX, startY;
+    if (shipDirection === "horizontal") {
+      startX = cellX;
+      startY = cellY - grabbedIndex;
+    } else {
+      startX = cellX - grabbedIndex;
+      startY = cellY;
+    }
+    
+    // Clear previous preview
+    grid.querySelectorAll(".cell").forEach(cell => {
+      cell.classList.remove("ship-preview", "invalid-preview");
+    });
+    
+    // Create temporary ship for validation
+    const tempShip = new Ship("temp", shipLength);
+    const isValid = validatePlacement(tempShip, startX, startY, shipDirection);
+    
+    // Show preview
+    for (let i = 0; i < shipLength; i++) {
+      const previewX = shipDirection === "horizontal" ? startX : startX + i;
+      const previewY = shipDirection === "horizontal" ? startY + i : startY;
+      const previewCell = grid.querySelector(`[data-x="${previewX}"][data-y="${previewY}"]`);
+      
+      if (previewCell) {
+        previewCell.classList.add(isValid ? "ship-preview" : "invalid-preview");
+      }
+    }
   }
 
   document.addEventListener("click", (e) => {
@@ -34,6 +68,7 @@ function shipPlacement(gameboard, grid) {
         new Ship("Patrol Boat", 2),
       ];
 
+      gameboard.placeShipsRandomly(ships);
       renderBoard(gameboard, grid);
       renderShips(gameboard, grid);
     }
@@ -57,26 +92,59 @@ function shipPlacement(gameboard, grid) {
         grabbedIndex = Math.floor(e.offsetY / segmentHeight);
       }
 
+      const dragData = { shipName, shipLength, shipDirection, grabbedIndex };
+      currentDragData = dragData;
       e.dataTransfer.setData(
         "text/plain",
-        JSON.stringify({ shipName, shipLength, shipDirection, grabbedIndex })
+        JSON.stringify(dragData)
       );
     }
   });
 
   document.addEventListener("dragover", (e) => {
     e.preventDefault();
-    if (e.target.classList.contains("cell")) {
-      const x = parseInt(e.target.dataset.x);
-      const y = parseInt(e.target.dataset.y);
-      const shipData = JSON.parse(e.dataTransfer.getData("text/plain"));
-      // validate if the x,y,direction,size is a valid position for ship
+    if (e.target.classList.contains("cell") && currentDragData) {
+      const cellX = parseInt(e.target.dataset.x);
+      const cellY = parseInt(e.target.dataset.y);
+      const { shipLength, shipDirection, grabbedIndex } = currentDragData;
+      
+      showShipPreview(cellX, cellY, shipLength, shipDirection, grabbedIndex);
+    }
+  });
+
+  document.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (e.target.classList.contains("cell") && currentDragData) {
+      const cellX = parseInt(e.target.dataset.x);
+      const cellY = parseInt(e.target.dataset.y);
+      const { shipName, shipLength, shipDirection, grabbedIndex } = currentDragData;
+      
+      // Calculate ship start position
+      let startX, startY;
+      if (shipDirection === "horizontal") {
+        startX = cellX;
+        startY = cellY - grabbedIndex;
+      } else {
+        startX = cellX - grabbedIndex;
+        startY = cellY;
+      }
+      
+      // Create and place ship if valid
+      const ship = new Ship(shipName, shipLength);
+      if (validatePlacement(ship, startX, startY, shipDirection)) {
+        placeShipOnGrid(ship, startX, startY, shipDirection);
+      }
     }
   });
 
   document.addEventListener("dragend", (e) => {
     if (e.target.classList.contains("ship")) {
       e.target.style.opacity = "1";
+      currentDragData = null;
+      // Clear preview on drag end
+      grid.querySelectorAll(".cell").forEach(cell => {
+        cell.classList.remove("ship-preview", "invalid-preview");
+      });
     }
   });
 }

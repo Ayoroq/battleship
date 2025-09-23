@@ -35,16 +35,16 @@ class Gameboard {
   validateShip(ship) {
     //check if ship is valid
     if (typeof ship.length !== "number") {
-      throw new Error("Ship length must be a number");
+      return false;
     }
     if (ship.length < 1) {
-      throw new Error("Ship length must be at least 1");
+      return false;
     }
     if (typeof ship.name !== "string" || ship.name.length === 0) {
-      throw new Error("Ship must have a valid name and it must be a string");
+      return false;
     }
     if (ship.length > this.MAX_SHIP_LENGTH) {
-      throw new Error(`Ship length must be at most ${this.MAX_SHIP_LENGTH}`);
+      return false;
     }
     return true;
   }
@@ -52,31 +52,31 @@ class Gameboard {
   validatePlacement(ship, x, y, direction) {
     //check if ship placement is valid
     if (!this.validateShip(ship)) {
-      throw new Error("Invalid ship");
+      return false;
     }
     if (x < 0 || x >= this.boardSize || y < 0 || y >= this.boardSize) {
-      throw new Error("Ship placement out of bounds");
+      return false;
     }
     if (direction !== "horizontal" && direction !== "vertical") {
-      throw new Error("Invalid direction");
+      return false;
     }
     // Check if the ship can be placed at the given coordinates
     if (direction === "horizontal") {
       if (y + ship.length > this.boardSize) {
-        throw new Error("Ship placement out of bounds");
+        return false;
       }
       for (let i = 0; i < ship.length; i++) {
         if (this.board[x][y + i] !== null) {
-          throw new Error("Ship placement overlaps with another ship");
+          return false;
         }
       }
     } else {
       if (x + ship.length > this.boardSize) {
-        throw new Error("Ship placement out of bounds");
+        return false;
       }
       for (let i = 0; i < ship.length; i++) {
         if (this.board[x + i][y] !== null) {
-          throw new Error("Ship placement overlaps with another ship");
+          return false;
         }
       }
     }
@@ -123,6 +123,26 @@ class Gameboard {
   allShipsSunk() {
     // Check if all ships on the game board are sunk
     return this.ships.length > 0 && this.ships.every((ship) => ship.isSunk());
+  }
+
+  placeShipsRandomly(ships) {
+    for (const ship of ships) {
+      let placed = false;
+      let attempts = 0;
+      const maxAttempts = 100;
+      
+      while (!placed && attempts < maxAttempts) {
+        const x = Math.floor(Math.random() * this.boardSize);
+        const y = Math.floor(Math.random() * this.boardSize);
+        const direction = Math.random() < 0.5 ? "horizontal" : "vertical";
+        
+        if (this.validatePlacement(ship, x, y, direction)) {
+          this.placeShip(ship, x, y, direction);
+          placed = true;
+        }
+        attempts++;
+      }
+    }
   }
 }
 

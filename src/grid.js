@@ -27,5 +27,17 @@ function renderBoard(gameboard, gameboardContainer) {
   }
 }
 
+function renderShips(gameboard, gameboardContainer) {
+  for (let x = 0; x < gameboard.boardSize; x++) {
+    for (let y = 0; y < gameboard.boardSize; y++) {
+      const cell = gameboardContainer.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+      if (gameboard.board[x][y]) {
+        cell.classList.add("ship");
+      } else {
+        cell.classList.remove("ship");
+      }
+    }
+  }
+}
 
-export { renderBoard };
+export { renderBoard, renderShips };
