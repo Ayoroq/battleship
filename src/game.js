@@ -99,6 +99,21 @@ class Gameboard {
     }
   }
 
+  removeShip(ship) {
+    // Remove the ship from the game board
+    for (let x = 0; x < this.boardSize; x++) {
+      for (let y = 0; y < this.boardSize; y++) {
+        if (this.board[x][y] === ship) {
+          this.board[x][y] = null;
+        }
+      }
+    }
+    const index = this.ships.indexOf(ship);
+    if (index !== -1) {
+      this.ships.splice(index, 1);
+    }
+  }
+
   getShipAt(x, y) {
     // Get the ship at the given coordinates
     return this.board[x][y];
