@@ -135,6 +135,7 @@ function shipPlacement(gameboard, grid) {
       if (validatePlacement(ship, startX, startY, shipDirection)) {
         placeShipOnGrid(ship, startX, startY, shipDirection);
         currentDragData = null;
+        // remove the ship after it has been placed
         const shipElement = document.querySelector(`.ship[data-ship-name="${shipName}"]`);
         const shipClass = shipElement.parentElement
         shipClass.style.display = "none";

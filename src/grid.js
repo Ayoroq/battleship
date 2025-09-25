@@ -25,10 +25,13 @@ function renderBoard(gameboard, gameboardContainer) {
 }
 
 function renderShips(gameboard, gameboardContainer) {
-  // Clear existing ship elements
-  gameboardContainer
-    .querySelectorAll(".ship-element")
-    .forEach((ship) => ship.remove());
+  // Clear existing ship styling and elements
+  gameboardContainer.querySelectorAll(".cell").forEach(cell => {
+    cell.classList.remove("ship");
+    delete cell.dataset.shipName;
+    delete cell.dataset.shipSegment;
+    cell.querySelector(".ship-element")?.remove();
+  });
 
   const processedShips = new Set();
 
@@ -38,22 +41,47 @@ function renderShips(gameboard, gameboardContainer) {
       if (ship && !processedShips.has(ship)) {
         processedShips.add(ship);
         
-        // Find ship direction and start position
+        // Find ship direction
         let direction = "horizontal";
-        let startX = x, startY = y;
-
-        // Check if ship extends vertically
         if (x + 1 < gameboard.boardSize && gameboard.board[x + 1][y] === ship) {
           direction = "vertical";
         }
 
-        // Get the cell with the starting position
-        const startCell = gameboardContainer.querySelector(
-          `[data-x="${startX}"][data-y="${startY}"]`
-        );
+        // Add ship element to first cell with proper spanning
+        const firstCell = gameboardContainer.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+        const shipElement = document.createElement("div");
+        shipElement.classList.add("ship-element");
+        shipElement.draggable = true;
+        shipElement.dataset.shipName = ship.name;
+        shipElement.dataset.shipSize = ship.length;
+        shipElement.dataset.shipDirection = direction;
+        shipElement.textContent = ship.name;
+        
+        // Position ship element to span across cells
+        shipElement.style.position = "absolute";
+        shipElement.style.zIndex = "10";
+        
+        if (direction === "horizontal") {
+          shipElement.style.width = `calc(100% * ${ship.length})`;
+          shipElement.style.height = "100%";
+        } else {
+          shipElement.style.width = "100%";
+          shipElement.style.height = `calc(100% * ${ship.length})`;
+        }
+        
+        firstCell.style.position = "relative";
+        firstCell.appendChild(shipElement);
 
-        if (startCell) {
-          startCell.classList.add("ship-element");
+        // Add ship class and data to all cells occupied by ship
+        for (let i = 0; i < ship.length; i++) {
+          const cellX = direction === "horizontal" ? x : x + i;
+          const cellY = direction === "horizontal" ? y + i : y;
+          const cell = gameboardContainer.querySelector(`[data-x="${cellX}"][data-y="${cellY}"]`);
+          if (cell) {
+            cell.classList.add("ship");
+            cell.dataset.shipName = ship.name;
+            cell.dataset.shipSegment = i;
+          }
         }
       }
     }
