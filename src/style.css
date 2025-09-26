@@ -83,21 +83,13 @@
   grid-template-rows: repeat(10, 1fr);
   width: 30rem;
   height: 30rem;
-  border: 1px solid #333;
   background-color: red;
-  position: relative;
-}
-
-.cell {
-  border: 1px solid #333;
-}
-
-.cell.ship {
-  background-color: #00ff04;
-}
-
-.cell.hover {
-  background-color: #90EE90;
+  /* Add grid lines using background-image with linear gradients */
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  background-position: top left;
 }
 
 
@@ -134,15 +126,12 @@
   transition: all 0.3s ease;
 }
 /* Ship placement preview styling */
-.cell.ship-preview {
+.ship-preview {
   background-color: rgba(0, 255, 4, 0.5);
   border: 2px solid #00ff04;
 }
 
-.cell.invalid-preview {
-  background-color: rgba(255, 0, 0, 0.5);
-  border: 2px solid #ff0000;
-}
+
 /* Ship element styling */
 .ship-element {
   background-color: rgb(131, 233, 6);
