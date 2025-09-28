@@ -201,6 +201,48 @@ function getShipCellIndex(e) {
   return null;
 }
 
+function shipGridRotation() {
+  gridContainer.addEventListener("dblclick", (e) => {
+    if (e.target.classList.contains("ship")) {
+      const ship = e.target;
+      const shipName = ship.getAttribute("data-ship-name");
+      const currentDirection = ship.getAttribute("data-ship-direction");
+      const newDirection = currentDirection === "horizontal" ? "vertical" : "horizontal";
+      const currentX = parseInt(ship.getAttribute("grid-row"));
+      const currentY = parseInt(ship.getAttribute("grid-col"));
+      const shipSize = parseInt(ship.getAttribute("data-ship-size"));
+      
+      // Remove ship from gameboard temporarily
+      const shipToRemove = gameBoard.ships.find(s => s.name === shipName);
+      if (shipToRemove) {
+        gameBoard.removeShip(shipToRemove);
+      }
+      
+      // Create temporary ship for validation
+      const tempShip = new Ship(shipName, shipSize);
+      
+      // Check if rotation is valid
+      if (isValidPlacement(tempShip, currentX, currentY, newDirection)) {
+        // Update gameboard with new direction
+        gameBoard.placeShip(tempShip, currentX, currentY, newDirection);
+        
+        // Update visual ship
+        ship.setAttribute("data-ship-direction", newDirection);
+      } else {
+        // Restore original placement if rotation invalid
+        gameBoard.placeShip(shipToRemove, currentX, currentY, currentDirection);
+        
+        // Flash red to indicate invalid rotation
+        const originalBackground = ship.style.backgroundColor;
+        ship.style.backgroundColor = "red";
+        setTimeout(() => {
+          ship.style.backgroundColor = originalBackground;
+        }, 200);
+      }
+    }
+  });
+}
+
 function shipDragAndDrop() {
   // Handle dragging from space-port
   spacePort.addEventListener("dragstart", (e) => {
@@ -339,4 +381,4 @@ function shipDragAndDrop() {
   });
 }
 
-export { shipRotation, shipDragAndDrop };
+export { shipRotation, shipDragAndDrop, shipGridRotation };
