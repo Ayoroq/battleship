@@ -102,41 +102,85 @@
       </div>
 
       <div class="ship-deployment">
-        <div class="grid-container-1 grid"></div>
-        <div class="ship-placement">
-          <div class="random-placement">
-            <button class="random-placement-btn" type="button">Random Placement</button>
+        <div class="player-deployment">
+          <div class="grid-container-1 grid"></div>
+          <div class="ship-placement">
+            <div class="random-placement">
+              <button class="random-placement-btn" type="button">
+                Random Placement
+              </button>
+            </div>
+            <div class="space-port">
+              <div class="ship-class">
+                <div
+                  class="ship"
+                  data-ship-name="Dreadnought"
+                  draggable="true"
+                  data-ship-size="5"
+                  data-ship-direction="horizontal"
+                >
+                  Dreadnought
+                </div>
+                <button class="rotate-ship" type="button">rotate</button>
+              </div>
+              <div class="ship-class">
+                <div
+                  class="ship"
+                  data-ship-name="Battlecruiser"
+                  draggable="true"
+                  data-ship-size="4"
+                  data-ship-direction="horizontal"
+                >
+                  Battlecruiser
+                </div>
+                <button class="rotate-ship" type="button">rotate</button>
+              </div>
+              <div class="ship-class">
+                <div
+                  class="ship"
+                  data-ship-name="Heavy Cruiser"
+                  draggable="true"
+                  data-ship-size="3"
+                  data-ship-direction="horizontal"
+                >
+                  Heavy Cruiser
+                </div>
+                <button class="rotate-ship" type="button">rotate</button>
+              </div>
+              <div class="ship-class">
+                <div
+                  class="ship"
+                  data-ship-name="Stealth Frigate"
+                  draggable="true"
+                  data-ship-size="3"
+                  data-ship-direction="horizontal"
+                >
+                  Stealth Frigate
+                </div>
+                <button class="rotate-ship" type="button">rotate</button>
+              </div>
+              <div class="ship-class">
+                <div
+                  class="ship"
+                  data-ship-name="Interceptor"
+                  draggable="true"
+                  data-ship-size="2"
+                  data-ship-direction="horizontal"
+                >
+                  Interceptor
+                </div>
+                <button class="rotate-ship" type="button">rotate</button>
+              </div>
+            </div>
           </div>
-          <div class="space-port">
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Dreadnought" draggable="true" data-ship-size="5" data-ship-direction="horizontal">Dreadnought</div>
-              <button class="rotate-ship" type="button">rotate</button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Battlecruiser" draggable="true" data-ship-size="4" data-ship-direction="horizontal">Battlecruiser</div>
-              <button class="rotate-ship" type="button">rotate</button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Heavy Cruiser" draggable="true" data-ship-size="3" data-ship-direction="horizontal">Heavy Cruiser</div>
-              <button class="rotate-ship" type="button">rotate</button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Stealth Frigate" draggable="true" data-ship-size="3" data-ship-direction="horizontal">Stealth Frigate</div>
-              <button class="rotate-ship" type="button">rotate</button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Interceptor" draggable="true" data-ship-size="2" data-ship-direction="horizontal">Interceptor</div>
-              <button class="rotate-ship" type="button">rotate</button>
-            </div>
+        </div>
+        <div class="enemy-deployment">
+          <div class="grid-container-2 grid"></div>
+          <div class="enemy-ship-placement">
+            <div class="enemy-space-port"></div>
           </div>
         </div>
       </div>
-      <div class="enemy-ship-deployment">
-        <div class="grid-container-2 grid"></div>
-        <div class="enemy-ship-placement">
-          <div class="enemy-space-port">
-          </div>
-        </div>
     </div>
   </body>
 </html>

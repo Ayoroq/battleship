@@ -73,7 +73,9 @@
 
 /* Grid Container Styling */
 .ship-deployment {
+  display: flex;
   padding: 3rem;
+  justify-content: space-around;
   background-color: cornflowerblue;
 }
 
