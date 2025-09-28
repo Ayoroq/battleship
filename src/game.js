@@ -159,6 +159,42 @@ class Gameboard {
       }
     }
   }
+
+  getShipPlacements() {
+    const shipPlacements = [];
+    
+    this.ships.forEach(ship => {
+      // Find the ship's starting position
+      let startX = -1, startY = -1, direction = null;
+      
+      // Find first occurrence of this ship
+      for (let x = 0; x < this.boardSize && startX === -1; x++) {
+        for (let y = 0; y < this.boardSize && startX === -1; y++) {
+          if (this.board[x][y] === ship) {
+            startX = x;
+            startY = y;
+            
+            // Determine direction by checking adjacent cells
+            if (y + 1 < this.boardSize && this.board[x][y + 1] === ship) {
+              direction = 'horizontal';
+            } else {
+              direction = 'vertical';
+            }
+          }
+        }
+      }
+      
+      shipPlacements.push({
+        ship: ship,
+        x: startX,
+        y: startY,
+        direction: direction
+      });
+    });
+    
+    return shipPlacements;
+  }
+
 }
 
 class Player {
