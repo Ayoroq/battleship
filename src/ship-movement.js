@@ -17,6 +17,7 @@ const shipData = [
 
 let draggedShip = null;
 let draggedCellIndex = null;
+let isFromSpacePort = false;
 
 function isValidPlacement(ship, x, y, direction) {
   return gameBoard.validatePlacement(ship, x, y, direction);
@@ -142,7 +143,7 @@ function highlightShipCells(startX, startY, size, direction, isValid) {
       highlight.style.height = '3rem';
       highlight.style.pointerEvents = 'none';
       highlight.style.zIndex = '5';
-      highlight.style.backgroundColor = isValid ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+      isValid ? highlight.classList.add('valid-preview') : highlight.classList.add('invalid-preview');
       highlight.style.border = isValid ? '2px solid green' : '2px solid red';
       
       gridContainer.appendChild(highlight);
@@ -201,11 +202,13 @@ function getShipCellIndex(e) {
 }
 
 function shipDragAndDrop() {
+  // Handle dragging from space-port
   spacePort.addEventListener("dragstart", (e) => {
     if (e.target.classList.contains("ship")) {
       e.target.style.opacity = "0.5";
       draggedShip = e.target;
       draggedCellIndex = getShipCellIndex(e);
+      isFromSpacePort = true;
       e.dataTransfer.setData("text/plain", e.target.outerHTML);
     }
   });
@@ -217,6 +220,36 @@ function shipDragAndDrop() {
       }
       draggedShip = null;
       draggedCellIndex = null;
+      isFromSpacePort = false;
+      clearPreviewHighlights();
+    }
+  });
+
+  // Handle dragging ships on grid for repositioning
+  gridContainer.addEventListener("dragstart", (e) => {
+    if (e.target.classList.contains("ship")) {
+      e.target.style.opacity = "0.5";
+      draggedShip = e.target;
+      draggedCellIndex = getShipCellIndex(e);
+      isFromSpacePort = false;
+      
+      // Remove ship from gameboard temporarily
+      const shipName = e.target.getAttribute("data-ship-name");
+      const shipToRemove = gameBoard.ships.find(ship => ship.name === shipName);
+      if (shipToRemove) {
+        gameBoard.removeShip(shipToRemove);
+      }
+      
+      e.dataTransfer.setData("text/plain", e.target.outerHTML);
+    }
+  });
+
+  gridContainer.addEventListener("dragend", (e) => {
+    if (e.target.classList.contains("ship")) {
+      e.target.style.opacity = "1";
+      draggedShip = null;
+      draggedCellIndex = null;
+      isFromSpacePort = false;
       clearPreviewHighlights();
     }
   });
@@ -264,25 +297,44 @@ function shipDragAndDrop() {
       // Update gameboard with ship placement
       gameBoard.placeShip(ship, shipStartX, shipStartY, shipDirection);
 
-      // Create new ship on grid
-      const newShip = draggedShip.cloneNode(true);
-      newShip.style.position = "absolute";
-      newShip.style.left = `${shipStartY * 3}rem`;
-      newShip.style.top = `${shipStartX * 3}rem`;
-      newShip.style.zIndex = "10";
-      newShip.style.opacity = "1";
+      // Check if dragging from space-port or repositioning on grid
+      if (isFromSpacePort) {
+        // Create new ship on grid
+        const newShip = draggedShip.cloneNode(true);
+        newShip.style.position = "absolute";
+        newShip.style.left = `${shipStartY * 3}rem`;
+        newShip.style.top = `${shipStartX * 3}rem`;
+        newShip.style.zIndex = "10";
+        newShip.style.opacity = "1";
 
-      // Add grid position attributes
-      newShip.setAttribute("grid-row", shipStartX);
-      newShip.setAttribute("grid-col", shipStartY);
+        // Add grid position attributes
+        newShip.setAttribute("data-ship-direction", shipDirection);
+        newShip.setAttribute("grid-row", shipStartX);
+        newShip.setAttribute("grid-col", shipStartY);
 
-      gridContainer.appendChild(newShip);
+        gridContainer.appendChild(newShip);
 
-      // Hide original ship
-      draggedShip.style.display = "none";
+        // Hide original ship
+        draggedShip.style.display = "none";
+      } else {
+        // Repositioning existing ship on grid
+        draggedShip.style.left = `${shipStartY * 3}rem`;
+        draggedShip.style.top = `${shipStartX * 3}rem`;
+        draggedShip.setAttribute("data-ship-direction", shipDirection);
+        draggedShip.setAttribute("grid-row", shipStartX);
+        draggedShip.setAttribute("grid-col", shipStartY);
+      }
     } else {
       // Reset opacity if placement failed
       draggedShip.style.opacity = "1";
+      
+      // If repositioning failed, restore ship to gameboard
+      if (draggedShip.parentElement === gridContainer) {
+        const oldX = parseInt(draggedShip.getAttribute("grid-row"));
+        const oldY = parseInt(draggedShip.getAttribute("grid-col"));
+        const oldDirection = draggedShip.getAttribute("data-ship-direction");
+        gameBoard.placeShip(ship, oldX, oldY, oldDirection);
+      }
     }
   });
 }

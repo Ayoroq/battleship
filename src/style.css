@@ -153,9 +153,14 @@
   transition: all 0.3s ease;
 }
 /* Ship placement preview styling */
-.ship-preview {
+.valid-preview {
   background-color: rgba(0, 255, 4, 0.5);
   border: 2px solid #00ff04;
+}
+
+.invalid-preview {
+  background-color: rgba(255, 0, 0, 0.5);
+  border: 2px solid #ff0000;
 }
 
 /* Ship element styling */
