@@ -83,8 +83,9 @@
   grid-template-rows: repeat(10, 1fr);
   width: 30rem;
   height: 30rem;
-  background-color: red;
   position: relative;
+  background-color: white;
+  border: 1px solid #000;
   /* Add grid lines using background-image with linear gradients */
   background-image: linear-gradient(
       to right,

@@ -15,6 +15,9 @@ const shipData = [
   { name: "Interceptor", size: 2 },
 ];
 
+let draggedShip = null;
+let draggedCellIndex = null;
+
 function isValidPlacement(ship, x, y, direction) {
   return gameBoard.validatePlacement(ship, x, y, direction);
 }
@@ -109,6 +112,69 @@ function placeRemainingShipsRandomly() {
   newPlacements.forEach(createVisualShip);
 }
 
+function clearPreviewHighlights() {
+  const previewCells = gridContainer.querySelectorAll('.ship-preview, .invalid-preview');
+  previewCells.forEach(cell => cell.remove());
+}
+
+function highlightShipCells(startX, startY, size, direction, isValid) {
+  const className = isValid ? 'ship-preview' : 'invalid-preview';
+  
+  for (let i = 0; i < size; i++) {
+    let cellX, cellY;
+    if (direction === 'horizontal') {
+      cellX = startX;
+      cellY = startY + i;
+    } else {
+      cellX = startX + i;
+      cellY = startY;
+    }
+    
+    // Only highlight if within bounds
+    if (cellX >= 0 && cellX < 10 && cellY >= 0 && cellY < 10) {
+      // Create a temporary highlight div
+      const highlight = document.createElement('div');
+      highlight.classList.add(className);
+      highlight.style.position = 'absolute';
+      highlight.style.left = `${cellY * 3}rem`;
+      highlight.style.top = `${cellX * 3}rem`;
+      highlight.style.width = '3rem';
+      highlight.style.height = '3rem';
+      highlight.style.pointerEvents = 'none';
+      highlight.style.zIndex = '5';
+      highlight.style.backgroundColor = isValid ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+      highlight.style.border = isValid ? '2px solid green' : '2px solid red';
+      
+      gridContainer.appendChild(highlight);
+    }
+  }
+}
+
+function calculateDropPosition(e) {
+  const gridRect = gridContainer.getBoundingClientRect();
+  const offsetX = e.clientX - gridRect.left;
+  const offsetY = e.clientY - gridRect.top;
+  
+  const cellSize = gridRect.width / 10;
+  const dropGridX = Math.floor(offsetY / cellSize);
+  const dropGridY = Math.floor(offsetX / cellSize);
+  
+  const shipSize = parseInt(draggedShip.getAttribute("data-ship-size"));
+  const shipDirection = draggedShip.getAttribute("data-ship-direction");
+  
+  // Calculate ship start position
+  let shipStartX, shipStartY;
+  if (shipDirection === "horizontal") {
+    shipStartX = dropGridX;
+    shipStartY = dropGridY - draggedCellIndex;
+  } else {
+    shipStartX = dropGridX - draggedCellIndex;
+    shipStartY = dropGridY;
+  }
+  
+  return { shipStartX, shipStartY, shipSize, shipDirection };
+}
+
 function getShipCellIndex(e) {
   if (e.target.classList.contains("ship")) {
     const ship = e.target;
@@ -135,9 +201,6 @@ function getShipCellIndex(e) {
 }
 
 function shipDragAndDrop() {
-  let draggedShip = null;
-  let draggedCellIndex = null;
-
   spacePort.addEventListener("dragstart", (e) => {
     if (e.target.classList.contains("ship")) {
       e.target.style.opacity = "0.5";
@@ -154,11 +217,28 @@ function shipDragAndDrop() {
       }
       draggedShip = null;
       draggedCellIndex = null;
+      clearPreviewHighlights();
     }
   });
 
   gridContainer.addEventListener("dragover", (e) => {
     e.preventDefault();
+    
+    if (!draggedShip) return;
+    
+    // Clear previous highlights
+    clearPreviewHighlights();
+    
+    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e);
+    
+    // Create temporary ship for validation
+    const shipName = draggedShip.getAttribute("data-ship-name");
+    const tempShip = new Ship(shipName, shipSize);
+    
+    const isValid = isValidPlacement(tempShip, shipStartX, shipStartY, shipDirection);
+    
+    // Highlight the cells
+    highlightShipCells(shipStartX, shipStartY, shipSize, shipDirection, isValid);
   });
 
   gridContainer.addEventListener("drop", (e) => {
@@ -166,27 +246,7 @@ function shipDragAndDrop() {
 
     if (!draggedShip) return;
 
-    const gridRect = gridContainer.getBoundingClientRect();
-    const offsetX = e.clientX - gridRect.left;
-    const offsetY = e.clientY - gridRect.top;
-
-    const cellSize = gridRect.width / 10;
-    // Fix coordinate system: X = rows (top/bottom), Y = columns (left/right)
-    const dropGridX = Math.floor(offsetY / cellSize); // X = row (vertical position)
-    const dropGridY = Math.floor(offsetX / cellSize); // Y = column (horizontal position)
-
-    const shipSize = parseInt(draggedShip.getAttribute("data-ship-size"));
-    const shipDirection = draggedShip.getAttribute("data-ship-direction");
-
-    // Adjust placement based on which cell was dragged
-    let shipStartX, shipStartY;
-    if (shipDirection === "horizontal") {
-      shipStartX = dropGridX; // Row stays same for horizontal
-      shipStartY = dropGridY - draggedCellIndex; // Adjust column
-    } else {
-      shipStartX = dropGridX - draggedCellIndex; // Adjust row
-      shipStartY = dropGridY; // Column stays same for vertical
-    }
+    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e);
 
     // Create ship object for validation and placement
     const shipName = draggedShip.getAttribute("data-ship-name");
