@@ -1,11 +1,6 @@
 // This is the module that handles the movement of ships, the drag and drops and the repositioning
 import { Ship, Gameboard, Player } from "./game";
 
-const spacePort = document.querySelector(".space-port");
-const gridContainer = document.querySelector(".grid-container-1");
-const gameBoard = new Gameboard();
-const randomizeButton = document.querySelector(".random-placement-btn");
-
 // Create all 5 ships
 const shipData = [
   { name: "Dreadnought", size: 5 },
@@ -19,11 +14,11 @@ let draggedShip = null;
 let draggedCellIndex = null;
 let isFromSpacePort = false;
 
-function isValidPlacement(ship, x, y, direction) {
-  return gameBoard.validatePlacement(ship, x, y, direction);
+function isValidPlacement(ship, x, y, direction, gameboard) {
+  return gameboard.validatePlacement(ship, x, y, direction);
 }
 
-function shipRotation() {
+function shipRotation(spacePort) {
   spacePort.addEventListener("click", (e) => {
     if (e.target.classList.contains("rotate-ship")) {
       const ship = e.target.previousElementSibling;
@@ -35,20 +30,21 @@ function shipRotation() {
   });
 }
 
-// Randomizing the ship placement
-randomizeButton.addEventListener("click", () => {
-  if (gameBoard.ships.length === 5 || gameBoard.ships.length === 0) {
-    // All ships placed - reset and place all randomly
-    gameBoard.resetBoard();
-    clearVisualShips();
-    placeAllShipsRandomly();
-  } else {
-    // Some ships placed - keep existing, place remaining randomly
-    placeRemainingShipsRandomly();
-  }
-});
+function setupRandomPlacement(randomizeButton, gameboard, gridContainer, spacePort) {
+  randomizeButton.addEventListener("click", () => {
+    if (gameboard.ships.length === 5 || gameboard.ships.length === 0) {
+      // All ships placed - reset and place all randomly
+      gameboard.resetBoard();
+      clearVisualShips(gridContainer, spacePort);
+      placeAllShipsRandomly(gameboard, gridContainer);
+    } else {
+      // Some ships placed - keep existing, place remaining randomly
+      placeRemainingShipsRandomly(gameboard, gridContainer);
+    }
+  });
+}
 
-function clearVisualShips() {
+function clearVisualShips(gridContainer, spacePort) {
   const placedShips = gridContainer.querySelectorAll(".ship");
   placedShips.forEach((ship) => ship.remove());
 
@@ -59,7 +55,7 @@ function clearVisualShips() {
   hiddenShips.forEach((ship) => (ship.style.display = ""));
 }
 
-function createVisualShip(placement) {
+function createVisualShip(placement, gridContainer, spacePort) {
   const { ship, x, y, direction } = placement;
   
   const newShip = document.createElement("div");
@@ -82,20 +78,22 @@ function createVisualShip(placement) {
   gridContainer.appendChild(newShip);
   
   // Hide corresponding ship in space-port
-  const spacePortShip = spacePort.querySelector(`[data-ship-name="${ship.name}"]`);
-  if (spacePortShip) spacePortShip.style.display = "none";
+  if (spacePort) {
+    const spacePortShip = spacePort.querySelector(`[data-ship-name="${ship.name}"]`);
+    if (spacePortShip) spacePortShip.style.display = "none";
+  }
 }
 
-function placeAllShipsRandomly() {
+function placeAllShipsRandomly(gameboard, gridContainer, spacePort = null) {
   const ships = shipData.map((data) => new Ship(data.name, data.size));
-  gameBoard.placeShipsRandomly(ships);
+  gameboard.placeShipsRandomly(ships);
   
-  const shipPlacements = gameBoard.getShipPlacements();
-  shipPlacements.forEach(createVisualShip);
+  const shipPlacements = gameboard.getShipPlacements();
+  shipPlacements.forEach(placement => createVisualShip(placement, gridContainer, spacePort));
 }
 
-function placeRemainingShipsRandomly() {
-  const currentPlacements = gameBoard.getShipPlacements();
+function placeRemainingShipsRandomly(gameboard, gridContainer, spacePort = null) {
+  const currentPlacements = gameboard.getShipPlacements();
   const missingShips = shipData.filter(
     (shipData) =>
       !currentPlacements.some((placement) => placement.ship.name === shipData.name)
@@ -103,22 +101,22 @@ function placeRemainingShipsRandomly() {
 
   // Create Ship objects and place them randomly
   const shipsToPlace = missingShips.map(data => new Ship(data.name, data.size));
-  gameBoard.placeShipsRandomly(shipsToPlace);
+  gameboard.placeShipsRandomly(shipsToPlace);
 
   // Get the new placements and create visuals
-  const newPlacements = gameBoard.getShipPlacements().filter(
+  const newPlacements = gameboard.getShipPlacements().filter(
     placement => missingShips.some(data => data.name === placement.ship.name)
   );
 
-  newPlacements.forEach(createVisualShip);
+  newPlacements.forEach(placement => createVisualShip(placement, gridContainer, spacePort));
 }
 
-function clearPreviewHighlights() {
+function clearPreviewHighlights(gridContainer) {
   const previewCells = gridContainer.querySelectorAll('.ship-preview, .invalid-preview');
   previewCells.forEach(cell => cell.remove());
 }
 
-function highlightShipCells(startX, startY, size, direction, isValid) {
+function highlightShipCells(startX, startY, size, direction, isValid, gridContainer) {
   const className = isValid ? 'ship-preview' : 'invalid-preview';
   
   for (let i = 0; i < size; i++) {
@@ -151,7 +149,7 @@ function highlightShipCells(startX, startY, size, direction, isValid) {
   }
 }
 
-function calculateDropPosition(e) {
+function calculateDropPosition(e, gridContainer) {
   const gridRect = gridContainer.getBoundingClientRect();
   const offsetX = e.clientX - gridRect.left;
   const offsetY = e.clientY - gridRect.top;
@@ -201,7 +199,7 @@ function getShipCellIndex(e) {
   return null;
 }
 
-function shipGridRotation() {
+function shipGridRotation(gridContainer, gameboard) {
   gridContainer.addEventListener("dblclick", (e) => {
     if (e.target.classList.contains("ship")) {
       const ship = e.target;
@@ -213,24 +211,24 @@ function shipGridRotation() {
       const shipSize = parseInt(ship.getAttribute("data-ship-size"));
       
       // Remove ship from gameboard temporarily
-      const shipToRemove = gameBoard.ships.find(s => s.name === shipName);
+      const shipToRemove = gameboard.ships.find(s => s.name === shipName);
       if (shipToRemove) {
-        gameBoard.removeShip(shipToRemove);
+        gameboard.removeShip(shipToRemove);
       }
       
       // Create temporary ship for validation
       const tempShip = new Ship(shipName, shipSize);
       
       // Check if rotation is valid
-      if (isValidPlacement(tempShip, currentX, currentY, newDirection)) {
+      if (isValidPlacement(tempShip, currentX, currentY, newDirection, gameboard)) {
         // Update gameboard with new direction
-        gameBoard.placeShip(tempShip, currentX, currentY, newDirection);
+        gameboard.placeShip(tempShip, currentX, currentY, newDirection);
         
         // Update visual ship
         ship.setAttribute("data-ship-direction", newDirection);
       } else {
         // Restore original placement if rotation invalid
-        gameBoard.placeShip(shipToRemove, currentX, currentY, currentDirection);
+        gameboard.placeShip(shipToRemove, currentX, currentY, currentDirection);
         
         // Flash red to indicate invalid rotation
         const originalBackground = ship.style.backgroundColor;
@@ -243,7 +241,7 @@ function shipGridRotation() {
   });
 }
 
-function shipDragAndDrop() {
+function shipDragAndDrop(spacePort, gridContainer, gameboard) {
   // Handle dragging from space-port
   spacePort.addEventListener("dragstart", (e) => {
     if (e.target.classList.contains("ship")) {
@@ -263,7 +261,7 @@ function shipDragAndDrop() {
       draggedShip = null;
       draggedCellIndex = null;
       isFromSpacePort = false;
-      clearPreviewHighlights();
+      clearPreviewHighlights(gridContainer);
     }
   });
 
@@ -277,9 +275,9 @@ function shipDragAndDrop() {
       
       // Remove ship from gameboard temporarily
       const shipName = e.target.getAttribute("data-ship-name");
-      const shipToRemove = gameBoard.ships.find(ship => ship.name === shipName);
+      const shipToRemove = gameboard.ships.find(ship => ship.name === shipName);
       if (shipToRemove) {
-        gameBoard.removeShip(shipToRemove);
+        gameboard.removeShip(shipToRemove);
       }
       
       e.dataTransfer.setData("text/plain", e.target.outerHTML);
@@ -292,7 +290,7 @@ function shipDragAndDrop() {
       draggedShip = null;
       draggedCellIndex = null;
       isFromSpacePort = false;
-      clearPreviewHighlights();
+      clearPreviewHighlights(gridContainer);
     }
   });
 
@@ -302,18 +300,18 @@ function shipDragAndDrop() {
     if (!draggedShip) return;
     
     // Clear previous highlights
-    clearPreviewHighlights();
+    clearPreviewHighlights(gridContainer);
     
-    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e);
+    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e, gridContainer);
     
     // Create temporary ship for validation
     const shipName = draggedShip.getAttribute("data-ship-name");
     const tempShip = new Ship(shipName, shipSize);
     
-    const isValid = isValidPlacement(tempShip, shipStartX, shipStartY, shipDirection);
+    const isValid = isValidPlacement(tempShip, shipStartX, shipStartY, shipDirection, gameboard);
     
     // Highlight the cells
-    highlightShipCells(shipStartX, shipStartY, shipSize, shipDirection, isValid);
+    highlightShipCells(shipStartX, shipStartY, shipSize, shipDirection, isValid, gridContainer);
   });
 
   gridContainer.addEventListener("drop", (e) => {
@@ -321,7 +319,7 @@ function shipDragAndDrop() {
 
     if (!draggedShip) return;
 
-    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e);
+    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e, gridContainer);
 
     // Create ship object for validation and placement
     const shipName = draggedShip.getAttribute("data-ship-name");
@@ -331,13 +329,14 @@ function shipDragAndDrop() {
       ship,
       shipStartX,
       shipStartY,
-      shipDirection
+      shipDirection,
+      gameboard
     );
 
     // Validate placement
     if (isValid) {
       // Update gameboard with ship placement
-      gameBoard.placeShip(ship, shipStartX, shipStartY, shipDirection);
+      gameboard.placeShip(ship, shipStartX, shipStartY, shipDirection);
 
       // Check if dragging from space-port or repositioning on grid
       if (isFromSpacePort) {
@@ -375,10 +374,20 @@ function shipDragAndDrop() {
         const oldX = parseInt(draggedShip.getAttribute("grid-row"));
         const oldY = parseInt(draggedShip.getAttribute("grid-col"));
         const oldDirection = draggedShip.getAttribute("data-ship-direction");
-        gameBoard.placeShip(ship, oldX, oldY, oldDirection);
+        gameboard.placeShip(ship, oldX, oldY, oldDirection);
       }
     }
   });
 }
 
-export { shipRotation, shipDragAndDrop, shipGridRotation };
+
+
+export { 
+  shipRotation, 
+  shipDragAndDrop, 
+  shipGridRotation, 
+  setupRandomPlacement,
+  placeAllShipsRandomly,
+  createVisualShip,
+  shipData
+};

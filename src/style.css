@@ -77,7 +77,7 @@
   background-color: cornflowerblue;
 }
 
-.grid-container-1 {
+.grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);

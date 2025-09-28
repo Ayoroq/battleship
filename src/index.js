@@ -1,11 +1,12 @@
 import "./reset.css";
 import "./style.css";
-import { shipRotation, shipDragAndDrop, shipGridRotation } from "./ship-movement.JS";
+import { initializeGame } from "./game-controller.js";
 import { Ship, Gameboard, Player } from "./game.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  shipDragAndDrop();
-  shipRotation();
-  shipGridRotation();
+  const gameState = initializeGame();
+  
+  // Game state is now available for future use
+  window.gameState = gameState;
 });
