@@ -41,6 +41,7 @@ function setupRandomPlacement(randomizeButton, gameboard, gridContainer, spacePo
       // Some ships placed - keep existing, place remaining randomly
       placeRemainingShipsRandomly(gameboard, gridContainer);
     }
+    spacePort.style.display = "none";
   });
 }
 
@@ -356,7 +357,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
         gridContainer.appendChild(newShip);
 
         // Hide original ship
-        draggedShip.style.display = "none";
+        draggedShip.parentElement.style.display = "none";
       } else {
         // Repositioning existing ship on grid
         draggedShip.style.left = `${shipStartY * 3}rem`;
