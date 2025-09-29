@@ -93,6 +93,11 @@ function placeAllShipsRandomly(gameboard, gridContainer, spacePort = null) {
   shipPlacements.forEach(placement => createVisualShip(placement, gridContainer, spacePort));
 }
 
+function placeComputerShipsRandomly(gameboard, gridContainer, spacePort = null) {
+  const ships = shipData.map((data) => new Ship(data.name, data.size));
+  gameboard.placeShipsRandomly(ships);
+}
+
 function placeRemainingShipsRandomly(gameboard, gridContainer, spacePort = null) {
   const currentPlacements = gameboard.getShipPlacements();
   const missingShips = shipData.filter(
@@ -389,6 +394,7 @@ export {
   shipGridRotation, 
   setupRandomPlacement,
   placeAllShipsRandomly,
+  placeComputerShipsRandomly,
   createVisualShip,
   shipData
 };

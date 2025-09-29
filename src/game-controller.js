@@ -1,5 +1,6 @@
 // Game controller that manages the overall game state and initialization
 import { Gameboard } from "./game.js";
+import { placeComputerShipsRandomly } from "./ship-movement.JS";
 import { 
   shipRotation, 
   shipDragAndDrop, 
@@ -26,7 +27,7 @@ function initializeGame() {
   const enemyGameBoard = new Gameboard();
   
   // Place enemy ships randomly
-  placeAllShipsRandomly(enemyGameBoard, enemyGridContainer);
+  placeComputerShipsRandomly(enemyGameBoard);
   
   return { 
     player: { gameBoard: playerGameBoard, gridContainer: playerGridContainer, spacePort },
