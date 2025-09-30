@@ -18,6 +18,18 @@ let isFromSpacePort = false;
 const startButton = document.querySelector(".start-btn");
 if (startButton) startButton.style.display = "none";
 
+const createGridCells = (gridContainer) => {
+  for (let i = 0; i < 100; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('grid-cell');
+    cell.dataset.x = Math.floor(i / 10);
+    cell.dataset.y = i % 10;
+    cell.style.width = '3rem';
+    cell.style.height = '3rem';
+    gridContainer.appendChild(cell);
+  }
+}
+
 function checkAllShipsPlaced(gameboard) {
   const allShipsPlaced = gameboard.ships.length === 5;
   if (startButton && !gameStarted) {
@@ -245,6 +257,9 @@ function shipGridRotation(gridContainer, gameboard) {
         
         // Update visual ship
         ship.setAttribute("data-ship-direction", newDirection);
+        
+        // Update grid cell hit states
+        game.updateGridCellHits(gridContainer, gameboard);
       } else {
         // Restore original placement if rotation invalid
         gameboard.placeShip(shipToRemove, currentX, currentY, currentDirection);
@@ -410,5 +425,6 @@ export {
   placeAllShipsRandomly,
   placeComputerShipsRandomly,
   createVisualShip,
+  createGridCells,
   shipData
 };

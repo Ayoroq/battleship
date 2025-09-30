@@ -6,7 +6,8 @@ import {
   shipDragAndDrop, 
   shipGridRotation, 
   setupRandomPlacement,
-  placeAllShipsRandomly 
+  placeAllShipsRandomly,
+  createGridCells 
 } from "./ship-movement.JS";
 
 // Initialize player and enemy ship movement
@@ -21,10 +22,12 @@ function initializeGame() {
   setupRandomPlacement(randomizeButton, playerGameBoard, playerGridContainer, spacePort);
   shipDragAndDrop(spacePort, playerGridContainer, playerGameBoard);
   shipGridRotation(playerGridContainer, playerGameBoard);
+  createGridCells(playerGridContainer);
   
   // Enemy setup
   const enemyGridContainer = document.querySelector(".grid-container-2");
   const enemyGameBoard = new Gameboard();
+  createGridCells(enemyGridContainer);
   
   // Place enemy ships randomly
   placeComputerShipsRandomly(enemyGameBoard);
@@ -52,10 +55,51 @@ const gameController = () => {
     })
   }
 
-  return {startGame, gameStarted };
+  const handlePlayerAttack = () => {
+    enemy.gridContainer.addEventListener("click", (e) => {
+      if (gameStarted && e.target.classList.contains("grid-cell")) {
+        const x = parseInt(e.target.dataset.x);
+        const y = parseInt(e.target.dataset.y);
+        const attackResult = enemy.gameBoard.receiveAttack(x, y);
+        if (attackResult.result === "hit") {
+          e.target.classList.add("hit");
+          console.log(`Hit ${attackResult.ship.name} at cell index ${attackResult.cellIndex}`);
+        } else if (attackResult.result === "miss") {
+          e.target.classList.add("miss");
+        }
+      }
+    })
+  }
+
+  const handleEnemyAttack = () => {
+    const makeRandomAttack = () => {
+      let x, y;
+      do {
+        x = Math.floor(Math.random() * 10);
+        y = Math.floor(Math.random() * 10);
+      } while (player.gameBoard.board[x][y] === 'hit' || player.gameBoard.board[x][y] === 'miss');
+      
+      const attackResult = player.gameBoard.receiveAttack(x, y);
+      const targetCell = player.gridContainer.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+      
+      if (attackResult.result === "hit") {
+        targetCell.classList.add("hit");
+        console.log(`Enemy hit your ${attackResult.ship.name} at cell index ${attackResult.cellIndex}`);
+        return { hit: true, ship: attackResult.ship, cellIndex: attackResult.cellIndex };
+      } else if (attackResult.result === "miss") {
+        targetCell.classList.add("miss");
+        return { hit: false };
+      }
+    }
+    
+    return { makeRandomAttack };
+  }
+
+  return {startGame, handlePlayerAttack, handleEnemyAttack, gameStarted };
 }
 
 const game = gameController();
 game.startGame();
+
 
 export { gameStarted };

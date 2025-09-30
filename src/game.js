@@ -128,11 +128,31 @@ class Gameboard {
   }
 
   receiveAttack(x, y) {
-    if (this.board[x][y] !== null) {
-      this.board[x][y].hit();
-      return true; // Hit
+    if (this.board[x][y] !== null && this.board[x][y] !== 'hit' && this.board[x][y] !== 'miss') {
+      const ship = this.board[x][y];
+      ship.hit();
+      
+      // Find ship's starting position and calculate cell index
+      const shipPlacements = this.getShipPlacements();
+      const shipPlacement = shipPlacements.find(p => p.ship === ship);
+      
+      let cellIndex = 0;
+      if (shipPlacement) {
+        if (shipPlacement.direction === 'horizontal') {
+          cellIndex = y - shipPlacement.y;
+        } else {
+          cellIndex = x - shipPlacement.x;
+        }
+      }
+      
+      this.board[x][y] = 'hit';
+      return { result: 'hit', ship: ship, cellIndex: cellIndex };
+    } else if (this.board[x][y] === 'hit' || this.board[x][y] === 'miss') {
+      return { result: 'already_attacked' };
     }
-    return false; // Miss
+    
+    this.board[x][y] = 'miss';
+    return { result: 'miss' };
   }
 
   allShipsSunk() {

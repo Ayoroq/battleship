@@ -181,3 +181,16 @@
   writing-mode: vertical-lr;
   text-orientation: mixed;
 }
+
+/* Attack result styling */
+.grid-cell {
+  cursor: crosshair;
+}
+
+.grid-cell.hit {
+  background-color: red;
+}
+
+.grid-cell.miss {
+  background-color: lightblue;
+}
