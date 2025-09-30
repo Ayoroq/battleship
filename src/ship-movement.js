@@ -1,5 +1,6 @@
 // This is the module that handles the movement of ships, the drag and drops and the repositioning
 import { Ship, Gameboard, Player } from "./game";
+import { gameStarted } from "./game-controller.js";
 
 // Create all 5 ships
 const shipData = [
@@ -13,6 +14,16 @@ const shipData = [
 let draggedShip = null;
 let draggedCellIndex = null;
 let isFromSpacePort = false;
+
+const startButton = document.querySelector(".start-btn");
+if (startButton) startButton.style.display = "none";
+
+function checkAllShipsPlaced(gameboard) {
+  const allShipsPlaced = gameboard.ships.length === 5;
+  if (startButton && !gameStarted) {
+    startButton.style.display = allShipsPlaced ? "block" : "none";
+  }
+}
 
 function isValidPlacement(ship, x, y, direction, gameboard) {
   return gameboard.validatePlacement(ship, x, y, direction);
@@ -91,6 +102,7 @@ function placeAllShipsRandomly(gameboard, gridContainer, spacePort = null) {
   
   const shipPlacements = gameboard.getShipPlacements();
   shipPlacements.forEach(placement => createVisualShip(placement, gridContainer, spacePort));
+  checkAllShipsPlaced(gameboard);
 }
 
 function placeComputerShipsRandomly(gameboard, gridContainer, spacePort = null) {
@@ -115,6 +127,7 @@ function placeRemainingShipsRandomly(gameboard, gridContainer, spacePort = null)
   );
 
   newPlacements.forEach(placement => createVisualShip(placement, gridContainer, spacePort));
+  checkAllShipsPlaced(gameboard);
 }
 
 function clearPreviewHighlights(gridContainer) {
@@ -343,6 +356,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
     if (isValid) {
       // Update gameboard with ship placement
       gameboard.placeShip(ship, shipStartX, shipStartY, shipDirection);
+      checkAllShipsPlaced(gameboard);
 
       // Check if dragging from space-port or repositioning on grid
       if (isFromSpacePort) {

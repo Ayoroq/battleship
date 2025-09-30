@@ -35,4 +35,18 @@ function initializeGame() {
   };
 }
 
-export { initializeGame };
+let gameStarted = false;
+
+function playGame(){
+  const start = document.querySelector(".start-btn");
+  start.addEventListener("click", () => {
+    gameStarted = true;
+    const randomizeButton = document.querySelector(".random-placement-btn");
+    randomizeButton.style.display = "none";
+    start.style.display = "none";
+  })
+}
+
+playGame();
+
+export { initializeGame, gameStarted };
