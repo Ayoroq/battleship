@@ -101,9 +101,16 @@
 
 /* Ship styling */
 .ship {
+  display: grid;
   background-color: rgb(131, 233, 6);
   cursor: grab;
   transition: all 0.3s ease;
+  z-index: 10;
+  opacity: 1;
+}
+
+.ship-cell{
+  pointer-events: none;
 }
 
 /* Horizontal ships*/
@@ -142,14 +149,6 @@
   height: 15rem;
 }
 
-/* Vertical text orientation */
-.ship[data-ship-direction="vertical"] {
-  writing-mode: vertical-lr;
-  text-orientation: mixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 /* Ship placement preview styling */
 .valid-preview {

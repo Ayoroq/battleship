@@ -1,6 +1,7 @@
 // This is the module that handles the movement of ships, the drag and drops and the repositioning
 import { Ship, Gameboard, Player } from "./game";
 import { gameStarted } from "./game-controller.js";
+import { renderShip } from "./render.js";
 
 // Create all 5 ships
 const shipData = [
@@ -79,50 +80,12 @@ function clearVisualShips(gridContainer, spacePort) {
   hiddenShips.forEach((ship) => (ship.style.display = ""));
 }
 
-function createVisualShip(placement, gridContainer, spacePort) {
-  const { ship, x, y, direction } = placement;
-  
-  const newShip = document.createElement("div");
-  newShip.classList.add("ship");
-  newShip.setAttribute("data-ship-name", ship.name);
-  newShip.setAttribute("data-ship-size", ship.length);
-  newShip.setAttribute("data-ship-direction", direction);
-  newShip.draggable = true;
-  newShip.style.position = "absolute";
-  newShip.style.left = `${y * 3}rem`;
-  newShip.style.top = `${x * 3}rem`;
-  newShip.style.zIndex = "10";
-  newShip.style.opacity = "1";
-  newShip.style.display = "flex";
-  newShip.style.flexDirection = direction === "horizontal" ? "row" : "column";
-  
-  // Create ship cells
-  for (let i = 0; i < ship.length; i++) {
-    const cell = document.createElement("div");
-    cell.classList.add("ship-cell");
-    cell.setAttribute("data-cell-index", i);
-    newShip.appendChild(cell);
-  }
-  
-  // Add grid position attributes
-  newShip.setAttribute("grid-row", x);
-  newShip.setAttribute("grid-col", y);
-  
-  gridContainer.appendChild(newShip);
-  
-  // Hide corresponding ship in space-port
-  if (spacePort) {
-    const originalShip = spacePort.querySelector(`[data-ship-name="${ship.name}"]`);
-    if (originalShip) originalShip.style.display = "none";
-  }
-}
-
 function placeAllShipsRandomly(gameboard, gridContainer, spacePort = null) {
   const ships = shipData.map((data) => new Ship(data.name, data.size));
   gameboard.placeShipsRandomly(ships);
   
   const shipPlacements = gameboard.getShipPlacements();
-  shipPlacements.forEach(placement => createVisualShip(placement, gridContainer, spacePort));
+  shipPlacements.forEach(placement => renderShip(placement, gridContainer, spacePort));
   checkAllShipsPlaced(gameboard);
 }
 
@@ -147,7 +110,7 @@ function placeRemainingShipsRandomly(gameboard, gridContainer, spacePort = null)
     placement => missingShips.some(data => data.name === placement.ship.name)
   );
 
-  newPlacements.forEach(placement => createVisualShip(placement, gridContainer, spacePort));
+  newPlacements.forEach(placement => renderShip(placement, gridContainer, spacePort));
   checkAllShipsPlaced(gameboard);
 }
 
@@ -242,6 +205,7 @@ function getShipCellIndex(e) {
 function shipGridRotation(gridContainer, gameboard) {
   gridContainer.addEventListener("dblclick", (e) => {
     if (e.target.classList.contains("ship")) {
+      console.log("Double-clicked ship for rotation");
       const ship = e.target;
       const shipName = ship.getAttribute("data-ship-name");
       const currentDirection = ship.getAttribute("data-ship-direction");
@@ -266,6 +230,7 @@ function shipGridRotation(gridContainer, gameboard) {
         
         // Update visual ship
         ship.setAttribute("data-ship-direction", newDirection);
+        ship.style.gridTemplate = newDirection === "horizontal" ? `1fr / repeat(${shipSize}, 1fr)` : `repeat(${shipSize}, 1fr) / 1fr`;
       } else {
         // Restore original placement if rotation invalid
         gameboard.placeShip(shipToRemove, currentX, currentY, currentDirection);
@@ -383,7 +348,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
       if (isFromSpacePort) {
         // Create new ship on grid using existing function
         const placement = { ship, x: shipStartX, y: shipStartY, direction: shipDirection };
-        createVisualShip(placement, gridContainer, draggedShip.parentElement);
+        renderShip(placement, gridContainer, draggedShip.parentElement);
       } else {
         // Repositioning existing ship on grid
         draggedShip.style.left = `${shipStartY * 3}rem`;
@@ -416,7 +381,7 @@ export {
   setupRandomPlacement,
   placeAllShipsRandomly,
   placeComputerShipsRandomly,
-  createVisualShip,
+
   createGridCells,
   shipData
 };
