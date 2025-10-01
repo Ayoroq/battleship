@@ -1,6 +1,6 @@
 // This is the module that handles the movement of ships, the drag and drops and the repositioning
 import { Ship, Gameboard, Player } from "./game";
-import { gameStarted } from "./game-controller.js";
+import { gameStarted, checkAllShipsPlaced } from "./game-controller.js";
 import { renderShip } from "./render.js";
 
 // Create all 5 ships
@@ -31,12 +31,7 @@ const createGridCells = (gridContainer) => {
   }
 }
 
-function checkAllShipsPlaced(gameboard) {
-  const allShipsPlaced = gameboard.ships.length === 5;
-  if (startButton && !gameStarted) {
-    startButton.style.display = allShipsPlaced ? "block" : "none";
-  }
-}
+
 
 function isValidPlacement(ship, x, y, direction, gameboard) {
   return gameboard.validatePlacement(ship, x, y, direction);
