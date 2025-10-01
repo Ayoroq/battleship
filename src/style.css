@@ -173,3 +173,20 @@
 .grid-cell.miss {
   background-color: lightblue;
 }
+
+
+.dialog,
+.finish {
+  position: absolute;
+  top: ;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.finish {
+  top: 20%;
+  padding: 2rem 2.5rem;
+}
