@@ -5,7 +5,7 @@
 /* Loading Screen Styling*/
 .loading-screen {
   background-color: rgb(0, 0, 0);
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -46,12 +46,43 @@
   }
 }
 
+/* Game mode  Styling */
+.game-mode {
+  background-color: rgb(0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5rem;
+  height: 100vh;
+  width: 100vw;
+}
+
+.game-mode-btn {
+  background-color: var(--primary-colour);
+  color: white;
+  font-size: 2rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transform: translateY(-0.2em);
+  transition: transform 0.1s ease;
+}
+
+.game-mode-btn:hover {
+  transform: translateY(-0.4em);
+}
+
+.game-mode-btn:active {
+  transform: translateY(0);
+}
+
 /* Rules Dialog Styling */
 .ship-placement-screen {
   display: none;
   flex-direction: column;
   gap: 5rem;
-  animation : fadeIn 1.5s ease-in-out forwards;
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 @keyframes fadeIn {
@@ -119,7 +150,7 @@
   opacity: 1;
 }
 
-.ship-cell{
+.ship-cell {
   pointer-events: none;
 }
 
@@ -159,7 +190,6 @@
   height: 15rem;
 }
 
-
 /* Ship placement preview styling */
 .valid-preview {
   background-color: rgba(0, 255, 4, 0.5);
@@ -183,7 +213,6 @@
 .grid-cell.miss {
   background-color: lightblue;
 }
-
 
 .dialog,
 .finish {

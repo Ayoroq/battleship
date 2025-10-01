@@ -14,4 +14,4 @@ function gameFlow(){
   }, 5000);
 }
 
-gameFlow();
+// gameFlow();
