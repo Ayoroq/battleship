@@ -44,6 +44,7 @@ let gameStarted = false;
 const gameController = () => {
   const gameState = initializeGame();
   const { player, enemy } = gameState;
+  const enemyAttacker = handleEnemyAttack();
 
   function startGame(){
     const start = document.querySelector(".start-btn");
@@ -55,9 +56,10 @@ const gameController = () => {
     })
   }
 
-  const handlePlayerAttack = () => {
+  function handlePlayerAttack() {
     enemy.gridContainer.addEventListener("click", (e) => {
-      if (gameStarted && e.target.classList.contains("grid-cell")) {
+      if (gameStarted && e.target.classList.contains("grid-cell") && 
+          !e.target.classList.contains("hit") && !e.target.classList.contains("miss")) {
         const x = parseInt(e.target.dataset.x);
         const y = parseInt(e.target.dataset.y);
         const attackResult = enemy.gameBoard.receiveAttack(x, y);
@@ -67,11 +69,12 @@ const gameController = () => {
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
+        playRound();
       }
     })
   }
 
-  const handleEnemyAttack = () => {
+  function handleEnemyAttack () {
     const makeRandomAttack = () => {
       let x, y;
       do {
@@ -95,7 +98,41 @@ const gameController = () => {
     return { makeRandomAttack };
   }
 
-  return {startGame, handlePlayerAttack, handleEnemyAttack, gameStarted };
+  function playRound(){
+    if (detectWinner()) {
+      stopGame();
+      return;
+    }
+    
+    setTimeout(() => {
+      if (gameStarted) {
+        enemyAttacker.makeRandomAttack();
+        if (detectWinner()) {
+          stopGame();
+        }
+      }
+    }, 1000);
+  }
+
+  function detectWinner(){
+    if (player.gameBoard.allShipsSunk()) {
+      return 'enemy';
+    } else if (enemy.gameBoard.allShipsSunk()) {
+      return 'player';
+    }
+    return null;
+  }
+
+  function stopGame(){
+    gameStarted = false;
+    const winner = detectWinner();
+    console.log(`Game Over! Winner: ${winner}`);
+  }
+
+
+  handlePlayerAttack();
+  
+  return {startGame, handlePlayerAttack, handleEnemyAttack, playRound, detectWinner, stopGame, gameStarted };
 }
 
 const game = gameController();
