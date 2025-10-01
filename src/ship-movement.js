@@ -82,10 +82,7 @@ function clearVisualShips(gridContainer, spacePort) {
 function createVisualShip(placement, gridContainer, spacePort) {
   const { ship, x, y, direction } = placement;
   
-  // Find and clone the original ship from space-port to preserve cell structure
-  const originalShip = spacePort ? spacePort.querySelector(`[data-ship-name="${ship.name}"]`) : null;
-  const newShip = originalShip ? originalShip.cloneNode(true) : document.createElement("div");
-  
+  const newShip = document.createElement("div");
   newShip.classList.add("ship");
   newShip.setAttribute("data-ship-name", ship.name);
   newShip.setAttribute("data-ship-size", ship.length);
@@ -99,6 +96,14 @@ function createVisualShip(placement, gridContainer, spacePort) {
   newShip.style.display = "flex";
   newShip.style.flexDirection = direction === "horizontal" ? "row" : "column";
   
+  // Create ship cells
+  for (let i = 0; i < ship.length; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("ship-cell");
+    cell.setAttribute("data-cell-index", i);
+    newShip.appendChild(cell);
+  }
+  
   // Add grid position attributes
   newShip.setAttribute("grid-row", x);
   newShip.setAttribute("grid-col", y);
@@ -106,8 +111,9 @@ function createVisualShip(placement, gridContainer, spacePort) {
   gridContainer.appendChild(newShip);
   
   // Hide corresponding ship in space-port
-  if (spacePort && originalShip) {
-    originalShip.style.display = "none";
+  if (spacePort) {
+    const originalShip = spacePort.querySelector(`[data-ship-name="${ship.name}"]`);
+    if (originalShip) originalShip.style.display = "none";
   }
 }
 
@@ -375,23 +381,9 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
 
       // Check if dragging from space-port or repositioning on grid
       if (isFromSpacePort) {
-        // Create new ship on grid
-        const newShip = draggedShip.cloneNode(true);
-        newShip.style.position = "absolute";
-        newShip.style.left = `${shipStartY * 3}rem`;
-        newShip.style.top = `${shipStartX * 3}rem`;
-        newShip.style.zIndex = "10";
-        newShip.style.opacity = "1";
-
-        // Add grid position attributes
-        newShip.setAttribute("data-ship-direction", shipDirection);
-        newShip.setAttribute("grid-row", shipStartX);
-        newShip.setAttribute("grid-col", shipStartY);
-
-        gridContainer.appendChild(newShip);
-
-        // Hide original ship
-        draggedShip.parentElement.style.display = "none";
+        // Create new ship on grid using existing function
+        const placement = { ship, x: shipStartX, y: shipStartY, direction: shipDirection };
+        createVisualShip(placement, gridContainer, draggedShip.parentElement);
       } else {
         // Repositioning existing ship on grid
         draggedShip.style.left = `${shipStartY * 3}rem`;
