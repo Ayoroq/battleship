@@ -82,18 +82,22 @@ function clearVisualShips(gridContainer, spacePort) {
 function createVisualShip(placement, gridContainer, spacePort) {
   const { ship, x, y, direction } = placement;
   
-  const newShip = document.createElement("div");
+  // Find and clone the original ship from space-port to preserve cell structure
+  const originalShip = spacePort ? spacePort.querySelector(`[data-ship-name="${ship.name}"]`) : null;
+  const newShip = originalShip ? originalShip.cloneNode(true) : document.createElement("div");
+  
   newShip.classList.add("ship");
   newShip.setAttribute("data-ship-name", ship.name);
   newShip.setAttribute("data-ship-size", ship.length);
   newShip.setAttribute("data-ship-direction", direction);
   newShip.draggable = true;
-  newShip.textContent = ship.name;
   newShip.style.position = "absolute";
   newShip.style.left = `${y * 3}rem`;
   newShip.style.top = `${x * 3}rem`;
   newShip.style.zIndex = "10";
   newShip.style.opacity = "1";
+  newShip.style.display = "flex";
+  newShip.style.flexDirection = direction === "horizontal" ? "row" : "column";
   
   // Add grid position attributes
   newShip.setAttribute("grid-row", x);
@@ -102,9 +106,8 @@ function createVisualShip(placement, gridContainer, spacePort) {
   gridContainer.appendChild(newShip);
   
   // Hide corresponding ship in space-port
-  if (spacePort) {
-    const spacePortShip = spacePort.querySelector(`[data-ship-name="${ship.name}"]`);
-    if (spacePortShip) spacePortShip.style.display = "none";
+  if (spacePort && originalShip) {
+    originalShip.style.display = "none";
   }
 }
 
@@ -257,9 +260,6 @@ function shipGridRotation(gridContainer, gameboard) {
         
         // Update visual ship
         ship.setAttribute("data-ship-direction", newDirection);
-        
-        // Update grid cell hit states
-        game.updateGridCellHits(gridContainer, gameboard);
       } else {
         // Restore original placement if rotation invalid
         gameboard.placeShip(shipToRemove, currentX, currentY, currentDirection);

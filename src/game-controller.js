@@ -56,6 +56,17 @@ const gameController = () => {
     })
   }
 
+  function markShipHit(gridContainer, ship, cellIndex) {
+    const shipElement = gridContainer.querySelector(`[data-ship-name="${ship.name}"]`);
+    if (shipElement) {
+      const cell = shipElement.querySelector(`[data-cell-index="${cellIndex}"]`);
+      if (cell) {
+        cell.style.backgroundColor = "red";
+        cell.classList.add("hit");
+      }
+    }
+  }
+
   function handlePlayerAttack() {
     enemy.gridContainer.addEventListener("click", (e) => {
       if (gameStarted && e.target.classList.contains("grid-cell") && 
@@ -65,6 +76,7 @@ const gameController = () => {
         const attackResult = enemy.gameBoard.receiveAttack(x, y);
         if (attackResult.result === "hit") {
           e.target.classList.add("hit");
+          markShipHit(enemy.gridContainer, attackResult.ship, attackResult.cellIndex);
           console.log(`Hit ${attackResult.ship.name} at cell index ${attackResult.cellIndex}`);
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
@@ -87,6 +99,7 @@ const gameController = () => {
       
       if (attackResult.result === "hit") {
         targetCell.classList.add("hit");
+        markShipHit(player.gridContainer, attackResult.ship, attackResult.cellIndex);
         console.log(`Enemy hit your ${attackResult.ship.name} at cell index ${attackResult.cellIndex}`);
         return { hit: true, ship: attackResult.ship, cellIndex: attackResult.cellIndex };
       } else if (attackResult.result === "miss") {
