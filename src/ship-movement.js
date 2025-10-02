@@ -1,6 +1,6 @@
 // This is the module that handles the movement of ships, the drag and drops and the repositioning
 import { Ship, Gameboard, Player } from "./game";
-import { gameStarted, checkAllShipsPlaced } from "./game-controller.js";
+import { gameStarted } from "./game-controller.js";
 import { renderShip } from "./render.js";
 
 // Create all 5 ships
@@ -31,7 +31,12 @@ const createGridCells = (gridContainer) => {
   }
 }
 
-
+function checkAllShipsPlaced(gameboard) {
+  const allShipsPlaced = gameboard.ships.length === 5;
+  if (startButton && !gameStarted) {
+    startButton.style.display = allShipsPlaced ? "block" : "none";
+  }
+}
 
 function isValidPlacement(ship, x, y, direction, gameboard) {
   return gameboard.validatePlacement(ship, x, y, direction);
@@ -39,12 +44,15 @@ function isValidPlacement(ship, x, y, direction, gameboard) {
 
 function shipRotation(spacePort) {
   spacePort.addEventListener("click", (e) => {
-    if (e.target.classList.contains("rotate-ship")) {
-      const ship = e.target.previousElementSibling;
-      const currentDirection = ship.getAttribute("data-ship-direction");
-      const newDirection =
-        currentDirection === "horizontal" ? "vertical" : "horizontal";
-      ship.setAttribute("data-ship-direction", newDirection);
+    const button = e.target.closest(".rotate-ship");
+    if (button) {
+      const ship = button.previousElementSibling;
+      if (ship && ship.classList.contains("ship")) {
+        const currentDirection = ship.getAttribute("data-ship-direction");
+        const newDirection =
+          currentDirection === "horizontal" ? "vertical" : "horizontal";
+        ship.setAttribute("data-ship-direction", newDirection);
+      }
     }
   });
 }

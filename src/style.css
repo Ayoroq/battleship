@@ -157,6 +157,21 @@
   display: none;;
 }
 
+.space-port{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ship-class{
+  display: flex;
+  gap: 1rem;
+}
+
+.rotate-ship img{
+  width: 1.5rem;
+}
+
 /* Ship styling */
 .ship {
   display: grid;
