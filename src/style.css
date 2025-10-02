@@ -133,6 +133,13 @@
   justify-content: space-around;
 }
 
+.grid-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -144,6 +151,7 @@
   outline: 1px solid black;
 }
 
+
 .grid-cell {
   border: 1px solid black;
 }
@@ -151,6 +159,7 @@
 .player-deployment {
   display: flex;
   gap: 5rem;
+  justify-content: center;
 }
 
 .enemy-deployment {
@@ -177,6 +186,13 @@
 .rotate-ship img {
   width: 1.5rem;
   cursor: pointer;
+}
+
+/* start and random button styling */
+.button-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
 }
 
 /* Ship styling */

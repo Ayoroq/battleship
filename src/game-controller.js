@@ -14,7 +14,7 @@ import {
 function initializeGame() {
   // Player setup
   const spacePort = document.querySelector(".space-port");
-  const playerGridContainer = document.querySelector(".grid-container-1");
+  const playerGridContainer = document.querySelector(".grid-container-player");
   const playerGameBoard = new Gameboard();
   const randomizeButton = document.querySelector(".random-placement-btn");
 
@@ -66,9 +66,8 @@ const gameController = () => {
     const start = document.querySelector(".start-btn");
     start.addEventListener("click", () => {
       gameStarted = true;
-      const randomizeButton = document.querySelector(".random-placement-btn");
-      randomizeButton.style.display = "none";
-      start.style.display = "none";
+      const buttonContainer = document.querySelector(".button-container");
+      buttonContainer.remove();
     });
   }
 
@@ -231,7 +230,7 @@ const gameController = () => {
       clearInterval(confettiInterval);
     }
     const restartButton = document.querySelector(".restart-btn");
-    
+
   }
 
   function stopGame() {

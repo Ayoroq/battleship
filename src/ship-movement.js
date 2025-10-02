@@ -68,7 +68,8 @@ function setupRandomPlacement(randomizeButton, gameboard, gridContainer, spacePo
       // Some ships placed - keep existing, place remaining randomly
       placeRemainingShipsRandomly(gameboard, gridContainer);
     }
-    spacePort.style.display = "none";
+    const shipPlacement = document.querySelector(".ship-placement");
+    if (shipPlacement) shipPlacement.remove(); // Remove space-port after random placement
   });
 }
 
@@ -355,7 +356,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
 
         // Hide the ship in space-port
         const shipElement = spacePort.querySelector(`[data-ship-name="${shipName}"]`);
-        if (shipElement) shipElement.closest('.ship-class').style.display = "none";
+        if (shipElement) shipElement.remove();
       } else {
         // Repositioning existing ship on grid
         draggedShip.style.left = `${shipStartY * 3}rem`;

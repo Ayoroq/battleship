@@ -12,8 +12,12 @@
       <p class="loading">LOADING ...</p>
     </div>
     <div class="game-mode-selection-screen">
-      <button class="game-mode-btn" type="button"><span class="single-player btn">Single Player</span></button>
-      <button class="game-mode-btn" type="button"><span class="multi-player btn">Multiplayer</span></button>
+      <button class="game-mode-btn" type="button">
+        <span class="single-player btn">Single Player</span>
+      </button>
+      <button class="game-mode-btn" type="button">
+        <span class="multi-player btn">Multiplayer</span>
+      </button>
     </div>
     <dialog class="rules-dialog">
       <div class="rules-container">
@@ -107,13 +111,20 @@
 
       <div class="ship-deployment">
         <div class="player-deployment">
-          <div class="grid-container-1 grid"></div>
-          <div class="ship-placement">
-            <div class="random-placement">
-              <button class="random-placement-btn" type="button">
-                Random Placement
-              </button>
+          <div class="grid-container">
+            <div class="grid-container-player grid"></div>
+            <div class="button-container">
+              <div class="random-placement">
+                <button class="random-placement-btn" type="button">
+                  Random Placement
+                </button>
+              </div>
+              <div class="start-game">
+                <button class="start-btn" type="button">Start Game</button>
+              </div>
             </div>
+          </div>
+          <div class="ship-placement">
             <div class="space-port">
               <div class="ship-class">
                 <div
@@ -123,7 +134,9 @@
                   data-ship-size="5"
                   data-ship-direction="horizontal"
                 ></div>
-                <button class="rotate-ship" type="button"><img src="/assets/rotate.svg" alt=""></button>
+                <button class="rotate-ship" type="button">
+                  <img src="/assets/rotate.svg" alt="" />
+                </button>
               </div>
               <div class="ship-class">
                 <div
@@ -133,7 +146,9 @@
                   data-ship-size="4"
                   data-ship-direction="horizontal"
                 ></div>
-                <button class="rotate-ship" type="button"><img src="/assets/rotate.svg" alt=""></button>
+                <button class="rotate-ship" type="button">
+                  <img src="/assets/rotate.svg" alt="" />
+                </button>
               </div>
               <div class="ship-class">
                 <div
@@ -143,7 +158,9 @@
                   data-ship-size="3"
                   data-ship-direction="horizontal"
                 ></div>
-                <button class="rotate-ship" type="button"><img src="/assets/rotate.svg" alt=""></button>
+                <button class="rotate-ship" type="button">
+                  <img src="/assets/rotate.svg" alt="" />
+                </button>
               </div>
               <div class="ship-class">
                 <div
@@ -153,7 +170,9 @@
                   data-ship-size="3"
                   data-ship-direction="horizontal"
                 ></div>
-                <button class="rotate-ship" type="button"><img src="/assets/rotate.svg" alt=""></button>
+                <button class="rotate-ship" type="button">
+                  <img src="/assets/rotate.svg" alt="" />
+                </button>
               </div>
               <div class="ship-class">
                 <div
@@ -163,7 +182,9 @@
                   data-ship-size="2"
                   data-ship-direction="horizontal"
                 ></div>
-                <button class="rotate-ship" type="button"><img src="/assets/rotate.svg" alt=""></button>
+                <button class="rotate-ship" type="button">
+                  <img src="/assets/rotate.svg" alt="" />
+                </button>
               </div>
             </div>
           </div>
@@ -174,9 +195,6 @@
             <div class="enemy-space-port"></div>
           </div>
         </div>
-      </div>
-      <div class="start-game">
-        <button class="start-btn" type="button">Start Game</button>
       </div>
     </div>
     <section>
