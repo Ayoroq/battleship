@@ -5,13 +5,14 @@ import { Ship, Gameboard, Player } from "./game.js";
 
 const loadingScreen = document.querySelector(".loading-screen");
 const shipPlacementScreen = document.querySelector(".ship-placement-screen");
+const gameModeSelectionScreen = document.querySelector(".game-mode-selection-screen");
 
 function gameFlow(){
   // Show loading screen initially 
   setTimeout(() => {
     loadingScreen.style.display = "none";
-    shipPlacementScreen.style.display = "flex";
-  }, 5000);
+    gameModeSelectionScreen.style.display = "flex";
+  }, 6000);
 }
 
-// gameFlow();
+gameFlow();
