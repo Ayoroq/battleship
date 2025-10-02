@@ -13,6 +13,15 @@ function gameFlow(){
     loadingScreen.style.display = "none";
     gameModeSelectionScreen.style.display = "flex";
   }, 6000);
+
+  // Handle game mode selection
+  const singlePlayerBtn = document.querySelector(".single-player");
+  const multiPlayerBtn = document.querySelector(".multi-player");
+
+  singlePlayerBtn.addEventListener("click", () => {
+    gameModeSelectionScreen.classList.add("fadeOut");
+    shipPlacementScreen.style.display = "flex";
+  });
 }
 
-gameFlow();
+//gameFlow();
