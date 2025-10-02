@@ -79,15 +79,15 @@
   transition: transform 0.1s ease;
 }
 
-.fadeOut{
+.fadeOut {
   animation: fadeOut 1s ease-in-out forwards;
 }
 
-.game-mode-btn:hover .btn{
+.game-mode-btn:hover .btn {
   transform: translateY(-0.5rem);
 }
 
-.game-mode-btn:active .btn{
+.game-mode-btn:active .btn {
   transform: translateY(0);
 }
 
@@ -154,22 +154,29 @@
 }
 
 .enemy-deployment {
-  display: none;;
+  display: none;
 }
 
-.space-port{
+.space-port {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-.ship-class{
+.ship-class {
   display: flex;
   gap: 1rem;
 }
 
-.rotate-ship img{
+.rotate-ship {
+  background: none;
+  border: none;
+  align-self: center;
+}
+
+.rotate-ship img {
   width: 1.5rem;
+  cursor: pointer;
 }
 
 /* Ship styling */
