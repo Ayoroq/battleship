@@ -168,6 +168,8 @@
 
 .space-port {
   display: flex;
+  height: 89%;
+  justify-content: space-between;
   flex-direction: column;
   gap: 2rem;
 }

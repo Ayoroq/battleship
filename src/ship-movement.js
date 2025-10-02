@@ -2,6 +2,7 @@
 import { Ship, Gameboard, Player } from "./game";
 import { gameStarted } from "./game-controller.js";
 import { renderShip } from "./render.js";
+import { checkAllShipsPlaced } from "./game-controller.js";
 
 // Create all 5 ships
 const shipData = [
@@ -28,13 +29,6 @@ const createGridCells = (gridContainer) => {
     cell.style.width = '3rem';
     cell.style.height = '3rem';
     gridContainer.appendChild(cell);
-  }
-}
-
-function checkAllShipsPlaced(gameboard) {
-  const allShipsPlaced = gameboard.ships.length === 5;
-  if (startButton && !gameStarted) {
-    startButton.style.display = allShipsPlaced ? "block" : "none";
   }
 }
 
@@ -356,7 +350,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
 
         // Hide the ship in space-port
         const shipElement = spacePort.querySelector(`[data-ship-name="${shipName}"]`);
-        if (shipElement) shipElement.remove();
+        if (shipElement) shipElement.closest(".ship-class").remove();
       } else {
         // Repositioning existing ship on grid
         draggedShip.style.left = `${shipStartY * 3}rem`;

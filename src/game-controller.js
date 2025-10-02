@@ -51,9 +51,13 @@ let gameStarted = false;
 
 function checkAllShipsPlaced(gameboard) {
   const startButton = document.querySelector(".start-btn");
+  const shipPlacement = document.querySelector(".ship-placement");
   const allShipsPlaced = gameboard.ships.length === 5;
   if (startButton && !gameStarted) {
     startButton.style.display = allShipsPlaced ? "block" : "none";
+  }
+  if (shipPlacement && allShipsPlaced) {
+    shipPlacement.remove(); // Remove space-port after all ships are placed
   }
 }
 
