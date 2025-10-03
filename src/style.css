@@ -197,6 +197,23 @@
   justify-content: center;
 }
 
+.random-placement-btn,.start-btn, .random-placement-btn:hover,.start-btn:hover{
+  font-size: 1rem;
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid black;
+  border-bottom: 5px solid rgb(50, 50, 50);
+  transform: translateY(-0.3rem);
+  cursor: pointer;
+  transition: 0.2s;
+  transition-timing-function: linear;
+}
+
+.random-placement-btn:active,.start-btn:active {
+  border-bottom: 2px solid rgb(50, 50, 50);
+  transform: translate(0, 0);
+}
+
 /* Ship styling */
 .ship {
   display: grid;
