@@ -114,7 +114,7 @@
       <div class="name-screen">
         <div class="name-container">
           <h2 class="name-title">ENTER YOUR NAME</h2>
-          <form class="name-form">
+          <form class="name-form" name="nameForm">
             <input
               type="text"
               class="player1-name-input"
@@ -126,10 +126,10 @@
             <input
               type="text"
               class="player2-name-input"
+              style="display: none;"
               placeholder="Player 2 Name"
               aria-label="Player 2 Name"
               maxlength="20"
-              required
             />
             <button class="confirm-names-btn clickable" type="submit">Confirm</button>
           </form>
