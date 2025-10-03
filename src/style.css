@@ -2,6 +2,25 @@
   --primary-colour: #d50202;
 }
 
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border: 5px solid red;
+}
+
+.header{
+  text-align: center;
+}
+
+main{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Loading Screen Styling*/
 .loading-screen {
   background-color: rgb(0, 0, 0);
@@ -10,8 +29,6 @@
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  height: 100vh;
-  width: 100vw;
   animation: fadeOut 1s ease-in-out 5s forwards;
 }
 
@@ -27,7 +44,7 @@
 
 .game-name {
   color: var(--primary-colour);
-  font-size: 8rem;
+  font-size: clamp(3rem, 8vw, 8rem);
 }
 
 .loading {
@@ -93,7 +110,8 @@
 
 /* Rules Dialog Styling */
 .ship-placement-screen {
-  display: flex;
+  background-color: rgb(255, 255, 255);
+  display: none;
   flex-direction: column;
   gap: 5rem;
   animation: fadeIn 1s ease-in-out forwards;
@@ -133,7 +151,7 @@
   justify-content: space-around;
 }
 
-.grid-container{
+.grid-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -150,7 +168,6 @@
   background-color: white;
   outline: 1px solid black;
 }
-
 
 .grid-cell {
   border: 1px solid black;
@@ -197,19 +214,27 @@
   justify-content: center;
 }
 
-.random-placement-btn,.start-btn, .random-placement-btn:hover,.start-btn:hover{
+.random-placement-btn,
+.start-btn,
+.confirm-names-btn,
+.random-placement-btn:hover,
+.start-btn:hover,
+.confirm-names-btn:hover {
+  color: white;
+  background-color: black;
   font-size: 1rem;
   border-radius: 0.75rem;
   padding: 0.25rem 0.5rem;
-  border: 2px solid black;
-  border-bottom: 5px solid rgb(50, 50, 50);
+  border: 2px solid red;
+  border-bottom: 5px solid red;
   transform: translateY(-0.3rem);
   cursor: pointer;
   transition: 0.2s;
   transition-timing-function: linear;
 }
 
-.random-placement-btn:active,.start-btn:active {
+.random-placement-btn:active,
+.start-btn:active, .confirm-names-btn:active {
   border-bottom: 2px solid rgb(50, 50, 50);
   transform: translate(0, 0);
 }
@@ -292,7 +317,7 @@
 .dialog,
 .finish {
   position: absolute;
-  top: ;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
@@ -303,4 +328,23 @@
 .finish {
   top: 20%;
   padding: 2rem 2.5rem;
+}
+
+.name-screen{
+  padding: 5rem;
+}
+
+.name-container{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.name-container input{
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 2px solid black;
+  font-size: 1rem;
+  text-align: center;
 }

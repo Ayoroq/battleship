@@ -6,204 +6,229 @@
     <title>Battleship</title>
   </head>
   <body>
-    <div class="loading-screen">
+    <header class="header">
       <h1 class="game-name">GALACTIC SIEGE</h1>
-      <img src="/assets/space-battle.jpg" alt="Image of a space battle" />
-      <p class="loading">LOADING ...</p>
-    </div>
-    <div class="game-mode-selection-screen">
-      <button class="game-mode-btn" type="button">
-        <span class="single-player btn">Single Player</span>
-      </button>
-      <button class="game-mode-btn" type="button">
-        <span class="multi-player btn">Multiplayer</span>
-      </button>
-    </div>
-    <dialog class="rules-dialog">
-      <div class="rules-container">
-        <header class="rules-header">
-          <button class="close-btn" type="button">&times;</button>
-          <h2 class="rules-title">🌌 Galactic Siege - Rules</h2>
-        </header>
-
-        <main class="rules-content">
-          <section class="rule-section">
-            <h3 class="rule-heading">1. Objective</h3>
-            <p class="rule-text">
-              Destroy all enemy starships before your fleet is destroyed.
-            </p>
-          </section>
-
-          <section class="rule-section">
-            <h3 class="rule-heading">2. Fleet Setup</h3>
-            <ul class="rule-list">
-              <li class="rule-item">
-                Each commander places ships secretly in their starfield grid.
-              </li>
-              <li class="rule-item">
-                Ships must be straight (horizontal or vertical).
-              </li>
-              <li class="rule-item">No overlapping ships.</li>
-            </ul>
-          </section>
-
-          <section class="rule-section">
-            <h3 class="rule-heading">3. Your Turn</h3>
-            <p class="rule-text">On your turn, choose one action:</p>
-            <ul class="rule-list action-list">
-              <li class="rule-item action-item">
-                <span class="action-icon">🔫</span>
-                <strong class="action-name">Attack</strong> - Fire at a
-                coordinate.<br />
-                <div class="action-details">
-                  - <em class="result-hit">Direct Hit!</em> → You struck an
-                  enemy ship.<br />
-                  - <em class="result-near">Near Miss!</em> → No hit, but a ship
-                  is nearby.<br />
-                  - <em class="result-void">Void!</em> → Nothing in range.
-                </div>
-              </li>
-              <li class="rule-item action-item">
-                <span class="action-icon">🛡️</span>
-                <strong class="action-name">Defend</strong> - Reposition one
-                ship.<br />
-                <div class="action-details">
-                  - Cannot move into attacked squares.<br />
-                  - Cannot overlap another ship.<br />
-                  - Damaged ships carry their damage when moved.
-                </div>
-              </li>
-            </ul>
-          </section>
-
-          <section class="rule-section">
-            <h3 class="rule-heading">4. Sinking Ships</h3>
-            <p class="rule-text">
-              When all parts of a ship are hit, it is destroyed and revealed.
-            </p>
-          </section>
-
-          <section class="rule-section">
-            <h3 class="rule-heading">5. Victory</h3>
-            <p class="rule-text">
-              The first commander to destroy all enemy ships wins the battle.
-            </p>
-            <p class="rule-text">
-              <strong>Turn Limit:</strong> If both fleets survive after 50 turns
-              (25 turns per commander), the commander with more ships remaining
-              wins the battle.
-            </p>
-          </section>
-        </main>
-
-        <footer class="rules-footer">
-          <button class="continue-btn" type="button">Begin Mission</button>
-        </footer>
-      </div>
-    </dialog>
-
-    <div class="ship-placement-screen">
       <div class="ship-placement-header">
-        <h1 class="game-title">GALACTIC SIEGE</h1>
         <h2 class="ship-placement-title">Fleet Deployment</h2>
-        <button class="show-rules-btn" type="button">View Rules</button>
+        <div class="rules-button">
+          <button class="show-rules-btn" type="button">View Rules</button>
+        </div>
       </div>
+    </header>
+    <main>
+      <div class="loading-screen">
+        <img src="/assets/space-battle.jpg" alt="Image of a space battle" />
+        <p class="loading">LOADING ...</p>
+      </div>
+      <div class="game-mode-selection-screen">
+        <button class="game-mode-btn" type="button">
+          <span class="single-player btn">Single Player</span>
+        </button>
+        <button class="game-mode-btn" type="button">
+          <span class="multi-player btn">Multiplayer</span>
+        </button>
+      </div>
+      <dialog class="rules-dialog">
+        <div class="rules-container">
+          <header class="rules-header">
+            <button class="close-btn" type="button">&times;</button>
+            <h2 class="rules-title">🌌 Galactic Siege - Rules</h2>
+          </header>
 
-      <div class="ship-deployment">
-        <div class="player-deployment">
-          <div class="grid-container">
-            <div class="grid-container-player grid"></div>
-            <div class="button-container">
-              <div class="random-placement">
-                <button class="random-placement-btn" type="button">
-                  Random Placement
-                </button>
-              </div>
-              <div class="start-game">
-                <button class="start-btn" type="button">Start Game</button>
-              </div>
-            </div>
-          </div>
-          <div class="ship-placement">
-            <div class="space-port">
-              <div class="ship-class">
-                <div
-                  class="ship"
-                  data-ship-name="Dreadnought"
-                  draggable="true"
-                  data-ship-size="5"
-                  data-ship-direction="horizontal"
-                ></div>
-                <button class="rotate-ship" type="button">
-                  <img src="/assets/rotate.svg" alt="" />
-                </button>
-              </div>
-              <div class="ship-class">
-                <div
-                  class="ship"
-                  data-ship-name="Battlecruiser"
-                  draggable="true"
-                  data-ship-size="4"
-                  data-ship-direction="horizontal"
-                ></div>
-                <button class="rotate-ship" type="button">
-                  <img src="/assets/rotate.svg" alt="" />
-                </button>
-              </div>
-              <div class="ship-class">
-                <div
-                  class="ship"
-                  data-ship-name="Heavy Cruiser"
-                  draggable="true"
-                  data-ship-size="3"
-                  data-ship-direction="horizontal"
-                ></div>
-                <button class="rotate-ship" type="button">
-                  <img src="/assets/rotate.svg" alt="" />
-                </button>
-              </div>
-              <div class="ship-class">
-                <div
-                  class="ship"
-                  data-ship-name="Stealth Frigate"
-                  draggable="true"
-                  data-ship-size="3"
-                  data-ship-direction="horizontal"
-                ></div>
-                <button class="rotate-ship" type="button">
-                  <img src="/assets/rotate.svg" alt="" />
-                </button>
-              </div>
-              <div class="ship-class">
-                <div
-                  class="ship"
-                  data-ship-name="Interceptor"
-                  draggable="true"
-                  data-ship-size="2"
-                  data-ship-direction="horizontal"
-                ></div>
-                <button class="rotate-ship" type="button">
-                  <img src="/assets/rotate.svg" alt="" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="enemy-deployment">
-          <div class="grid-container-2 grid"></div>
-          <div class="enemy-ship-placement">
-            <div class="enemy-space-port"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <section>
-      <dialog class="finish" closedby="closerequest">
-        <div class="container">
-          <p class="winner"></p>
-          <button class="restart">Restart Game</button>
+          <main class="rules-content">
+            <section class="rule-section">
+              <h3 class="rule-heading">1. Objective</h3>
+              <p class="rule-text">
+                Destroy all enemy starships before your fleet is destroyed.
+              </p>
+            </section>
+
+            <section class="rule-section">
+              <h3 class="rule-heading">2. Fleet Setup</h3>
+              <ul class="rule-list">
+                <li class="rule-item">
+                  Each commander places ships secretly in their starfield grid.
+                </li>
+                <li class="rule-item">
+                  Ships must be straight (horizontal or vertical).
+                </li>
+                <li class="rule-item">No overlapping ships.</li>
+              </ul>
+            </section>
+
+            <section class="rule-section">
+              <h3 class="rule-heading">3. Your Turn</h3>
+              <p class="rule-text">On your turn, choose one action:</p>
+              <ul class="rule-list action-list">
+                <li class="rule-item action-item">
+                  <span class="action-icon">🔫</span>
+                  <strong class="action-name">Attack</strong> - Fire at a
+                  coordinate.<br />
+                  <div class="action-details">
+                    - <em class="result-hit">Direct Hit!</em> → You struck an
+                    enemy ship.<br />
+                    - <em class="result-near">Near Miss!</em> → No hit, but a
+                    ship is nearby.<br />
+                    - <em class="result-void">Void!</em> → Nothing in range.
+                  </div>
+                </li>
+                <li class="rule-item action-item">
+                  <span class="action-icon">🛡️</span>
+                  <strong class="action-name">Defend</strong> - Reposition one
+                  ship.<br />
+                  <div class="action-details">
+                    - Cannot move into attacked squares.<br />
+                    - Cannot overlap another ship.<br />
+                    - Damaged ships carry their damage when moved.
+                  </div>
+                </li>
+              </ul>
+            </section>
+
+            <section class="rule-section">
+              <h3 class="rule-heading">4. Sinking Ships</h3>
+              <p class="rule-text">
+                When all parts of a ship are hit, it is destroyed and revealed.
+              </p>
+            </section>
+
+            <section class="rule-section">
+              <h3 class="rule-heading">5. Victory</h3>
+              <p class="rule-text">
+                The first commander to destroy all enemy ships wins the battle.
+              </p>
+              <p class="rule-text">
+                <strong>Turn Limit:</strong> If both fleets survive after 50
+                turns (25 turns per commander), the commander with more ships
+                remaining wins the battle.
+              </p>
+            </section>
+          </main>
+
+          <footer class="rules-footer">
+            <button class="continue-btn" type="button">Begin Mission</button>
+          </footer>
         </div>
       </dialog>
-    </section>
+
+      <div class="name-screen">
+        <div class="name-container">
+          <h2 class="name-title">Enter Your Name</h2>
+          <input
+            type="text"
+            class="player1-name-input"
+            placeholder="Player 1 Name"
+            maxlength="20"
+          />
+          <input
+            type="text"
+            class="player2-name-input"
+            placeholder="Player 2 Name"
+            maxlength="20"
+          />
+          <div class="names-btn">
+            <button class="confirm-names-btn" type="button">Confirm</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ship-placement-screen">
+        <div class="ship-deployment">
+          <div class="player-deployment">
+            <div class="grid-container">
+              <div class="grid-container-player grid"></div>
+              <div class="button-container">
+                <div class="random-placement">
+                  <button class="random-placement-btn" type="button">
+                    Random Placement
+                  </button>
+                </div>
+                <div class="start-game">
+                  <button class="start-btn" type="button">Start Game</button>
+                </div>
+              </div>
+            </div>
+            <div class="ship-placement">
+              <div class="space-port">
+                <div class="ship-class">
+                  <div
+                    class="ship"
+                    data-ship-name="Dreadnought"
+                    draggable="true"
+                    data-ship-size="5"
+                    data-ship-direction="horizontal"
+                  ></div>
+                  <button class="rotate-ship" type="button">
+                    <img src="/assets/rotate.svg" alt="" />
+                  </button>
+                </div>
+                <div class="ship-class">
+                  <div
+                    class="ship"
+                    data-ship-name="Battlecruiser"
+                    draggable="true"
+                    data-ship-size="4"
+                    data-ship-direction="horizontal"
+                  ></div>
+                  <button class="rotate-ship" type="button">
+                    <img src="/assets/rotate.svg" alt="" />
+                  </button>
+                </div>
+                <div class="ship-class">
+                  <div
+                    class="ship"
+                    data-ship-name="Heavy Cruiser"
+                    draggable="true"
+                    data-ship-size="3"
+                    data-ship-direction="horizontal"
+                  ></div>
+                  <button class="rotate-ship" type="button">
+                    <img src="/assets/rotate.svg" alt="" />
+                  </button>
+                </div>
+                <div class="ship-class">
+                  <div
+                    class="ship"
+                    data-ship-name="Stealth Frigate"
+                    draggable="true"
+                    data-ship-size="3"
+                    data-ship-direction="horizontal"
+                  ></div>
+                  <button class="rotate-ship" type="button">
+                    <img src="/assets/rotate.svg" alt="" />
+                  </button>
+                </div>
+                <div class="ship-class">
+                  <div
+                    class="ship"
+                    data-ship-name="Interceptor"
+                    draggable="true"
+                    data-ship-size="2"
+                    data-ship-direction="horizontal"
+                  ></div>
+                  <button class="rotate-ship" type="button">
+                    <img src="/assets/rotate.svg" alt="" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="enemy-deployment">
+            <div class="grid-container-2 grid"></div>
+            <div class="enemy-ship-placement">
+              <div class="enemy-space-port"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <section>
+        <dialog class="finish" closedby="closerequest">
+          <div class="container">
+            <p class="winner"></p>
+            <button class="restart">Restart Game</button>
+          </div>
+        </dialog>
+      </section>
+    </main>
   </body>
 </html>
