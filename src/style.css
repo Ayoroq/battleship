@@ -9,11 +9,17 @@ body {
   border: 5px solid red;
 }
 
-.header{
+.header {
   text-align: center;
 }
 
-main{
+.ship-placement-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+main {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -214,31 +220,6 @@ main{
   justify-content: center;
 }
 
-.random-placement-btn,
-.start-btn,
-.confirm-names-btn,
-.random-placement-btn:hover,
-.start-btn:hover,
-.confirm-names-btn:hover {
-  color: white;
-  background-color: black;
-  font-size: 1rem;
-  border-radius: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border: 2px solid red;
-  border-bottom: 5px solid red;
-  transform: translateY(-0.3rem);
-  cursor: pointer;
-  transition: 0.2s;
-  transition-timing-function: linear;
-}
-
-.random-placement-btn:active,
-.start-btn:active, .confirm-names-btn:active {
-  border-bottom: 2px solid rgb(50, 50, 50);
-  transform: translate(0, 0);
-}
-
 /* Ship styling */
 .ship {
   display: grid;
@@ -330,21 +311,43 @@ main{
   padding: 2rem 2.5rem;
 }
 
-.name-screen{
+.name-screen {
   padding: 5rem;
 }
 
-.name-container{
+.name-container {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   align-items: center;
 }
 
-.name-container input{
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: 2px solid black;
+.name-container input {
+  padding: 0.1rem;
+  border: none;
+  border-bottom: 2px solid black;
   font-size: 1rem;
-  text-align: center;
+  outline: none;
+}
+
+.clickable {
+  padding: 0.5rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background: var(--primary-colour);
+  border: 2px solid var(--primary-colour);
+  box-shadow: 0 4px 0 darkred;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  transform: translateY(-2px);
+}
+.clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 0 darkred;
+}
+.clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 darkred;
 }
