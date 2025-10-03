@@ -313,6 +313,7 @@ main {
 
 .name-screen {
   padding: 5rem;
+  display: none;
 }
 
 .name-container {

@@ -6,22 +6,41 @@ import { Ship, Gameboard, Player } from "./game.js";
 const loadingScreen = document.querySelector(".loading-screen");
 const shipPlacementScreen = document.querySelector(".ship-placement-screen");
 const gameModeSelectionScreen = document.querySelector(".game-mode-selection-screen");
+const nameScreen = document.querySelector(".name-screen");
+let isMultiPlayer = false; // Set to true for multiplayer mode
 
 function gameFlow(){
   // Show loading screen initially 
+  loadingScreen.style.display = "flex";
   setTimeout(() => {
     loadingScreen.style.display = "none";
     gameModeSelectionScreen.style.display = "flex";
   }, 6000);
 
-  // Handle game mode selection
-  const singlePlayerBtn = document.querySelector(".single-player");
-  const multiPlayerBtn = document.querySelector(".multi-player");
+  // Handle game mode selection with event delegation
+  gameModeSelectionScreen.addEventListener("click", (e) => {
+    if (e.target.closest(".single-player") || e.target.closest(".multi-player")) {
+      isMultiPlayer = e.target.closest(".multi-player") !== null;
+      
+      gameModeSelectionScreen.style.display = "none";
+      nameScreen.style.display = "flex";
+      
+      // Show/hide Player 2 input based on game mode
+      const player2Input = document.querySelector(".player2-name-input");
+      player2Input.style.display = isMultiPlayer ? "block" : "none";
+      player2Input.required = isMultiPlayer;
+    }
+  });
 
-  singlePlayerBtn.addEventListener("click", () => {
-    gameModeSelectionScreen.classList.add("fadeOut");
+  // handles player name input and transition to ship placement screen
+  const form = document.querySelector(".name-form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    nameScreen.style.display = "none";
     shipPlacementScreen.style.display = "flex";
   });
 }
 
-//gameFlow();
+gameFlow();
+
+export { isMultiPlayer };

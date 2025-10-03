@@ -9,6 +9,7 @@ import {
   placeAllShipsRandomly,
   createGridCells,
 } from "./ship-movement.JS";
+import { isMultiPlayer } from "./index.js";
 
 // Initialize player and enemy ship movement
 function initializeGame() {
@@ -48,7 +49,6 @@ function initializeGame() {
 }
 
 let gameStarted = false;
-let multiPlayer = false; // Set to true for multiplayer mode
 
 function checkAllShipsPlaced(gameboard) {
   const startButton = document.querySelector(".start-btn");
@@ -77,25 +77,19 @@ const gameController = () => {
     const nameForm = document.querySelector(".name-form");
     const player1Input = document.querySelector(".player1-name-input");
     const player2Input = document.querySelector(".player2-name-input");
-    
-    // Show/hide Player 2 input based on game mode
-    if (multiPlayer) {
-      player2Input.style.display = "block";
-      player2Input.required = true;
-    }
 
     if (nameForm) {
       nameForm.addEventListener("submit", (e) => {
         e.preventDefault();
         
         let player1Name = "Player 1";
-        let player2Name = multiPlayer ? "Player 2" : "Computer";
+        let player2Name = isMultiPlayer ? "Player 2" : "Computer";
 
         if (player1Input && player1Input.value.trim() !== "") {
           player1Name = capitalizeFirstLetter(player1Input.value.trim());
         }
 
-        if (multiPlayer && player2Input && player2Input.value.trim() !== "") {
+        if (isMultiPlayer && player2Input && player2Input.value.trim() !== "") {
           player2Name = capitalizeFirstLetter(player2Input.value.trim());
         }
       });
