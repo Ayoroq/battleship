@@ -322,7 +322,14 @@ main {
   align-items: center;
 }
 
-.name-container input {
+.name-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.name-form input {
   padding: 0.1rem;
   border: none;
   border-bottom: 2px solid black;

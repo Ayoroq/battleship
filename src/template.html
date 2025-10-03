@@ -114,21 +114,25 @@
       <div class="name-screen">
         <div class="name-container">
           <h2 class="name-title">ENTER YOUR NAME</h2>
-          <input
-            type="text"
-            class="player1-name-input"
-            placeholder="Player 1 Name"
-            maxlength="20"
-          />
-          <input
-            type="text"
-            class="player2-name-input"
-            placeholder="Player 2 Name"
-            maxlength="20"
-          />
-          <div class="names-btn">
-            <button class="confirm-names-btn clickable" type="button">Confirm</button>
-          </div>
+          <form class="name-form">
+            <input
+              type="text"
+              class="player1-name-input"
+              placeholder="Player 1 Name"
+              aria-label="Player 1 Name"
+              maxlength="20"
+              required
+            />
+            <input
+              type="text"
+              class="player2-name-input"
+              placeholder="Player 2 Name"
+              aria-label="Player 2 Name"
+              maxlength="20"
+              required
+            />
+            <button class="confirm-names-btn clickable" type="submit">Confirm</button>
+          </form>
         </div>
       </div>
 
