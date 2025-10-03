@@ -169,7 +169,7 @@
 .space-port {
   display: flex;
   height: 89%;
-  justify-content: space-between;
+  justify-content: space-evenly;
   flex-direction: column;
   gap: 2rem;
 }

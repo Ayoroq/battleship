@@ -350,7 +350,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
 
         // Hide the ship in space-port
         const shipElement = spacePort.querySelector(`[data-ship-name="${shipName}"]`);
-        if (shipElement) shipElement.closest(".ship-class").remove();
+        if (shipElement) shipElement.closest('.ship-class').style.display = "none";
       } else {
         // Repositioning existing ship on grid
         draggedShip.style.left = `${shipStartY * 3}rem`;
