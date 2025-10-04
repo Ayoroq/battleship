@@ -26,7 +26,7 @@ body {
   color: white;
 }
 
-main {
+.main {
   flex: 1;
   display: flex;
   gap: 8rem;
@@ -359,6 +359,10 @@ main {
   box-shadow: 0 2px 0 darkred;
 }
 
+.user-ship-placement{
+  display: none;
+}
+
 .text{
   font-size: 2.5rem;
   font-weight: bold;
@@ -371,4 +375,46 @@ main {
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+}
+
+/* styling for the rules dialog */
+.rules-dialog{
+  position:absolute;
+  top:55%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  border: 2px solid var(--primary-colour);
+  padding:0;
+  z-index:1000;
+  border-radius: 3rem;
+}
+
+.rules-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+  width: 90vw;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.rules-content{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.green{
+  background-color: #059508;
+  border-color: #059508;
+  box-shadow: 0 4px 0 darkgreen;
+}
+.green:hover {
+  box-shadow: 0 6px 0 darkgreen;
+}
+.green:active {
+  box-shadow: 0 2px 0 darkgreen;
 }

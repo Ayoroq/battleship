@@ -28,7 +28,7 @@
           <span class="multi-player btn">Multiplayer</span>
         </button>
       </div>
-      <dialog class="rules-dialog" closedby="closerequest">
+      <dialog class="rules-dialog" closedby="closerequest" open>
         <div class="rules-container">
           <header class="rules-header">
             <button class="close-btn" type="button">&times;</button>
@@ -61,7 +61,6 @@
               <p class="rule-text">On your turn, choose one action:</p>
               <ul class="rule-list action-list">
                 <li class="rule-item action-item">
-                  <span class="action-icon">🔫</span>
                   <strong class="action-name">Attack</strong> - Fire at a
                   coordinate.<br />
                   <div class="action-details">
@@ -73,7 +72,6 @@
                   </div>
                 </li>
                 <li class="rule-item action-item">
-                  <span class="action-icon">🛡️</span>
                   <strong class="action-name">Defend</strong> - Reposition one
                   ship.<br />
                   <div class="action-details">
@@ -106,7 +104,7 @@
           </main>
 
           <footer class="rules-footer">
-            <button class="continue-btn" type="button">Begin Mission</button>
+            <button class="continue-btn clickable green" type="button">Begin Mission</button>
           </footer>
         </div>
       </dialog>
