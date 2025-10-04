@@ -9,6 +9,7 @@ body {
   flex-direction: column;
   background: black;
   margin: 0 auto;
+  gap: 2rem;
 }
 
 .header {

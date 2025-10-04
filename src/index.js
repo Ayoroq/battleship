@@ -10,6 +10,7 @@ const gameModeSelectionScreen = document.querySelector(".game-mode-selection-scr
 const nameScreen = document.querySelector(".name-screen");
 const startGameBtn = document.querySelector(".start-btn");
 const enemyDeployment = document.querySelector(".enemy-deployment");
+const shipPlacementHeader = document.querySelector(".ship-placement-header");
 let isMultiPlayer = false; // Set to true for multiplayer mode
 
 function gameFlow(){
@@ -41,6 +42,7 @@ function gameFlow(){
     e.preventDefault();
     main.style.background = 'white';
     nameScreen.style.display = "none";
+    shipPlacementHeader.style.display = "flex";
     shipPlacementScreen.style.display = "flex";
   });
 

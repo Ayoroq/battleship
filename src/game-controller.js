@@ -100,6 +100,8 @@ const gameController = () => {
     const start = document.querySelector(".start-btn");
     start.addEventListener("click", () => {
       gameStarted = true;
+      const shipDeploymentTitle = document.querySelector(".ship-placement-title");
+      shipDeploymentTitle.style.display = "none";
       const buttonContainer = document.querySelector(".button-container");
       buttonContainer.remove();
     });
