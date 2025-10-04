@@ -152,8 +152,7 @@ main {
 /* Grid Container Styling */
 .ship-deployment {
   display: flex;
-  padding: 3rem;
-  justify-content: space-around;
+  gap: 5rem;
 }
 
 .grid-container {
