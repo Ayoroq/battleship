@@ -11,6 +11,7 @@ const nameScreen = document.querySelector(".name-screen");
 const startGameBtn = document.querySelector(".start-btn");
 const enemyDeployment = document.querySelector(".enemy-deployment");
 const shipPlacementHeader = document.querySelector(".ship-placement-header");
+const userPlacementScreen = document.querySelector(".user-ship-placement");
 let isMultiPlayer = false; // Set to true for multiplayer mode
 
 function gameFlow(){
@@ -49,6 +50,7 @@ function gameFlow(){
   // Start game button click handler
   startGameBtn.addEventListener("click", () => {
     enemyDeployment.style.display = "flex";
+    userPlacementScreen.style.display = "none";
   });
 }
 
