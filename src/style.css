@@ -3,11 +3,12 @@
 }
 
 body {
+  max-width: 1340px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  border: 2px solid red;
   background: black;
+  margin: 0 auto;
 }
 
 .header {
