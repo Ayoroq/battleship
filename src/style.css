@@ -389,6 +389,10 @@ body {
   border-radius: 2rem;
 }
 
+.rules-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .rules-container{
   display: flex;
   flex-direction: column;
