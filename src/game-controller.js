@@ -67,6 +67,8 @@ const gameController = () => {
   const { player, enemy } = gameState;
   const enemyAttacker = handleEnemyAttack();
   const currentPlayerTurn = document.querySelector(".current-player-turn");
+  const winnerDisplay = document.querySelector(".winner");
+  const winnerDialog = document.querySelector(".finish");
 
   // function that's used to convert the user's names
   function capitalizeFirstLetter(string) {
@@ -76,8 +78,10 @@ const gameController = () => {
   // Store player names
   let playerNames = {
     player1Name: "Player 1",
-    player2Name: "Computer"
+    player2Name: "Computer",
   };
+
+  let currentTurn = playerNames.player1Name; // Track whose turn it is
 
   // function to get the player's names
   function getPlayerNames() {
@@ -88,17 +92,22 @@ const gameController = () => {
     if (nameForm) {
       nameForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        
+
         if (player1Input && player1Input.value.trim() !== "") {
-          playerNames.player1Name = capitalizeFirstLetter(player1Input.value.trim());
+          playerNames.player1Name = capitalizeFirstLetter(
+            player1Input.value.trim()
+          );
+          currentTurn = playerNames.player1Name; // Update currentTurn
         }
 
         if (isMultiPlayer && player2Input && player2Input.value.trim() !== "") {
-          playerNames.player2Name = capitalizeFirstLetter(player2Input.value.trim());
+          playerNames.player2Name = capitalizeFirstLetter(
+            player2Input.value.trim()
+          );
         }
       });
     }
-    
+
     return playerNames;
   }
 
@@ -106,8 +115,11 @@ const gameController = () => {
     const start = document.querySelector(".start-btn");
     start.addEventListener("click", () => {
       gameStarted = true;
+      currentTurn = playerNames.player1Name; // Ensure currentTurn matches actual name
       currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
-      const shipDeploymentTitle = document.querySelector(".ship-placement-title");
+      const shipDeploymentTitle = document.querySelector(
+        ".ship-placement-title"
+      );
       shipDeploymentTitle.style.display = "none";
       const buttonContainer = document.querySelector(".button-container");
       buttonContainer.remove();
@@ -133,6 +145,7 @@ const gameController = () => {
     enemy.gridContainer.addEventListener("click", (e) => {
       if (
         gameStarted &&
+        currentTurn === playerNames.player1Name &&
         e.target.classList.contains("grid-cell") &&
         !e.target.classList.contains("hit") &&
         !e.target.classList.contains("miss")
@@ -146,9 +159,6 @@ const gameController = () => {
             enemy.gridContainer,
             attackResult.ship,
             attackResult.cellIndex
-          );
-          console.log(
-            `Hit ${attackResult.ship.name} at cell index ${attackResult.cellIndex}`
           );
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
@@ -204,13 +214,17 @@ const gameController = () => {
       return;
     }
 
+    currentTurn = playerNames.player2Name;
     currentPlayerTurn.textContent = `${playerNames.player2Name}'s turn`;
+    
+    // Delay enemy attack for better UX
     setTimeout(() => {
       if (gameStarted) {
         enemyAttacker.makeRandomAttack();
         if (detectWinner()) {
           stopGame();
         } else {
+          currentTurn = playerNames.player1Name;
           currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
         }
       }
@@ -260,31 +274,69 @@ const gameController = () => {
 
   function displayWinner() {
     const winner = detectWinner();
-    const winnerDisplay = document.querySelector(".winner-display");
     if (winner) {
-      winnerDisplay.textContent = `${winner} wins!`;
-      winnerDisplay.style.display = "block";
+      const winnerName = winner === "player" ? playerNames.player1Name : playerNames.player2Name;
+      winnerDisplay.textContent = `${winnerName} wins!`;
+      winnerDialog.showModal();
+      
+      if (winner === "player") {
+        addConfetti();
+      }
     }
+  }
 
-    if (winner === "player") {
-      addConfetti();
-    }
+  function forfeitGame() {
+    const forfeitButton = document.querySelector(".forfeit-btn");
+    forfeitButton.addEventListener("click", () => {
+      gameStarted = false;
+      const winner = currentTurn === playerNames.player1Name ? playerNames.player2Name : playerNames.player1Name;
+      winnerDisplay.textContent = `${winner} wins by forfeit!`;
+      winnerDialog.showModal();
+      handleRestart();
+    });
   }
 
   function handleRestart() {
     if (confettiInterval) {
       clearInterval(confettiInterval);
     }
-    const restartButton = document.querySelector(".restart-btn");
+    const restartButton = document.querySelector(".restart");
+    restartButton.addEventListener("click", () => {
+      // Reset game state
+      gameStarted = false;
+      
+      // Clear grids
+      player.gridContainer.innerHTML = '';
+      enemy.gridContainer.innerHTML = '';
+      
+      // Reset game boards
+      player.gameBoard.board = Array(10).fill(null).map(() => Array(10).fill(null));
+      player.gameBoard.ships = [];
+      enemy.gameBoard.board = Array(10).fill(null).map(() => Array(10).fill(null));
+      enemy.gameBoard.ships = [];
+      
+      // Show ship placement elements
+      document.querySelector('.ship-placement-title').style.display = 'block';
+      document.querySelector('.enemy-deployment').style.display = 'none';
+      document.querySelector('.player-deployment').style.display = 'flex';
+      
+      winnerDialog.close();
+      
+      // Reinitialize game
+      const newGame = gameController();
+      newGame.startGame();
+      newGame.getPlayerNames();
+    });
   }
 
   function stopGame() {
     gameStarted = false;
-    const winner = detectWinner();
-    console.log(`Game Over! Winner: ${winner}`);
+    displayWinner();
+    handleRestart();
   }
 
   handlePlayerAttack();
+  forfeitGame();
 
   return {
     startGame,
@@ -293,6 +345,7 @@ const gameController = () => {
     playRound,
     detectWinner,
     stopGame,
+    forfeitGame,
     gameStarted,
     getPlayerNames,
   };
