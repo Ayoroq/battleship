@@ -337,6 +337,13 @@ const gameController = () => {
     });
   }
 
+  function handleEndGame() {
+    endGame.addEventListener("click", () => {
+      sessionStorage.setItem('skipLoading', 'true');
+      location.reload();
+    });
+  }
+
   function handleRestart() {
     const restartButton = document.querySelector(".restart");
     restartButton.addEventListener("click", () => {
@@ -482,12 +489,21 @@ const gameController = () => {
   }
 
   function initializeGameFlow() {
-    // Show loading screen initially
-    loadingScreen.style.display = "flex";
-    setTimeout(() => {
+    // Check if we should skip loading screen
+    const skipLoading = sessionStorage.getItem('skipLoading');
+    
+    if (skipLoading) {
+      sessionStorage.removeItem('skipLoading');
       loadingScreen.style.display = "none";
       gameModeSelectionScreen.style.display = "flex";
-    }, 6000);
+    } else {
+      // Show loading screen initially
+      loadingScreen.style.display = "flex";
+      setTimeout(() => {
+        loadingScreen.style.display = "none";
+        gameModeSelectionScreen.style.display = "flex";
+      }, 6000);
+    }
 
     // Handle game mode selection
     gameModeSelectionScreen.addEventListener("click", (e) => {
@@ -540,6 +556,7 @@ const gameController = () => {
     // Initialize game components
     handlePlayerAttack();
     forfeitGame();
+    handleEndGame();
     startGame();
     getPlayerNames();
     handleRestart();
@@ -553,6 +570,7 @@ const gameController = () => {
     detectWinner,
     stopGame,
     forfeitGame,
+    handleEndGame,
     gameStarted,
     getPlayerNames,
     initializeGameFlow,
