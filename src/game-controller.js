@@ -274,14 +274,21 @@ const gameController = () => {
 
   function displayWinner() {
     const winner = detectWinner();
+    console.log('displayWinner called, winner:', winner);
+    
     if (winner) {
       const winnerName = winner === "player" ? playerNames.player1Name : playerNames.player2Name;
       winnerDisplay.textContent = `${winnerName} wins!`;
       winnerDialog.showModal();
       
+      console.log('Winner is:', winner, 'Should show confetti:', winner === "player");
+      
       if (winner === "player") {
+        console.log('Calling addConfetti for player win');
         addConfetti();
       }
+      
+      handleRestart();
     }
   }
 
@@ -292,16 +299,21 @@ const gameController = () => {
       const winner = currentTurn === playerNames.player1Name ? playerNames.player2Name : playerNames.player1Name;
       winnerDisplay.textContent = `${winner} wins by forfeit!`;
       winnerDialog.showModal();
+      if(winner != 'computer'){
+        addConfetti();
+      }
       handleRestart();
     });
   }
 
   function handleRestart() {
-    if (confettiInterval) {
-      clearInterval(confettiInterval);
-    }
     const restartButton = document.querySelector(".restart");
     restartButton.addEventListener("click", () => {
+      // Clear confetti when restarting
+      if (confettiInterval) {
+        clearInterval(confettiInterval);
+      }
+      
       // Reset game state
       gameStarted = false;
       
@@ -332,7 +344,7 @@ const gameController = () => {
   function stopGame() {
     gameStarted = false;
     displayWinner();
-    handleRestart();
+    // Don't call handleRestart immediately - let confetti play
   }
 
   handlePlayerAttack();
