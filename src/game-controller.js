@@ -351,20 +351,122 @@ const gameController = () => {
       gameStarted = false;
       currentTurn = playerNames.player1Name;
 
-      // Clear grids
-      player.gridContainer.innerHTML = "";
-      enemy.gridContainer.innerHTML = "";
-
       // Reset game boards
       player.gameBoard.resetBoard();
       enemy.gameBoard.resetBoard();
 
-      // Reinitialize grids and ships
-      createGridCells(player.gridContainer);
+      // Reconstruct entire player deployment
+      const playerDeployment = document.querySelector('.player-deployment');
+      if (playerDeployment) {
+        let gridCells = '';
+        for (let x = 0; x < 10; x++) {
+          for (let y = 0; y < 10; y++) {
+            gridCells += `<div class="grid-cell" data-x="${x}" data-y="${y}" style="width: 3rem; height: 3rem;"></div>`;
+          }
+        }
+        
+        playerDeployment.innerHTML = `
+          <div class="grid-container">
+            <div class="grid-container-player grid">${gridCells}</div>
+            <div class="button-container">
+              <div class="random-placement">
+                <button class="random-placement-btn clickable" type="button">
+                  Random Placement
+                </button>
+              </div>
+              <div class="start-game">
+                <button class="start-btn clickable" type="button" style="display: none;">
+                  Start Game
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="ship-placement">
+            <div class="space-port">
+              <div class="ship-class">
+                <div class="ship" data-ship-name="Dreadnought" draggable="true" data-ship-size="5" data-ship-direction="horizontal"></div>
+                <button class="rotate-ship" type="button">
+                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
+                </button>
+              </div>
+              <div class="ship-class">
+                <div class="ship" data-ship-name="Battlecruiser" draggable="true" data-ship-size="4" data-ship-direction="horizontal"></div>
+                <button class="rotate-ship" type="button">
+                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
+                </button>
+              </div>
+              <div class="ship-class">
+                <div class="ship" data-ship-name="Heavy Cruiser" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
+                <button class="rotate-ship" type="button">
+                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
+                </button>
+              </div>
+              <div class="ship-class">
+                <div class="ship" data-ship-name="Stealth Frigate" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
+                <button class="rotate-ship" type="button">
+                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
+                </button>
+              </div>
+              <div class="ship-class">
+                <div class="ship" data-ship-name="Interceptor" draggable="true" data-ship-size="2" data-ship-direction="horizontal"></div>
+                <button class="rotate-ship" type="button">
+                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Reinitialize enemy grid
+      enemy.gridContainer.innerHTML = "";
       createGridCells(enemy.gridContainer);
       if (!isMultiPlayer) {
         placeComputerShipsRandomly(enemy.gameBoard);
       }
+      
+      // Reinitialize ship functionality
+      const newSpacePort = document.querySelector('.space-port');
+      const newPlayerGrid = document.querySelector('.grid-container-player');
+      if (newSpacePort && newPlayerGrid) {
+        // Update player object references
+        player.gridContainer = newPlayerGrid;
+        player.spacePort = newSpacePort;
+        
+        shipRotation(newSpacePort);
+        shipDragAndDrop(newSpacePort, newPlayerGrid, player.gameBoard);
+        shipGridRotation(newPlayerGrid, player.gameBoard);
+        
+        const randomizeButton = document.querySelector(".random-placement-btn");
+        if (randomizeButton) {
+          setupRandomPlacement(randomizeButton, player.gameBoard, newPlayerGrid, newSpacePort);
+        }
+        
+        // Reattach start button functionality
+        startGame();
+        
+        // Reattach UI transition functionality
+        const newStartBtn = document.querySelector(".start-btn");
+        if (newStartBtn) {
+          newStartBtn.addEventListener("click", () => {
+            enemyDeployment.style.display = "flex";
+            userPlacementScreen.style.display = "none";
+            turnsController.style.display = "flex";
+          });
+        }
+      }
+      
+      const turnsController = document.querySelector(".turns-controller");
+      const enemyDeployment = document.querySelector(".enemy-deployment");
+      const shipPlacementHeader = document.querySelector(".ship-placement-header");
+      const shipPlacementScreen = document.querySelector(".ship-placement-screen");
+      const userPlacementScreen = document.querySelector(".user-ship-placement");
+      
+      turnsController.style.display = "none";
+      enemyDeployment.style.display = "none";
+      shipPlacementHeader.style.display = "flex";
+      shipPlacementScreen.style.display = "flex";
+      userPlacementScreen.style.display = "flex";
 
       winnerDialog.close();
     });
