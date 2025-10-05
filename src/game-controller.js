@@ -9,8 +9,8 @@ import {
   placeAllShipsRandomly,
   createGridCells,
 } from "./ship-movement.JS";
-// Initialize player and enemy ship movement
 
+// Initialize player and enemy ship movement
 function initializeGame() {
   // Player setup
   const spacePort = document.querySelector(".space-port");
@@ -66,6 +66,24 @@ const gameController = () => {
   const gameState = initializeGame();
   const { player, enemy } = gameState;
   const enemyAttacker = handleEnemyAttack();
+
+  // DOM elements
+  const loadingScreen = document.querySelector(".loading-screen");
+  const main = document.querySelector(".main");
+  const shipPlacementScreen = document.querySelector(".ship-placement-screen");
+  const gameModeSelectionScreen = document.querySelector(
+    ".game-mode-selection-screen"
+  );
+  const nameScreen = document.querySelector(".name-screen");
+  const startGameBtn = document.querySelector(".start-btn");
+  const enemyDeployment = document.querySelector(".enemy-deployment");
+  const shipPlacementHeader = document.querySelector(".ship-placement-header");
+  const userPlacementScreen = document.querySelector(".user-ship-placement");
+  const turnsController = document.querySelector(".turns-controller");
+  const rulesDialog = document.querySelector(".rules-dialog");
+  const viewRulesBtn = document.querySelector(".show-rules-btn");
+  const beginMission = document.querySelector(".continue-btn");
+  const endGame = document.querySelector(".end");
   const currentPlayerTurn = document.querySelector(".current-player-turn");
   const winnerDisplay = document.querySelector(".winner");
   const winnerDialog = document.querySelector(".finish");
@@ -216,7 +234,7 @@ const gameController = () => {
 
     currentTurn = playerNames.player2Name;
     currentPlayerTurn.textContent = `${playerNames.player2Name}'s turn`;
-    
+
     // Delay enemy attack for better UX
     setTimeout(() => {
       if (gameStarted) {
@@ -234,17 +252,22 @@ const gameController = () => {
   let confettiInterval;
 
   function addConfetti() {
-    console.log('addConfetti called');
-    console.trace('addConfetti call stack');
-    
-    if (typeof confetti === 'undefined') {
-      console.error('Confetti library not loaded');
+    console.log("addConfetti called");
+    console.trace("addConfetti call stack");
+
+    if (typeof confetti === "undefined") {
+      console.error("Confetti library not loaded");
       return;
     }
-    
+
     const duration = 5 * 1000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 99999 };
+    const defaults = {
+      startVelocity: 30,
+      spread: 360,
+      ticks: 60,
+      zIndex: 99999,
+    };
 
     const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
@@ -282,12 +305,13 @@ const gameController = () => {
 
   function displayWinner() {
     const winner = detectWinner();
-    
+
     if (winner) {
-      const winnerName = winner === "player" ? playerNames.player1Name : playerNames.player2Name;
+      const winnerName =
+        winner === "player" ? playerNames.player1Name : playerNames.player2Name;
       winnerDisplay.textContent = `${winnerName} wins!`;
       winnerDialog.showModal();
-    
+
       if (winner === "player") {
         addConfetti();
       }
@@ -298,13 +322,18 @@ const gameController = () => {
     const forfeitButton = document.querySelector(".forfeit-btn");
     forfeitButton.addEventListener("click", () => {
       gameStarted = false;
-      const winner = currentTurn === playerNames.player1Name ? playerNames.player2Name : playerNames.player1Name;
+      const winner =
+        currentTurn === playerNames.player1Name
+          ? playerNames.player2Name
+          : playerNames.player1Name;
       winnerDisplay.textContent = `${winner} wins by forfeit!`;
       winnerDialog.showModal();
-      
+
       // Only show confetti if the human player wins (not the computer)
-      const isHumanWinner = winner === playerNames.player1Name || (isMultiPlayer && winner === playerNames.player2Name);
-      if(isHumanWinner) {
+      const isHumanWinner =
+        winner === playerNames.player1Name ||
+        (isMultiPlayer && winner === playerNames.player2Name);
+      if (isHumanWinner) {
         addConfetti();
       }
     });
@@ -317,29 +346,27 @@ const gameController = () => {
       if (confettiInterval) {
         clearInterval(confettiInterval);
       }
-      
+
       // Reset game state
       gameStarted = false;
-      
+      currentTurn = playerNames.player1Name;
+
       // Clear grids
-      player.gridContainer.innerHTML = '';
-      enemy.gridContainer.innerHTML = '';
-      
+      player.gridContainer.innerHTML = "";
+      enemy.gridContainer.innerHTML = "";
+
       // Reset game boards
       player.gameBoard.resetBoard();
       enemy.gameBoard.resetBoard();
-      
-      // Show ship placement elements
-      document.querySelector('.ship-placement-title').style.display = 'block';
-      document.querySelector('.enemy-deployment').style.display = 'none';
-      document.querySelector('.player-deployment').style.display = 'flex';
-      
+
+      // Reinitialize grids and ships
+      createGridCells(player.gridContainer);
+      createGridCells(enemy.gridContainer);
+      if (!isMultiPlayer) {
+        placeComputerShipsRandomly(enemy.gameBoard);
+      }
+
       winnerDialog.close();
-      
-      // Reinitialize game
-      const newGame = gameController();
-      newGame.startGame();
-      newGame.getPlayerNames();
     });
   }
 
@@ -349,21 +376,6 @@ const gameController = () => {
   }
 
   function initializeGameFlow() {
-    const loadingScreen = document.querySelector(".loading-screen");
-    const main = document.querySelector(".main");
-    const shipPlacementScreen = document.querySelector(".ship-placement-screen");
-    const gameModeSelectionScreen = document.querySelector(".game-mode-selection-screen");
-    const nameScreen = document.querySelector(".name-screen");
-    const startGameBtn = document.querySelector(".start-btn");
-    const enemyDeployment = document.querySelector(".enemy-deployment");
-    const shipPlacementHeader = document.querySelector(".ship-placement-header");
-    const userPlacementScreen = document.querySelector(".user-ship-placement");
-    const turnsController = document.querySelector(".turns-controller");
-    const rulesDialog = document.querySelector(".rules-dialog");
-    const viewRulesBtn = document.querySelector(".show-rules-btn");
-    const beginMission = document.querySelector(".continue-btn");
-    const endGame = document.querySelector(".end");
-
     // Show loading screen initially
     loadingScreen.style.display = "flex";
     setTimeout(() => {
@@ -373,11 +385,14 @@ const gameController = () => {
 
     // Handle game mode selection
     gameModeSelectionScreen.addEventListener("click", (e) => {
-      if (e.target.closest(".single-player") || e.target.closest(".multi-player")) {
+      if (
+        e.target.closest(".single-player") ||
+        e.target.closest(".multi-player")
+      ) {
         isMultiPlayer = e.target.closest(".multi-player") !== null;
         gameModeSelectionScreen.style.display = "none";
         nameScreen.style.display = "flex";
-        
+
         const player2Input = document.querySelector(".player2-name-input");
         player2Input.style.display = isMultiPlayer ? "block" : "none";
         player2Input.required = isMultiPlayer;
