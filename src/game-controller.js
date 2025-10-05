@@ -66,11 +66,18 @@ const gameController = () => {
   const gameState = initializeGame();
   const { player, enemy } = gameState;
   const enemyAttacker = handleEnemyAttack();
+  const currentPlayerTurn = document.querySelector(".current-player-turn");
 
   // function that's used to convert the user's names
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   }
+
+  // Store player names
+  let playerNames = {
+    player1Name: "Player 1",
+    player2Name: "Computer"
+  };
 
   // function to get the player's names
   function getPlayerNames() {
@@ -82,24 +89,24 @@ const gameController = () => {
       nameForm.addEventListener("submit", (e) => {
         e.preventDefault();
         
-        let player1Name = "Player 1";
-        let player2Name = isMultiPlayer ? "Player 2" : "Computer";
-
         if (player1Input && player1Input.value.trim() !== "") {
-          player1Name = capitalizeFirstLetter(player1Input.value.trim());
+          playerNames.player1Name = capitalizeFirstLetter(player1Input.value.trim());
         }
 
         if (isMultiPlayer && player2Input && player2Input.value.trim() !== "") {
-          player2Name = capitalizeFirstLetter(player2Input.value.trim());
+          playerNames.player2Name = capitalizeFirstLetter(player2Input.value.trim());
         }
       });
     }
+    
+    return playerNames;
   }
 
   function startGame() {
     const start = document.querySelector(".start-btn");
     start.addEventListener("click", () => {
       gameStarted = true;
+      currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
       const shipDeploymentTitle = document.querySelector(".ship-placement-title");
       shipDeploymentTitle.style.display = "none";
       const buttonContainer = document.querySelector(".button-container");
@@ -197,11 +204,14 @@ const gameController = () => {
       return;
     }
 
+    currentPlayerTurn.textContent = `${playerNames.player2Name}'s turn`;
     setTimeout(() => {
       if (gameStarted) {
         enemyAttacker.makeRandomAttack();
         if (detectWinner()) {
           stopGame();
+        } else {
+          currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
         }
       }
     }, 1000);
