@@ -76,6 +76,7 @@ const gameController = () => {
   );
   const nameScreen = document.querySelector(".name-screen");
   const startGameBtn = document.querySelector(".start-btn");
+  const shipDeploymentTitle = document.querySelector(".ship-placement-title");
   const enemyDeployment = document.querySelector(".enemy-deployment");
   const shipPlacementHeader = document.querySelector(".ship-placement-header");
   const userPlacementScreen = document.querySelector(".user-ship-placement");
@@ -135,9 +136,6 @@ const gameController = () => {
       gameStarted = true;
       currentTurn = playerNames.player1Name; // Ensure currentTurn matches actual name
       currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
-      const shipDeploymentTitle = document.querySelector(
-        ".ship-placement-title"
-      );
       shipDeploymentTitle.style.display = "none";
       const buttonContainer = document.querySelector(".button-container");
       buttonContainer.remove();
@@ -356,18 +354,11 @@ const gameController = () => {
       enemy.gameBoard.resetBoard();
 
       // Reconstruct entire player deployment
-      const playerDeployment = document.querySelector('.player-deployment');
+      const playerDeployment = document.querySelector(".player-deployment");
       if (playerDeployment) {
-        let gridCells = '';
-        for (let x = 0; x < 10; x++) {
-          for (let y = 0; y < 10; y++) {
-            gridCells += `<div class="grid-cell" data-x="${x}" data-y="${y}" style="width: 3rem; height: 3rem;"></div>`;
-          }
-        }
-        
         playerDeployment.innerHTML = `
           <div class="grid-container">
-            <div class="grid-container-player grid">${gridCells}</div>
+            <div class="grid-container-player grid"></div>
             <div class="button-container">
               <div class="random-placement">
                 <button class="random-placement-btn clickable" type="button">
@@ -417,34 +408,40 @@ const gameController = () => {
           </div>
         `;
       }
-      
+
       // Reinitialize enemy grid
       enemy.gridContainer.innerHTML = "";
       createGridCells(enemy.gridContainer);
       if (!isMultiPlayer) {
         placeComputerShipsRandomly(enemy.gameBoard);
       }
-      
+
       // Reinitialize ship functionality
-      const newSpacePort = document.querySelector('.space-port');
-      const newPlayerGrid = document.querySelector('.grid-container-player');
+      const newSpacePort = document.querySelector(".space-port");
+      const newPlayerGrid = document.querySelector(".grid-container-player");
       if (newSpacePort && newPlayerGrid) {
-        // Update player object references
+        // Create grid cells and update player object references
+        createGridCells(newPlayerGrid);
         player.gridContainer = newPlayerGrid;
         player.spacePort = newSpacePort;
-        
+
         shipRotation(newSpacePort);
         shipDragAndDrop(newSpacePort, newPlayerGrid, player.gameBoard);
         shipGridRotation(newPlayerGrid, player.gameBoard);
-        
+
         const randomizeButton = document.querySelector(".random-placement-btn");
         if (randomizeButton) {
-          setupRandomPlacement(randomizeButton, player.gameBoard, newPlayerGrid, newSpacePort);
+          setupRandomPlacement(
+            randomizeButton,
+            player.gameBoard,
+            newPlayerGrid,
+            newSpacePort
+          );
         }
-        
+
         // Reattach start button functionality
         startGame();
-        
+
         // Reattach UI transition functionality
         const newStartBtn = document.querySelector(".start-btn");
         if (newStartBtn) {
@@ -455,13 +452,20 @@ const gameController = () => {
           });
         }
       }
-      
+
       const turnsController = document.querySelector(".turns-controller");
       const enemyDeployment = document.querySelector(".enemy-deployment");
-      const shipPlacementHeader = document.querySelector(".ship-placement-header");
-      const shipPlacementScreen = document.querySelector(".ship-placement-screen");
-      const userPlacementScreen = document.querySelector(".user-ship-placement");
-      
+      const shipPlacementHeader = document.querySelector(
+        ".ship-placement-header"
+      );
+      const shipPlacementScreen = document.querySelector(
+        ".ship-placement-screen"
+      );
+      const userPlacementScreen = document.querySelector(
+        ".user-ship-placement"
+      );
+
+      shipDeploymentTitle.style.display = "block";
       turnsController.style.display = "none";
       enemyDeployment.style.display = "none";
       shipPlacementHeader.style.display = "flex";
