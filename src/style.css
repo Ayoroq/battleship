@@ -454,3 +454,8 @@ body {
 .green:active {
   box-shadow: 0 2px 0 darkgreen;
 }
+
+.after {
+  display: flex;
+  gap: 2rem;
+}

@@ -9,9 +9,8 @@ import {
   placeAllShipsRandomly,
   createGridCells,
 } from "./ship-movement.JS";
-import { isMultiPlayer } from "./index.js";
-
 // Initialize player and enemy ship movement
+
 function initializeGame() {
   // Player setup
   const spacePort = document.querySelector(".space-port");
@@ -49,6 +48,7 @@ function initializeGame() {
 }
 
 let gameStarted = false;
+let isMultiPlayer = false;
 
 function checkAllShipsPlaced(gameboard) {
   const startButton = document.querySelector(".start-btn");
@@ -236,7 +236,7 @@ const gameController = () => {
   function addConfetti() {
     const duration = 5 * 1000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 99999 };
 
     const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
@@ -253,12 +253,12 @@ const gameController = () => {
       confetti({
         ...defaults,
         particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() * 0.3 + 0.1 },
       });
       confetti({
         ...defaults,
         particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() * 0.3 + 0.1 },
       });
     }, 250);
   }
@@ -274,17 +274,13 @@ const gameController = () => {
 
   function displayWinner() {
     const winner = detectWinner();
-    console.log('displayWinner called, winner:', winner);
     
     if (winner) {
       const winnerName = winner === "player" ? playerNames.player1Name : playerNames.player2Name;
       winnerDisplay.textContent = `${winnerName} wins!`;
       winnerDialog.showModal();
       
-      console.log('Winner is:', winner, 'Should show confetti:', winner === "player");
-      
       if (winner === "player") {
-        console.log('Calling addConfetti for player win');
         addConfetti();
       }
       
@@ -347,8 +343,79 @@ const gameController = () => {
     // Don't call handleRestart immediately - let confetti play
   }
 
-  handlePlayerAttack();
-  forfeitGame();
+  function initializeGameFlow() {
+    const loadingScreen = document.querySelector(".loading-screen");
+    const main = document.querySelector(".main");
+    const shipPlacementScreen = document.querySelector(".ship-placement-screen");
+    const gameModeSelectionScreen = document.querySelector(".game-mode-selection-screen");
+    const nameScreen = document.querySelector(".name-screen");
+    const startGameBtn = document.querySelector(".start-btn");
+    const enemyDeployment = document.querySelector(".enemy-deployment");
+    const shipPlacementHeader = document.querySelector(".ship-placement-header");
+    const userPlacementScreen = document.querySelector(".user-ship-placement");
+    const turnsController = document.querySelector(".turns-controller");
+    const rulesDialog = document.querySelector(".rules-dialog");
+    const viewRulesBtn = document.querySelector(".show-rules-btn");
+    const beginMission = document.querySelector(".continue-btn");
+
+    // Show loading screen initially
+    loadingScreen.style.display = "flex";
+    setTimeout(() => {
+      loadingScreen.style.display = "none";
+      gameModeSelectionScreen.style.display = "flex";
+    }, 6000);
+
+    // Handle game mode selection
+    gameModeSelectionScreen.addEventListener("click", (e) => {
+      if (e.target.closest(".single-player") || e.target.closest(".multi-player")) {
+        isMultiPlayer = e.target.closest(".multi-player") !== null;
+        gameModeSelectionScreen.style.display = "none";
+        nameScreen.style.display = "flex";
+        
+        const player2Input = document.querySelector(".player2-name-input");
+        player2Input.style.display = isMultiPlayer ? "block" : "none";
+        player2Input.required = isMultiPlayer;
+      }
+    });
+
+    // Handle name form submission
+    const form = document.querySelector(".name-form");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      main.style.background = "white";
+      nameScreen.style.display = "none";
+      rulesDialog.showModal();
+    });
+
+    // Continue button click handler
+    beginMission.addEventListener("click", () => {
+      shipPlacementHeader.style.display = "flex";
+      shipPlacementScreen.style.display = "flex";
+      userPlacementScreen.style.display = "flex";
+      rulesDialog.close();
+    });
+
+    // Start game button click handler
+    startGameBtn.addEventListener("click", () => {
+      enemyDeployment.style.display = "flex";
+      userPlacementScreen.style.display = "none";
+      turnsController.style.display = "flex";
+    });
+
+    // View rules button click handler
+    viewRulesBtn.addEventListener("click", () => {
+      const rulesFooter = document.querySelector(".rules-footer");
+      rulesFooter.style.display = "none";
+      rulesDialog.setAttribute("closedby", "any");
+      rulesDialog.showModal();
+    });
+
+    // Initialize game components
+    handlePlayerAttack();
+    forfeitGame();
+    startGame();
+    getPlayerNames();
+  }
 
   return {
     startGame,
@@ -360,11 +427,8 @@ const gameController = () => {
     forfeitGame,
     gameStarted,
     getPlayerNames,
+    initializeGameFlow,
   };
 };
 
-const game = gameController();
-game.startGame();
-game.getPlayerNames();
-
-export { gameStarted, checkAllShipsPlaced };
+export { gameController, gameStarted, checkAllShipsPlaced, isMultiPlayer };
