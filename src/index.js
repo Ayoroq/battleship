@@ -79,6 +79,6 @@ function gameFlow() {
   });
 }
 
-gameFlow();
+//gameFlow();
 
 export { isMultiPlayer };

@@ -294,20 +294,29 @@ body {
   background-color: lightblue;
 }
 
-.dialog,
 .finish {
   position: absolute;
+  padding: 2rem 4rem;
   top: 50%;
   left: 50%;
+  border-radius: 1.5rem;
   transform: translate(-50%, -50%);
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
-.finish {
-  top: 20%;
-  padding: 2rem 2.5rem;
+.finish .container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.winner{
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: bold;
+  text-align: center;
 }
 
 .name-screen {
@@ -389,7 +398,7 @@ body {
   border-radius: 2rem;
 }
 
-.rules-dialog::backdrop {
+.rules-dialog::backdrop, .finish::backdrop {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -433,6 +442,7 @@ body {
 }
 
 .green{
+  outline: none;
   background-color: #059508;
   border-color: #059508;
   box-shadow: 0 4px 0 darkgreen;

@@ -11,7 +11,9 @@
       <div class="ship-placement-header">
         <h2 class="ship-placement-title">Fleet Deployment</h2>
         <div class="rules-button">
-          <button class="show-rules-btn clickable" type="button">View Rules</button>
+          <button class="show-rules-btn clickable" type="button">
+            View Rules
+          </button>
         </div>
       </div>
     </header>
@@ -103,7 +105,13 @@
           </main>
 
           <footer class="rules-footer">
-            <button class="continue-btn clickable green" type="button" autofocus>Begin Mission</button>
+            <button
+              class="continue-btn clickable green"
+              type="button"
+              autofocus
+            >
+              Begin Mission
+            </button>
           </footer>
         </div>
       </dialog>
@@ -123,12 +131,14 @@
             <input
               type="text"
               class="player2-name-input"
-              style="display: none;"
+              style="display: none"
               placeholder="Player 2 Name"
               aria-label="Player 2 Name"
               maxlength="20"
             />
-            <button class="confirm-names-btn clickable" type="submit">Confirm</button>
+            <button class="confirm-names-btn clickable" type="submit">
+              Confirm
+            </button>
           </form>
         </div>
       </div>
@@ -138,7 +148,9 @@
       <div class="turns-controller">
         <p class="current-player-turn text">Player 1's <span>Turn</span></p>
         <p class="turns-remaining"></p>
-        <button class="forfeit-btn clickable" type="button">Forfeit Game</button>
+        <button class="forfeit-btn clickable" type="button">
+          Forfeit Game
+        </button>
       </div>
       <div class="ship-placement-screen">
         <div class="ship-deployment">
@@ -152,7 +164,9 @@
                   </button>
                 </div>
                 <div class="start-game">
-                  <button class="start-btn clickable" type="button">Start Game</button>
+                  <button class="start-btn clickable" type="button">
+                    Start Game
+                  </button>
                 </div>
               </div>
             </div>
@@ -229,14 +243,12 @@
           </div>
         </div>
       </div>
-      <section>
-        <dialog class="finish" closedby="closerequest">
-          <div class="container">
-            <p class="winner"></p>
-            <button class="restart clickable">Restart Game</button>
-          </div>
-        </dialog>
-      </section>
+      <dialog class="finish" closedby="closerequest" open>
+        <div class="container">
+          <p class="winner">The winner is Kemi</p>
+          <button class="restart clickable green">Restart Game</button>
+        </div>
+      </dialog>
     </main>
   </body>
 </html>
