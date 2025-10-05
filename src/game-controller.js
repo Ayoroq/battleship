@@ -234,6 +234,14 @@ const gameController = () => {
   let confettiInterval;
 
   function addConfetti() {
+    console.log('addConfetti called');
+    console.trace('addConfetti call stack');
+    
+    if (typeof confetti === 'undefined') {
+      console.error('Confetti library not loaded');
+      return;
+    }
+    
     const duration = 5 * 1000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 99999 };
@@ -279,12 +287,10 @@ const gameController = () => {
       const winnerName = winner === "player" ? playerNames.player1Name : playerNames.player2Name;
       winnerDisplay.textContent = `${winnerName} wins!`;
       winnerDialog.showModal();
-      
+    
       if (winner === "player") {
         addConfetti();
       }
-      
-      handleRestart();
     }
   }
 
@@ -295,10 +301,12 @@ const gameController = () => {
       const winner = currentTurn === playerNames.player1Name ? playerNames.player2Name : playerNames.player1Name;
       winnerDisplay.textContent = `${winner} wins by forfeit!`;
       winnerDialog.showModal();
-      if(winner != 'computer'){
+      
+      // Only show confetti if the human player wins (not the computer)
+      const isHumanWinner = winner === playerNames.player1Name || (isMultiPlayer && winner === playerNames.player2Name);
+      if(isHumanWinner) {
         addConfetti();
       }
-      handleRestart();
     });
   }
 
@@ -318,10 +326,8 @@ const gameController = () => {
       enemy.gridContainer.innerHTML = '';
       
       // Reset game boards
-      player.gameBoard.board = Array(10).fill(null).map(() => Array(10).fill(null));
-      player.gameBoard.ships = [];
-      enemy.gameBoard.board = Array(10).fill(null).map(() => Array(10).fill(null));
-      enemy.gameBoard.ships = [];
+      player.gameBoard.resetBoard();
+      enemy.gameBoard.resetBoard();
       
       // Show ship placement elements
       document.querySelector('.ship-placement-title').style.display = 'block';
@@ -340,7 +346,6 @@ const gameController = () => {
   function stopGame() {
     gameStarted = false;
     displayWinner();
-    // Don't call handleRestart immediately - let confetti play
   }
 
   function initializeGameFlow() {
@@ -357,6 +362,7 @@ const gameController = () => {
     const rulesDialog = document.querySelector(".rules-dialog");
     const viewRulesBtn = document.querySelector(".show-rules-btn");
     const beginMission = document.querySelector(".continue-btn");
+    const endGame = document.querySelector(".end");
 
     // Show loading screen initially
     loadingScreen.style.display = "flex";
@@ -415,6 +421,7 @@ const gameController = () => {
     forfeitGame();
     startGame();
     getPlayerNames();
+    handleRestart();
   }
 
   return {
