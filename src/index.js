@@ -6,17 +6,22 @@ import { Ship, Gameboard, Player } from "./game.js";
 const loadingScreen = document.querySelector(".loading-screen");
 const main = document.querySelector(".main");
 const shipPlacementScreen = document.querySelector(".ship-placement-screen");
-const gameModeSelectionScreen = document.querySelector(".game-mode-selection-screen");
+const gameModeSelectionScreen = document.querySelector(
+  ".game-mode-selection-screen"
+);
 const nameScreen = document.querySelector(".name-screen");
 const startGameBtn = document.querySelector(".start-btn");
 const enemyDeployment = document.querySelector(".enemy-deployment");
 const shipPlacementHeader = document.querySelector(".ship-placement-header");
 const userPlacementScreen = document.querySelector(".user-ship-placement");
 const turnsController = document.querySelector(".turns-controller");
+const rulesDialog = document.querySelector(".rules-dialog");
+const viewRulesBtn = document.querySelector(".show-rules-btn");
+const beginMission = document.querySelector(".continue-btn");
 let isMultiPlayer = false; // Set to true for multiplayer mode
 
-function gameFlow(){
-  // Show loading screen initially 
+function gameFlow() {
+  // Show loading screen initially
   loadingScreen.style.display = "flex";
   setTimeout(() => {
     loadingScreen.style.display = "none";
@@ -25,12 +30,15 @@ function gameFlow(){
 
   // Handle game mode selection with event delegation
   gameModeSelectionScreen.addEventListener("click", (e) => {
-    if (e.target.closest(".single-player") || e.target.closest(".multi-player")) {
+    if (
+      e.target.closest(".single-player") ||
+      e.target.closest(".multi-player")
+    ) {
       isMultiPlayer = e.target.closest(".multi-player") !== null;
-      
+
       gameModeSelectionScreen.style.display = "none";
       nameScreen.style.display = "flex";
-      
+
       // Show/hide Player 2 input based on game mode
       const player2Input = document.querySelector(".player2-name-input");
       player2Input.style.display = isMultiPlayer ? "block" : "none";
@@ -42,10 +50,17 @@ function gameFlow(){
   const form = document.querySelector(".name-form");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    main.style.background = 'white';
+    main.style.background = "white";
     nameScreen.style.display = "none";
+    rulesDialog.showModal();
+  });
+
+  // Continue button click handler
+  beginMission.addEventListener("click", () => {
     shipPlacementHeader.style.display = "flex";
     shipPlacementScreen.style.display = "flex";
+    userPlacementScreen.style.display = "flex";
+    rulesDialog.close();
   });
 
   // Start game button click handler
@@ -54,8 +69,16 @@ function gameFlow(){
     userPlacementScreen.style.display = "none";
     turnsController.style.display = "flex";
   });
+
+  // View rules button click handler
+  viewRulesBtn.addEventListener("click", () => {
+    const rulesFooter = document.querySelector(".rules-footer");
+    rulesFooter.style.display = "none";
+    rulesDialog.setAttribute("closedby", "any");
+    rulesDialog.showModal();
+  });
 }
 
-//gameFlow();
+gameFlow();
 
 export { isMultiPlayer };
