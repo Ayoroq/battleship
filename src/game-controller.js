@@ -189,6 +189,14 @@ const gameController = () => {
 
     return playerNames;
   }
+  
+  // Initialize game functions
+  getPlayerNames();
+  startGame();
+  handlePlayerAttack();
+  handlePlayerShipMovement();
+  forfeitGame();
+  handleEndGame();
 
   function startGame() {
     const start = safeQuerySelector(".start-btn");
@@ -247,6 +255,29 @@ const gameController = () => {
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
+        playRound();
+      }
+    });
+  }
+  
+  function handlePlayerShipMovement() {
+    let shipMoved = false;
+    
+    player.gridContainer.addEventListener("drop", (e) => {
+      if (gameStarted && currentTurn === playerNames.player1Name) {
+        shipMoved = true;
+      }
+    });
+    
+    player.gridContainer.addEventListener("dragend", (e) => {
+      if (gameStarted && currentTurn === playerNames.player1Name && e.target.classList.contains("ship") && shipMoved) {
+        shipMoved = false;
+        playRound();
+      }
+    });
+    
+    player.gridContainer.addEventListener("dblclick", (e) => {
+      if (gameStarted && currentTurn === playerNames.player1Name && e.target.classList.contains("ship")) {
         playRound();
       }
     });
