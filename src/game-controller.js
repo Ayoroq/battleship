@@ -253,43 +253,70 @@ const gameController = () => {
   }
 
   function handleEnemyAttack() {
-    const makeRandomAttack = () => {
+    let huntTargets = [];
+    
+    const makeSmartAttack = () => {
       let x, y;
-      do {
-        x = Math.floor(Math.random() * 10);
-        y = Math.floor(Math.random() * 10);
-      } while (
-        player.gameBoard.board[x][y] === "hit" ||
-        player.gameBoard.board[x][y] === "miss"
-      );
+      
+      if (huntTargets.length > 0) {
+        // Target mode: attack adjacent cells
+        const target = huntTargets.shift();
+        x = target.x;
+        y = target.y;
+      } else {
+        // Hunt mode: checkerboard pattern, then random
+        let attempts = 0;
+        do {
+          x = Math.floor(Math.random() * 10);
+          y = Math.floor(Math.random() * 10);
+          attempts++;
+        } while (
+          (player.gameBoard.board[x][y] === "hit" ||
+           player.gameBoard.board[x][y] === "miss" ||
+           (attempts < 50 && (x + y) % 2 !== 0)) &&
+          attempts < 100
+        );
+      }
 
       const attackResult = player.gameBoard.receiveAttack(x, y);
+      if (attackResult.result === "already_attacked") {
+        return makeSmartAttack();
+      }
+      
       const targetCell = player.gridContainer.querySelector(
         `[data-x="${x}"][data-y="${y}"]`
       );
+      
+      if (!targetCell) {
+        return { hit: false };
+      }
 
       if (attackResult.result === "hit") {
         targetCell.classList.add("hit");
-        markShipHit(
-          player.gridContainer,
-          attackResult.ship,
-          attackResult.cellIndex
-        );
-        console.log(
-          `Enemy hit your ${attackResult.ship.name} at cell index ${attackResult.cellIndex}`
-        );
-        return {
-          hit: true,
-          ship: attackResult.ship,
-          cellIndex: attackResult.cellIndex,
-        };
+        markShipHit(player.gridContainer, attackResult.ship, attackResult.cellIndex);
+        
+        if (!attackResult.ship.isSunk()) {
+          // Add adjacent cells to hunt targets
+          const adjacent = [
+            {x: x-1, y}, {x: x+1, y}, {x, y: y-1}, {x, y: y+1}
+          ].filter(pos => 
+            pos.x >= 0 && pos.x < 10 && pos.y >= 0 && pos.y < 10 &&
+            player.gameBoard.board[pos.x][pos.y] !== "hit" &&
+            player.gameBoard.board[pos.x][pos.y] !== "miss"
+          );
+          huntTargets.unshift(...adjacent);
+        } else {
+          huntTargets = [];
+        }
+        
+        return { hit: true, ship: attackResult.ship, cellIndex: attackResult.cellIndex };
       } else if (attackResult.result === "miss") {
         targetCell.classList.add("miss");
         return { hit: false };
       }
     };
-
-    return { makeRandomAttack };
+    
+    return { makeSmartAttack };
   }
 
   function playRound() {
@@ -306,7 +333,7 @@ const gameController = () => {
     // Delay enemy attack for better UX
     setTimeout(() => {
       if (gameStarted) {
-        enemyAttacker.makeRandomAttack();
+        enemyAttacker.makeSmartAttack();
         if (detectWinner()) {
           stopGame();
         } else {
