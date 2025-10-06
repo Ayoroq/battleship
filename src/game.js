@@ -30,6 +30,7 @@ class Gameboard {
       Array(this.boardSize).fill(null)
     );
     this.ships = [];
+    this.shipPlacements = new Map(); // Store ship positions
   }
 
   validateShip(ship) {
@@ -87,6 +88,7 @@ class Gameboard {
     // Place the ship on the game board
     if (this.validatePlacement(ship, x, y, direction)) {
       this.ships.push(ship);
+      this.shipPlacements.set(ship, { x, y, direction }); // Store placement
       if (direction === "horizontal") {
         for (let i = 0; i < ship.length; i++) {
           this.board[x][y + i] = ship;
@@ -132,9 +134,8 @@ class Gameboard {
       const ship = this.board[x][y];
       ship.hit();
       
-      // Find ship's starting position and calculate cell index
-      const shipPlacements = this.getShipPlacements();
-      const shipPlacement = shipPlacements.find(p => p.ship === ship);
+      // Calculate cell index using stored placement
+      const shipPlacement = this.shipPlacements.get(ship);
       
       let cellIndex = 0;
       if (shipPlacement) {
@@ -184,32 +185,15 @@ class Gameboard {
     const shipPlacements = [];
     
     this.ships.forEach(ship => {
-      // Find the ship's starting position
-      let startX = -1, startY = -1, direction = null;
-      
-      // Find first occurrence of this ship
-      for (let x = 0; x < this.boardSize && startX === -1; x++) {
-        for (let y = 0; y < this.boardSize && startX === -1; y++) {
-          if (this.board[x][y] === ship) {
-            startX = x;
-            startY = y;
-            
-            // Determine direction by checking adjacent cells
-            if (y + 1 < this.boardSize && this.board[x][y + 1] === ship) {
-              direction = 'horizontal';
-            } else {
-              direction = 'vertical';
-            }
-          }
-        }
+      const placement = this.shipPlacements.get(ship);
+      if (placement) {
+        shipPlacements.push({
+          ship: ship,
+          x: placement.x,
+          y: placement.y,
+          direction: placement.direction
+        });
       }
-      
-      shipPlacements.push({
-        ship: ship,
-        x: startX,
-        y: startY,
-        direction: direction
-      });
     });
     
     return shipPlacements;
