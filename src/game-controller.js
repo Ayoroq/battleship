@@ -6,9 +6,74 @@ import {
   shipDragAndDrop,
   shipGridRotation,
   setupRandomPlacement,
-  placeAllShipsRandomly,
   createGridCells,
 } from "./ship-movement.JS";
+
+// Constants
+const SHIP_PLACEMENT_TEMPLATE = `
+  <div class="grid-container">
+    <div class="grid-container-player grid"></div>
+    <div class="button-container">
+      <div class="random-placement">
+        <button class="random-placement-btn clickable" type="button">
+          Random Placement
+        </button>
+      </div>
+      <div class="start-game">
+        <button class="start-btn clickable" type="button" style="display: none;">
+          Start Game
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="ship-placement">
+    <div class="space-port">
+      <div class="ship-class">
+        <div class="ship" data-ship-name="Dreadnought" draggable="true" data-ship-size="5" data-ship-direction="horizontal"></div>
+        <button class="rotate-ship" type="button">
+          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+        </button>
+      </div>
+      <div class="ship-class">
+        <div class="ship" data-ship-name="Battlecruiser" draggable="true" data-ship-size="4" data-ship-direction="horizontal"></div>
+        <button class="rotate-ship" type="button">
+          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+        </button>
+      </div>
+      <div class="ship-class">
+        <div class="ship" data-ship-name="Heavy Cruiser" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
+        <button class="rotate-ship" type="button">
+          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+        </button>
+      </div>
+      <div class="ship-class">
+        <div class="ship" data-ship-name="Stealth Frigate" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
+        <button class="rotate-ship" type="button">
+          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+        </button>
+      </div>
+      <div class="ship-class">
+        <div class="ship" data-ship-name="Interceptor" draggable="true" data-ship-size="2" data-ship-direction="horizontal"></div>
+        <button class="rotate-ship" type="button">
+          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+        </button>
+      </div>
+    </div>
+  </div>
+`;
+
+// Helper functions
+function safeQuerySelector(selector) {
+  const element = document.querySelector(selector);
+  if (!element) {
+    console.warn(`Element not found: ${selector}`);
+  }
+  return element;
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
 
 // Initialize player and enemy ship movement
 function initializeGame() {
@@ -67,40 +132,35 @@ const gameController = () => {
   const { player, enemy } = gameState;
   const enemyAttacker = handleEnemyAttack();
 
-  // DOM elements
-  const loadingScreen = document.querySelector(".loading-screen");
-  const main = document.querySelector(".main");
-  const shipPlacementScreen = document.querySelector(".ship-placement-screen");
-  const gameModeSelectionScreen = document.querySelector(
-    ".game-mode-selection-screen"
-  );
-  const nameScreen = document.querySelector(".name-screen");
-  const startGameBtn = document.querySelector(".start-btn");
-  const shipDeploymentTitle = document.querySelector(".ship-placement-title");
-  const enemyDeployment = document.querySelector(".enemy-deployment");
-  const shipPlacementHeader = document.querySelector(".ship-placement-header");
-  const userPlacementScreen = document.querySelector(".user-ship-placement");
-  const turnsController = document.querySelector(".turns-controller");
-  const rulesDialog = document.querySelector(".rules-dialog");
-  const viewRulesBtn = document.querySelector(".show-rules-btn");
-  const beginMission = document.querySelector(".continue-btn");
-  const endGame = document.querySelector(".end");
-  const currentPlayerTurn = document.querySelector(".current-player-turn");
-  const winnerDisplay = document.querySelector(".winner");
-  const winnerDialog = document.querySelector(".finish");
+  // DOM elements cache
+  const elements = {
+    loadingScreen: safeQuerySelector(".loading-screen"),
+    main: safeQuerySelector(".main"),
+    shipPlacementScreen: safeQuerySelector(".ship-placement-screen"),
+    gameModeSelectionScreen: safeQuerySelector(".game-mode-selection-screen"),
+    nameScreen: safeQuerySelector(".name-screen"),
+    startGameBtn: safeQuerySelector(".start-btn"),
+    shipDeploymentTitle: safeQuerySelector(".ship-placement-title"),
+    enemyDeployment: safeQuerySelector(".enemy-deployment"),
+    shipPlacementHeader: safeQuerySelector(".ship-placement-header"),
+    userPlacementScreen: safeQuerySelector(".user-ship-placement"),
+    turnsController: safeQuerySelector(".turns-controller"),
+    rulesDialog: safeQuerySelector(".rules-dialog"),
+    viewRulesBtn: safeQuerySelector(".show-rules-btn"),
+    beginMission: safeQuerySelector(".continue-btn"),
+    endGame: safeQuerySelector(".end"),
+    currentPlayerTurn: safeQuerySelector(".current-player-turn"),
+    winnerDisplay: safeQuerySelector(".winner"),
+    winnerDialog: safeQuerySelector(".finish"),
+  };
 
-  // function that's used to convert the user's names
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  }
-
-  // Store player names
+  // Game state
   let playerNames = {
     player1Name: "Player 1",
     player2Name: "Computer",
   };
-
-  let currentTurn = playerNames.player1Name; // Track whose turn it is
+  let currentTurn = playerNames.player1Name;
+  let confettiInterval;
 
   // function to get the player's names
   function getPlayerNames() {
@@ -131,14 +191,22 @@ const gameController = () => {
   }
 
   function startGame() {
-    const start = document.querySelector(".start-btn");
+    const start = safeQuerySelector(".start-btn");
+    if (!start) return;
+    
     start.addEventListener("click", () => {
       gameStarted = true;
-      currentTurn = playerNames.player1Name; // Ensure currentTurn matches actual name
-      currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
-      shipDeploymentTitle.style.display = "none";
-      const buttonContainer = document.querySelector(".button-container");
-      buttonContainer.remove();
+      currentTurn = playerNames.player1Name;
+      if (elements.currentPlayerTurn) {
+        elements.currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
+      }
+      if (elements.shipDeploymentTitle) {
+        elements.shipDeploymentTitle.style.display = "none";
+      }
+      const buttonContainer = safeQuerySelector(".button-container");
+      if (buttonContainer) {
+        buttonContainer.remove();
+      }
     });
   }
 
@@ -231,7 +299,9 @@ const gameController = () => {
     }
 
     currentTurn = playerNames.player2Name;
-    currentPlayerTurn.textContent = `${playerNames.player2Name}'s turn`;
+    if (elements.currentPlayerTurn) {
+      elements.currentPlayerTurn.textContent = `${playerNames.player2Name}'s turn`;
+    }
 
     // Delay enemy attack for better UX
     setTimeout(() => {
@@ -241,18 +311,15 @@ const gameController = () => {
           stopGame();
         } else {
           currentTurn = playerNames.player1Name;
-          currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
+          if (elements.currentPlayerTurn) {
+            elements.currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
+          }
         }
       }
     }, 1000);
   }
 
-  let confettiInterval;
-
   function addConfetti() {
-    console.log("addConfetti called");
-    console.trace("addConfetti call stack");
-
     if (typeof confetti === "undefined") {
       console.error("Confetti library not loaded");
       return;
@@ -304,11 +371,11 @@ const gameController = () => {
   function displayWinner() {
     const winner = detectWinner();
 
-    if (winner) {
+    if (winner && elements.winnerDisplay && elements.winnerDialog) {
       const winnerName =
         winner === "player" ? playerNames.player1Name : playerNames.player2Name;
-      winnerDisplay.textContent = `${winnerName} wins!`;
-      winnerDialog.showModal();
+      elements.winnerDisplay.textContent = `${winnerName} wins!`;
+      elements.winnerDialog.showModal();
 
       if (winner === "player") {
         addConfetti();
@@ -317,17 +384,21 @@ const gameController = () => {
   }
 
   function forfeitGame() {
-    const forfeitButton = document.querySelector(".forfeit-btn");
+    const forfeitButton = safeQuerySelector(".forfeit-btn");
+    if (!forfeitButton) return;
+    
     forfeitButton.addEventListener("click", () => {
       gameStarted = false;
       const winner =
         currentTurn === playerNames.player1Name
           ? playerNames.player2Name
           : playerNames.player1Name;
-      winnerDisplay.textContent = `${winner} wins by forfeit!`;
-      winnerDialog.showModal();
+      
+      if (elements.winnerDisplay && elements.winnerDialog) {
+        elements.winnerDisplay.textContent = `${winner} wins by forfeit!`;
+        elements.winnerDialog.showModal();
+      }
 
-      // Only show confetti if the human player wins (not the computer)
       const isHumanWinner =
         winner === playerNames.player1Name ||
         (isMultiPlayer && winner === playerNames.player2Name);
@@ -338,148 +409,87 @@ const gameController = () => {
   }
 
   function handleEndGame() {
-    endGame.addEventListener("click", () => {
+    if (!elements.endGame) return;
+    
+    elements.endGame.addEventListener("click", () => {
       sessionStorage.setItem('skipLoading', 'true');
       location.reload();
     });
   }
 
+  function resetGameState() {
+    if (confettiInterval) {
+      clearInterval(confettiInterval);
+    }
+    gameStarted = false;
+    currentTurn = playerNames.player1Name;
+    player.gameBoard.resetBoard();
+    enemy.gameBoard.resetBoard();
+  }
+
+  function resetPlayerDeployment() {
+    const playerDeployment = safeQuerySelector(".player-deployment");
+    if (playerDeployment) {
+      playerDeployment.innerHTML = SHIP_PLACEMENT_TEMPLATE;
+    }
+  }
+
+  function reinitializeGameComponents() {
+    enemy.gridContainer.innerHTML = "";
+    createGridCells(enemy.gridContainer);
+    if (!isMultiPlayer) {
+      placeComputerShipsRandomly(enemy.gameBoard);
+    }
+
+    const newSpacePort = safeQuerySelector(".space-port");
+    const newPlayerGrid = safeQuerySelector(".grid-container-player");
+    
+    if (newSpacePort && newPlayerGrid) {
+      createGridCells(newPlayerGrid);
+      player.gridContainer = newPlayerGrid;
+      player.spacePort = newSpacePort;
+
+      shipRotation(newSpacePort);
+      shipDragAndDrop(newSpacePort, newPlayerGrid, player.gameBoard);
+      shipGridRotation(newPlayerGrid, player.gameBoard);
+
+      const randomizeButton = safeQuerySelector(".random-placement-btn");
+      if (randomizeButton) {
+        setupRandomPlacement(randomizeButton, player.gameBoard, newPlayerGrid, newSpacePort);
+      }
+
+      startGame();
+
+      const newStartBtn = safeQuerySelector(".start-btn");
+      if (newStartBtn) {
+        newStartBtn.addEventListener("click", () => {
+          if (elements.enemyDeployment) elements.enemyDeployment.style.display = "flex";
+          if (elements.userPlacementScreen) elements.userPlacementScreen.style.display = "none";
+          if (elements.turnsController) elements.turnsController.style.display = "flex";
+        });
+      }
+    }
+  }
+
+  function resetUIState() {
+    if (elements.shipDeploymentTitle) elements.shipDeploymentTitle.style.display = "block";
+    if (elements.turnsController) elements.turnsController.style.display = "none";
+    if (elements.enemyDeployment) elements.enemyDeployment.style.display = "none";
+    if (elements.shipPlacementHeader) elements.shipPlacementHeader.style.display = "flex";
+    if (elements.shipPlacementScreen) elements.shipPlacementScreen.style.display = "flex";
+    if (elements.userPlacementScreen) elements.userPlacementScreen.style.display = "flex";
+    if (elements.winnerDialog) elements.winnerDialog.close();
+  }
+
   function handleRestart() {
-    const restartButton = document.querySelector(".restart");
+    const restartButton = safeQuerySelector(".restart");
+    if (!restartButton) return;
+    
     restartButton.addEventListener("click", () => {
-      // Clear confetti when restarting
-      if (confettiInterval) {
-        clearInterval(confettiInterval);
-      }
-
-      // Reset game state
-      gameStarted = false;
-      currentTurn = playerNames.player1Name;
-
-      // Reset game boards
-      player.gameBoard.resetBoard();
-      enemy.gameBoard.resetBoard();
-
-      // Reconstruct entire player deployment
-      const playerDeployment = document.querySelector(".player-deployment");
-      if (playerDeployment) {
-        playerDeployment.innerHTML = `
-          <div class="grid-container">
-            <div class="grid-container-player grid"></div>
-            <div class="button-container">
-              <div class="random-placement">
-                <button class="random-placement-btn clickable" type="button">
-                  Random Placement
-                </button>
-              </div>
-              <div class="start-game">
-                <button class="start-btn clickable" type="button" style="display: none;">
-                  Start Game
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="ship-placement">
-            <div class="space-port">
-              <div class="ship-class">
-                <div class="ship" data-ship-name="Dreadnought" draggable="true" data-ship-size="5" data-ship-direction="horizontal"></div>
-                <button class="rotate-ship" type="button">
-                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
-                </button>
-              </div>
-              <div class="ship-class">
-                <div class="ship" data-ship-name="Battlecruiser" draggable="true" data-ship-size="4" data-ship-direction="horizontal"></div>
-                <button class="rotate-ship" type="button">
-                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
-                </button>
-              </div>
-              <div class="ship-class">
-                <div class="ship" data-ship-name="Heavy Cruiser" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
-                <button class="rotate-ship" type="button">
-                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
-                </button>
-              </div>
-              <div class="ship-class">
-                <div class="ship" data-ship-name="Stealth Frigate" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
-                <button class="rotate-ship" type="button">
-                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
-                </button>
-              </div>
-              <div class="ship-class">
-                <div class="ship" data-ship-name="Interceptor" draggable="true" data-ship-size="2" data-ship-direction="horizontal"></div>
-                <button class="rotate-ship" type="button">
-                  <img src="0318bfb7c1037aa6bc68.svg" alt="">
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      // Reinitialize enemy grid
-      enemy.gridContainer.innerHTML = "";
-      createGridCells(enemy.gridContainer);
-      if (!isMultiPlayer) {
-        placeComputerShipsRandomly(enemy.gameBoard);
-      }
-
-      // Reinitialize ship functionality
-      const newSpacePort = document.querySelector(".space-port");
-      const newPlayerGrid = document.querySelector(".grid-container-player");
-      if (newSpacePort && newPlayerGrid) {
-        // Create grid cells and update player object references
-        createGridCells(newPlayerGrid);
-        player.gridContainer = newPlayerGrid;
-        player.spacePort = newSpacePort;
-
-        shipRotation(newSpacePort);
-        shipDragAndDrop(newSpacePort, newPlayerGrid, player.gameBoard);
-        shipGridRotation(newPlayerGrid, player.gameBoard);
-
-        const randomizeButton = document.querySelector(".random-placement-btn");
-        if (randomizeButton) {
-          setupRandomPlacement(
-            randomizeButton,
-            player.gameBoard,
-            newPlayerGrid,
-            newSpacePort
-          );
-        }
-
-        // Reattach start button functionality
-        startGame();
-
-        // Reattach UI transition functionality
-        const newStartBtn = document.querySelector(".start-btn");
-        if (newStartBtn) {
-          newStartBtn.addEventListener("click", () => {
-            enemyDeployment.style.display = "flex";
-            userPlacementScreen.style.display = "none";
-            turnsController.style.display = "flex";
-          });
-        }
-      }
-
-      const turnsController = document.querySelector(".turns-controller");
-      const enemyDeployment = document.querySelector(".enemy-deployment");
-      const shipPlacementHeader = document.querySelector(
-        ".ship-placement-header"
-      );
-      const shipPlacementScreen = document.querySelector(
-        ".ship-placement-screen"
-      );
-      const userPlacementScreen = document.querySelector(
-        ".user-ship-placement"
-      );
-
-      shipDeploymentTitle.style.display = "block";
-      turnsController.style.display = "none";
-      enemyDeployment.style.display = "none";
-      shipPlacementHeader.style.display = "flex";
-      shipPlacementScreen.style.display = "flex";
-      userPlacementScreen.style.display = "flex";
-
-      winnerDialog.close();
+      resetGameState();
+      resetPlayerDeployment();
+      reinitializeGameComponents();
+      resetUIState();
     });
   }
 
@@ -488,71 +498,87 @@ const gameController = () => {
     displayWinner();
   }
 
-  function initializeGameFlow() {
-    // Check if we should skip loading screen
+  function setupLoadingScreen() {
     const skipLoading = sessionStorage.getItem('skipLoading');
     
     if (skipLoading) {
       sessionStorage.removeItem('skipLoading');
-      loadingScreen.style.display = "none";
-      gameModeSelectionScreen.style.display = "flex";
+      if (elements.loadingScreen) elements.loadingScreen.style.display = "none";
+      if (elements.gameModeSelectionScreen) elements.gameModeSelectionScreen.style.display = "flex";
     } else {
-      // Show loading screen initially
-      loadingScreen.style.display = "flex";
+      if (elements.loadingScreen) elements.loadingScreen.style.display = "flex";
       setTimeout(() => {
-        loadingScreen.style.display = "none";
-        gameModeSelectionScreen.style.display = "flex";
+        if (elements.loadingScreen) elements.loadingScreen.style.display = "none";
+        if (elements.gameModeSelectionScreen) elements.gameModeSelectionScreen.style.display = "flex";
       }, 6000);
     }
+  }
 
-    // Handle game mode selection
-    gameModeSelectionScreen.addEventListener("click", (e) => {
-      if (
-        e.target.closest(".single-player") ||
-        e.target.closest(".multi-player")
-      ) {
-        isMultiPlayer = e.target.closest(".multi-player") !== null;
-        gameModeSelectionScreen.style.display = "none";
-        nameScreen.style.display = "flex";
+  function setupEventListeners() {
+    // Game mode selection
+    if (elements.gameModeSelectionScreen) {
+      elements.gameModeSelectionScreen.addEventListener("click", (e) => {
+        if (e.target.closest(".single-player") || e.target.closest(".multi-player")) {
+          isMultiPlayer = e.target.closest(".multi-player") !== null;
+          elements.gameModeSelectionScreen.style.display = "none";
+          if (elements.nameScreen) elements.nameScreen.style.display = "flex";
 
-        const player2Input = document.querySelector(".player2-name-input");
-        player2Input.style.display = isMultiPlayer ? "block" : "none";
-        player2Input.required = isMultiPlayer;
-      }
-    });
+          const player2Input = safeQuerySelector(".player2-name-input");
+          if (player2Input) {
+            player2Input.style.display = isMultiPlayer ? "block" : "none";
+            player2Input.required = isMultiPlayer;
+          }
+        }
+      });
+    }
 
-    // Handle name form submission
-    const form = document.querySelector(".name-form");
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      main.style.background = "white";
-      nameScreen.style.display = "none";
-      rulesDialog.showModal();
-    });
+    // Name form submission
+    const form = safeQuerySelector(".name-form");
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (elements.main) elements.main.style.background = "white";
+        if (elements.nameScreen) elements.nameScreen.style.display = "none";
+        if (elements.rulesDialog) elements.rulesDialog.showModal();
+      });
+    }
 
-    // Continue button click handler
-    beginMission.addEventListener("click", () => {
-      shipPlacementHeader.style.display = "flex";
-      shipPlacementScreen.style.display = "flex";
-      userPlacementScreen.style.display = "flex";
-      rulesDialog.close();
-    });
+    // Continue button
+    if (elements.beginMission) {
+      elements.beginMission.addEventListener("click", () => {
+        if (elements.shipPlacementHeader) elements.shipPlacementHeader.style.display = "flex";
+        if (elements.shipPlacementScreen) elements.shipPlacementScreen.style.display = "flex";
+        if (elements.userPlacementScreen) elements.userPlacementScreen.style.display = "flex";
+        if (elements.rulesDialog) elements.rulesDialog.close();
+      });
+    }
 
-    // Start game button click handler
-    startGameBtn.addEventListener("click", () => {
-      enemyDeployment.style.display = "flex";
-      userPlacementScreen.style.display = "none";
-      turnsController.style.display = "flex";
-    });
+    // Start game button
+    if (elements.startGameBtn) {
+      elements.startGameBtn.addEventListener("click", () => {
+        if (elements.enemyDeployment) elements.enemyDeployment.style.display = "flex";
+        if (elements.userPlacementScreen) elements.userPlacementScreen.style.display = "none";
+        if (elements.turnsController) elements.turnsController.style.display = "flex";
+      });
+    }
 
-    // View rules button click handler
-    viewRulesBtn.addEventListener("click", () => {
-      const rulesFooter = document.querySelector(".rules-footer");
-      rulesFooter.style.display = "none";
-      rulesDialog.setAttribute("closedby", "any");
-      rulesDialog.showModal();
-    });
+    // View rules button
+    if (elements.viewRulesBtn) {
+      elements.viewRulesBtn.addEventListener("click", () => {
+        const rulesFooter = safeQuerySelector(".rules-footer");
+        if (rulesFooter) rulesFooter.style.display = "none";
+        if (elements.rulesDialog) {
+          elements.rulesDialog.setAttribute("closedby", "any");
+          elements.rulesDialog.showModal();
+        }
+      });
+    }
+  }
 
+  function initializeGameFlow() {
+    setupLoadingScreen();
+    setupEventListeners();
+    
     // Initialize game components
     handlePlayerAttack();
     forfeitGame();
