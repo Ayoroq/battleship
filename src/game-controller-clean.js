@@ -47,7 +47,8 @@ export function initializeGame() {
   setupLoadingScreen(elements);
   setupGameModeSelection(elements);
   setupNameForm(elements, playerNames);
-  setupRulesDialog(elements);
+  setupRulesDialog(elements, playerNames);
+  
   const startButtonSetup = setupStartButton(elements, playerNames);
   
   // Make setupStartButton available globally for restart
@@ -66,7 +67,6 @@ export function initializeGame() {
   }
   
   handleEndGame(elements);
-  initializeGameController(elements, playerNames);
 }
 
 function handleEndGame(elements) {
@@ -139,12 +139,15 @@ function setupNameForm(elements, playerNames) {
   });
 }
 
-function setupRulesDialog(elements) {
+function setupRulesDialog(elements, playerNames) {
   elements.beginMission.addEventListener("click", () => {
     elements.shipPlacementHeader.style.display = "flex";
     elements.shipPlacementScreen.style.display = "flex";
     elements.userPlacementScreen.style.display = "flex";
     elements.rulesDialog.close();
+    
+    // Initialize game controller after user selections are made
+    initializeGameController(elements, playerNames);
   });
 }
 
