@@ -20,6 +20,7 @@ function capitalizeFirstLetter(string) {
 export function initializeGame() {
   const elements = {
     loadingScreen: safeQuerySelector(".loading-screen"),
+    main: safeQuerySelector(".main"),
     gameModeSelectionScreen: safeQuerySelector(".game-mode-selection-screen"),
     nameScreen: safeQuerySelector(".name-screen"),
     shipPlacementScreen: safeQuerySelector(".ship-placement-screen"),
@@ -118,6 +119,7 @@ function setupNameForm(elements, playerNames) {
       );
     }
 
+    elements.main.style.background = "white";
     elements.nameScreen.style.display = "none";
     elements.rulesDialog.showModal();
   });
