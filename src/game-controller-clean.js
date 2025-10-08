@@ -46,7 +46,10 @@ export function initializeGame() {
   setupGameModeSelection(elements);
   setupNameForm(elements, playerNames);
   setupRulesDialog(elements);
-  setupStartButton(elements, playerNames);
+  const startButtonSetup = setupStartButton(elements, playerNames);
+  
+  // Make setupStartButton available globally for restart
+  window.setupStartButton = startButtonSetup.setupStartButton;
   
   // View rules button
   if (elements.viewRulesBtn) {
@@ -173,6 +176,9 @@ function setupStartButton(elements, playerNames) {
       gameController.startGame();
     }
   });
+  
+  // Expose function to re-setup start button after restart
+  return { setupStartButton: startGame };
 }
 
 function addConfetti() {
