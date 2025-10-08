@@ -3,6 +3,8 @@ import { createMultiPlayerController } from "./multiplayer-controller.js";
 
 let isMultiPlayer = false;
 let gameController = null;
+let gameStarted = false;
+let currentTurn = null;
 
 function safeQuerySelector(selector) {
   const element = document.querySelector(selector);
@@ -29,6 +31,7 @@ export function initializeGame() {
     currentPlayerTurn: safeQuerySelector(".current-player-turn"),
     winnerDisplay: safeQuerySelector(".winner"),
     winnerDialog: safeQuerySelector(".finish"),
+    shipDeploymentTitle: safeQuerySelector(".ship-placement-title"),
   };
 
   let playerNames = {
@@ -114,10 +117,30 @@ function setupRulesDialog(elements) {
 }
 
 function setupStartButton(elements, playerNames) {
+  function startGame() {
+    const start = safeQuerySelector(".start-btn");
+    if (!start) return;
+    
+    start.addEventListener("click", () => {
+      gameStarted = true;
+      currentTurn = playerNames.player1Name;
+      if (elements.currentPlayerTurn) {
+        elements.currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
+      }
+      if (elements.shipDeploymentTitle) {
+        elements.shipDeploymentTitle.style.display = "none";
+      }
+      const buttonContainer = safeQuerySelector(".button-container");
+      if (buttonContainer) {
+        buttonContainer.remove();
+      }
+    });
+  }
+
+  startGame();
+
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("start-btn")) {
-      initializeGameController(elements, playerNames);
-
       if (isMultiPlayer) {
         gameController.showPlayer2Placement();
       } else {
