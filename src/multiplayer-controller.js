@@ -1,7 +1,7 @@
 import { Gameboard } from "./game.js";
 import { shipRotation, shipDragAndDrop, shipGridRotation, setupRandomPlacement, createGridCells, markShipHit } from "./ship-movement.js";
 
-export function createMultiPlayerController(elements, playerNames) {
+export function createMultiPlayerController(elements, playerNames, addConfetti) {
   const player1 = initializePlayer1();
   const player2 = initializePlayer2();
   
@@ -165,6 +165,28 @@ export function createMultiPlayerController(elements, playerNames) {
     }
   }
 
+  function setupForfeit() {
+    const forfeitButton = document.querySelector(".forfeit-btn");
+    if (!forfeitButton) return;
+    
+    forfeitButton.addEventListener("click", () => {
+      gameStarted = false;
+      const winner = currentTurn === playerNames.player1Name
+        ? playerNames.player2Name
+        : playerNames.player1Name;
+      
+      if (elements.winnerDisplay && elements.winnerDialog) {
+        elements.winnerDisplay.textContent = `${winner} wins by forfeit!`;
+        elements.winnerDialog.showModal();
+      }
+
+      // Both players are human in multiplayer
+      if (addConfetti) {
+        addConfetti();
+      }
+    });
+  }
+
   function showPlayer2Placement() {
     const userPlacement = document.querySelector('.user-ship-placement');
     const player2Placement = document.querySelector('.player2-ship-placement');
@@ -179,6 +201,8 @@ export function createMultiPlayerController(elements, playerNames) {
     if (elements.turnsController) elements.turnsController.style.display = "flex";
     player2ShipsPlaced = true;
   }
+
+  setupForfeit();
 
   return {
     handlePlayerAttacks,

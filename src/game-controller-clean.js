@@ -47,7 +47,6 @@ export function initializeGame() {
   setupNameForm(elements, playerNames);
   setupRulesDialog(elements);
   setupStartButton(elements, playerNames);
-  forfeitGame(elements, playerNames);
   
   // View rules button
   if (elements.viewRulesBtn) {
@@ -176,31 +175,6 @@ function setupStartButton(elements, playerNames) {
   });
 }
 
-function forfeitGame(elements, playerNames) {
-  const forfeitButton = safeQuerySelector(".forfeit-btn");
-  if (!forfeitButton) return;
-  
-  forfeitButton.addEventListener("click", () => {
-    gameStarted = false;
-    const winner =
-      currentTurn === playerNames.player1Name
-        ? playerNames.player2Name
-        : playerNames.player1Name;
-    
-    if (elements.winnerDisplay && elements.winnerDialog) {
-      elements.winnerDisplay.textContent = `${winner} wins by forfeit!`;
-      elements.winnerDialog.showModal();
-    }
-
-    const isHumanWinner =
-      winner === playerNames.player1Name ||
-      (isMultiPlayer && winner === playerNames.player2Name);
-    if (isHumanWinner) {
-      addConfetti();
-    }
-  });
-}
-
 function addConfetti() {
   if (typeof confetti === "undefined") {
     console.error("Confetti library not loaded");
@@ -243,11 +217,11 @@ function addConfetti() {
 
 function initializeGameController(elements, playerNames) {
   if (isMultiPlayer) {
-    gameController = createMultiPlayerController(elements, playerNames);
+    gameController = createMultiPlayerController(elements, playerNames, addConfetti);
     gameController.setupPlayer2ShipPlacement();
     gameController.handlePlayerAttacks();
   } else {
-    gameController = createSinglePlayerController(elements, playerNames);
+    gameController = createSinglePlayerController(elements, playerNames, addConfetti);
     gameController.handlePlayerAttack();
   }
 }

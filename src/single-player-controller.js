@@ -1,7 +1,7 @@
 import { Gameboard } from "./game.js";
 import { shipRotation, shipDragAndDrop,placeComputerShipsRandomly, shipGridRotation, setupRandomPlacement, createGridCells, markShipHit } from "./ship-movement.js";
 
-export function createSinglePlayerController(elements, playerNames) {
+export function createSinglePlayerController(elements, playerNames, addConfetti) {
   const player = initializePlayer();
   const enemy = initializeEnemy();
   const enemyAttacker = createEnemyAI();
@@ -153,6 +153,26 @@ export function createSinglePlayerController(elements, playerNames) {
       elements.currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
     }
   }
+
+  function setupForfeit() {
+    const forfeitButton = document.querySelector(".forfeit-btn");
+    if (!forfeitButton) return;
+    
+    forfeitButton.addEventListener("click", () => {
+      // Only allow forfeit during human player's turn
+      if (currentTurn !== playerNames.player1Name) return;
+      
+      gameStarted = false;
+      const winner = playerNames.player2Name; // Computer always wins
+      
+      if (elements.winnerDisplay && elements.winnerDialog) {
+        elements.winnerDisplay.textContent = `${winner} wins by forfeit!`;
+        elements.winnerDialog.showModal();
+      }
+    });
+  }
+
+  setupForfeit();
 
   return {
     handlePlayerAttack,
