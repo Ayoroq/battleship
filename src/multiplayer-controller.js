@@ -1,5 +1,5 @@
 import { Gameboard } from "./game.js";
-import { shipRotation, shipDragAndDrop, shipGridRotation, setupRandomPlacement, createGridCells } from "./ship-movement.js";
+import { shipRotation, shipDragAndDrop, shipGridRotation, setupRandomPlacement, createGridCells, markShipHit } from "./ship-movement.js";
 
 export function createMultiPlayerController(elements, playerNames) {
   const player1 = initializePlayer1();
@@ -99,6 +99,7 @@ export function createMultiPlayerController(elements, playerNames) {
         
         if (attackResult.result === "hit") {
           e.target.classList.add("hit");
+          markShipHit(player2.gridContainer,attackResult.ship,attackResult.cellIndex);
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
@@ -119,6 +120,7 @@ export function createMultiPlayerController(elements, playerNames) {
         
         if (attackResult.result === "hit") {
           e.target.classList.add("hit");
+          markShipHit(player1.gridContainer,attackResult.ship,attackResult.cellIndex);
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
@@ -185,6 +187,7 @@ export function createMultiPlayerController(elements, playerNames) {
     onPlayer2Ready,
     startGame,
     player1,
-    player2: () => player2
+    player2: () => player2,
+    markShipHit
   };
 }

@@ -1,5 +1,5 @@
 import { Gameboard } from "./game.js";
-import { shipRotation, shipDragAndDrop,placeComputerShipsRandomly, shipGridRotation, setupRandomPlacement, createGridCells } from "./ship-movement.js";
+import { shipRotation, shipDragAndDrop,placeComputerShipsRandomly, shipGridRotation, setupRandomPlacement, createGridCells, markShipHit } from "./ship-movement.js";
 
 export function createSinglePlayerController(elements, playerNames) {
   const player = initializePlayer();
@@ -105,6 +105,7 @@ export function createSinglePlayerController(elements, playerNames) {
 
       if (attackResult.result === "hit") {
         targetCell.classList.add("hit");
+        markShipHit(player.gridContainer,attackResult.ship,attackResult.cellIndex);
         if (!attackResult.ship.isSunk()) {
           const adjacent = [
             {x: x-1, y}, {x: x+1, y}, {x, y: y-1}, {x, y: y+1}
@@ -157,6 +158,7 @@ export function createSinglePlayerController(elements, playerNames) {
     handlePlayerAttack,
     startGame,
     player,
-    enemy
+    enemy,
+    markShipHit
   };
 }

@@ -375,6 +375,21 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
 
 
 
+function markShipHit(gridContainer, ship, cellIndex) {
+  const shipElement = gridContainer.querySelector(
+    `[data-ship-name="${ship.name}"]`
+  );
+  if (shipElement) {
+    const cell = shipElement.querySelector(
+      `[data-cell-index="${cellIndex}"]`
+    );
+    if (cell) {
+      cell.style.backgroundColor = "red";
+      cell.classList.add("hit");
+    }
+  }
+}
+
 export { 
   shipRotation, 
   shipDragAndDrop, 
@@ -383,5 +398,6 @@ export {
   placeAllShipsRandomly,
   placeComputerShipsRandomly,
   createGridCells,
-  shipData
+  shipData,
+  markShipHit
 };
