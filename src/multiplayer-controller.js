@@ -1,5 +1,5 @@
 import { Gameboard } from "./game.js";
-import { shipRotation, shipDragAndDrop, shipGridRotation, setupRandomPlacement, createGridCells } from "./ship-movement.JS";
+import { shipRotation, shipDragAndDrop, shipGridRotation, setupRandomPlacement, createGridCells } from "./ship-movement.js";
 
 export function createMultiPlayerController(elements, playerNames) {
   const player1 = initializePlayer1();

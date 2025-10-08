@@ -1,6 +1,5 @@
 // This is the module that handles the movement of ships, the drag and drops and the repositioning
 import { Ship, Gameboard, Player } from "./game";
-import { gameStarted } from "./game-controller.js";
 import { renderShip } from "./render.js";
 import { checkAllShipsPlaced } from "./game-controller.js";
 
@@ -383,7 +382,6 @@ export {
   setupRandomPlacement,
   placeAllShipsRandomly,
   placeComputerShipsRandomly,
-
   createGridCells,
   shipData
 };

@@ -1,6 +1,5 @@
 import { Gameboard } from "./game.js";
-import { placeComputerShipsRandomly } from "./ship-movement.JS";
-import { shipRotation, shipDragAndDrop, shipGridRotation, setupRandomPlacement, createGridCells } from "./ship-movement.JS";
+import { shipRotation, shipDragAndDrop,placeComputerShipsRandomly, shipGridRotation, setupRandomPlacement, createGridCells } from "./ship-movement.js";
 
 export function createSinglePlayerController(elements, playerNames) {
   const player = initializePlayer();

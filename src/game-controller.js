@@ -1,13 +1,13 @@
 // Game controller that manages the overall game state and initialization
 import { Gameboard } from "./game.js";
-import { placeComputerShipsRandomly } from "./ship-movement.JS";
+import { placeComputerShipsRandomly } from "./ship-movement.js";
 import {
   shipRotation,
   shipDragAndDrop,
   shipGridRotation,
   setupRandomPlacement,
   createGridCells,
-} from "./ship-movement.JS";
+} from "./ship-movement.js";
 
 // Constants
 const SHIP_PLACEMENT_TEMPLATE = `
