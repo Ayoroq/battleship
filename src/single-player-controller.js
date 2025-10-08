@@ -144,6 +144,9 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
       elements.winnerDisplay.textContent = `${winnerName} wins!`;
       elements.winnerDialog.showModal();
     }
+    if (winner === "player" && addConfetti) {
+      addConfetti();
+    }
   }
 
   function startGame() {
