@@ -5,6 +5,7 @@ let isMultiPlayer = false;
 let gameController = null;
 let gameStarted = false;
 let currentTurn = null;
+let confettiInterval = null;
 
 function safeQuerySelector(selector) {
   const element = document.querySelector(selector);
@@ -29,6 +30,7 @@ export function initializeGame() {
     rulesDialog: safeQuerySelector(".rules-dialog"),
     beginMission: safeQuerySelector(".continue-btn"),
     currentPlayerTurn: safeQuerySelector(".current-player-turn"),
+    viewRulesBtn: safeQuerySelector(".show-rules-btn"),
     winnerDisplay: safeQuerySelector(".winner"),
     winnerDialog: safeQuerySelector(".finish"),
     shipDeploymentTitle: safeQuerySelector(".ship-placement-title"),
@@ -44,6 +46,20 @@ export function initializeGame() {
   setupNameForm(elements, playerNames);
   setupRulesDialog(elements);
   setupStartButton(elements, playerNames);
+  forfeitGame(elements, playerNames);
+  
+  // View rules button
+  if (elements.viewRulesBtn) {
+    elements.viewRulesBtn.addEventListener("click", () => {
+      const rulesFooter = safeQuerySelector(".rules-footer");
+      if (rulesFooter) rulesFooter.style.display = "none";
+      if (elements.rulesDialog) {
+        elements.rulesDialog.setAttribute("closedby", "any");
+        elements.rulesDialog.showModal();
+      }
+    });
+  }
+  
   initializeGameController(elements, playerNames);
 }
 
@@ -156,6 +172,71 @@ function setupStartButton(elements, playerNames) {
       gameController.startGame();
     }
   });
+}
+
+function forfeitGame(elements, playerNames) {
+  const forfeitButton = safeQuerySelector(".forfeit-btn");
+  if (!forfeitButton) return;
+  
+  forfeitButton.addEventListener("click", () => {
+    gameStarted = false;
+    const winner =
+      currentTurn === playerNames.player1Name
+        ? playerNames.player2Name
+        : playerNames.player1Name;
+    
+    if (elements.winnerDisplay && elements.winnerDialog) {
+      elements.winnerDisplay.textContent = `${winner} wins by forfeit!`;
+      elements.winnerDialog.showModal();
+    }
+
+    const isHumanWinner =
+      winner === playerNames.player1Name ||
+      (isMultiPlayer && winner === playerNames.player2Name);
+    if (isHumanWinner) {
+      addConfetti();
+    }
+  });
+}
+
+function addConfetti() {
+  if (typeof confetti === "undefined") {
+    console.error("Confetti library not loaded");
+    return;
+  }
+
+  const duration = 5 * 1000;
+  const animationEnd = Date.now() + duration;
+  const defaults = {
+    startVelocity: 30,
+    spread: 360,
+    ticks: 60,
+    zIndex: 99999,
+  };
+
+  const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+  confettiInterval = setInterval(() => {
+    const timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      clearInterval(confettiInterval);
+      return;
+    }
+
+    const particleCount = 50 * (timeLeft / duration);
+
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.1, 0.3), y: Math.random() * 0.3 + 0.1 },
+    });
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.7, 0.9), y: Math.random() * 0.3 + 0.1 },
+    });
+  }, 250);
 }
 
 function initializeGameController(elements, playerNames) {
