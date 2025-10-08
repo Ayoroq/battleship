@@ -127,10 +127,11 @@ function checkAllShipsPlaced(gameboard) {
   }
 }
 
+import { createSinglePlayerController } from './single-player-controller.js';
+import { createMultiPlayerController } from './multiplayer-controller.js';
+
 const gameController = () => {
-  const gameState = initializeGame();
-  const { player, enemy } = gameState;
-  const enemyAttacker = handleEnemyAttack();
+  let gameController = null;
 
   // DOM elements cache
   const elements = {
@@ -633,15 +634,22 @@ const gameController = () => {
     }
   }
 
+  function initializeGameController() {
+    if (isMultiPlayer) {
+      gameController = createMultiPlayerController(elements, playerNames);
+      gameController.setupPlayer2ShipPlacement();
+      gameController.handlePlayerAttacks();
+    } else {
+      gameController = createSinglePlayerController(elements, playerNames);
+      gameController.handlePlayerAttack();
+    }
+  }
+
   function initializeGameFlow() {
     setupLoadingScreen();
     setupEventListeners();
-    
-    // Initialize game components
-    handlePlayerAttack();
     forfeitGame();
     handleEndGame();
-    startGame();
     getPlayerNames();
     handleRestart();
   }

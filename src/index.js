@@ -1,7 +1,6 @@
 import "./reset.css";
 import "./style.css";
-import { gameController } from "./game-controller.js";
+import { initializeGame } from "./game-controller-clean.js";
 
 // Initialize the game
-const game = gameController();
-game.initializeGameFlow();
+initializeGame();
