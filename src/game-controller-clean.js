@@ -1,5 +1,5 @@
-import { createSinglePlayerController } from './single-player-controller.js';
-import { createMultiPlayerController } from './multiplayer-controller.js';
+import { createSinglePlayerController } from "./single-player-controller.js";
+import { createMultiPlayerController } from "./multiplayer-controller.js";
 
 let isMultiPlayer = false;
 let gameController = null;
@@ -20,6 +20,7 @@ export function initializeGame() {
     gameModeSelectionScreen: safeQuerySelector(".game-mode-selection-screen"),
     nameScreen: safeQuerySelector(".name-screen"),
     shipPlacementScreen: safeQuerySelector(".ship-placement-screen"),
+    shipPlacementHeader: safeQuerySelector(".ship-placement-header"),
     userPlacementScreen: safeQuerySelector(".user-ship-placement"),
     enemyDeployment: safeQuerySelector(".enemy-deployment"),
     turnsController: safeQuerySelector(".turns-controller"),
@@ -40,13 +41,14 @@ export function initializeGame() {
   setupNameForm(elements, playerNames);
   setupRulesDialog(elements);
   setupStartButton(elements, playerNames);
+  initializeGameController(elements, playerNames);
 }
 
 function setupLoadingScreen(elements) {
-  const skipLoading = sessionStorage.getItem('skipLoading');
-  
+  const skipLoading = sessionStorage.getItem("skipLoading");
+
   if (skipLoading) {
-    sessionStorage.removeItem('skipLoading');
+    sessionStorage.removeItem("skipLoading");
     elements.loadingScreen.style.display = "none";
     elements.gameModeSelectionScreen.style.display = "flex";
   } else {
@@ -60,7 +62,10 @@ function setupLoadingScreen(elements) {
 
 function setupGameModeSelection(elements) {
   elements.gameModeSelectionScreen.addEventListener("click", (e) => {
-    if (e.target.closest(".single-player") || e.target.closest(".multi-player")) {
+    if (
+      e.target.closest(".single-player") ||
+      e.target.closest(".multi-player")
+    ) {
       isMultiPlayer = e.target.closest(".multi-player") !== null;
       elements.gameModeSelectionScreen.style.display = "none";
       elements.nameScreen.style.display = "flex";
@@ -81,13 +86,17 @@ function setupNameForm(elements, playerNames) {
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    
+
     if (player1Input?.value.trim()) {
-      playerNames.player1Name = capitalizeFirstLetter(player1Input.value.trim());
+      playerNames.player1Name = capitalizeFirstLetter(
+        player1Input.value.trim()
+      );
     }
-    
+
     if (isMultiPlayer && player2Input?.value.trim()) {
-      playerNames.player2Name = capitalizeFirstLetter(player2Input.value.trim());
+      playerNames.player2Name = capitalizeFirstLetter(
+        player2Input.value.trim()
+      );
     }
 
     elements.nameScreen.style.display = "none";
@@ -97,6 +106,7 @@ function setupNameForm(elements, playerNames) {
 
 function setupRulesDialog(elements) {
   elements.beginMission.addEventListener("click", () => {
+    elements.shipPlacementHeader.style.display = "flex";
     elements.shipPlacementScreen.style.display = "flex";
     elements.userPlacementScreen.style.display = "flex";
     elements.rulesDialog.close();
@@ -104,10 +114,10 @@ function setupRulesDialog(elements) {
 }
 
 function setupStartButton(elements, playerNames) {
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('start-btn')) {
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("start-btn")) {
       initializeGameController(elements, playerNames);
-      
+
       if (isMultiPlayer) {
         gameController.showPlayer2Placement();
       } else {
@@ -117,8 +127,8 @@ function setupStartButton(elements, playerNames) {
         gameController.startGame();
       }
     }
-    
-    if (e.target.classList.contains('ready-btn-p2') && gameController) {
+
+    if (e.target.classList.contains("ready-btn-p2") && gameController) {
       gameController.onPlayer2Ready();
       gameController.startGame();
     }
