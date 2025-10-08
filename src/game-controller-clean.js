@@ -31,10 +31,12 @@ export function initializeGame() {
     rulesDialog: safeQuerySelector(".rules-dialog"),
     beginMission: safeQuerySelector(".continue-btn"),
     currentPlayerTurn: safeQuerySelector(".current-player-turn"),
+    endGame: safeQuerySelector(".end"),
     viewRulesBtn: safeQuerySelector(".show-rules-btn"),
     winnerDisplay: safeQuerySelector(".winner"),
     winnerDialog: safeQuerySelector(".finish"),
     shipDeploymentTitle: safeQuerySelector(".ship-placement-title"),
+    endGame: safeQuerySelector(".end"),
   };
 
   let playerNames = {
@@ -63,7 +65,17 @@ export function initializeGame() {
     });
   }
   
+  handleEndGame(elements);
   initializeGameController(elements, playerNames);
+}
+
+function handleEndGame(elements) {
+  if (!elements.endGame) return;
+  
+  elements.endGame.addEventListener("click", () => {
+    sessionStorage.setItem('skipLoading', 'true');
+    location.reload();
+  });
 }
 
 function setupLoadingScreen(elements) {
