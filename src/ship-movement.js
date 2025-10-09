@@ -1,7 +1,6 @@
 // This is the module that handles the movement of ships, the drag and drops and the repositioning
 import { Ship, Gameboard, Player } from "./game";
 import { renderShip } from "./render.js";
-import { checkAllShipsPlaced } from "./game-controller.js";
 
 // Create all 5 ships
 const shipData = [
@@ -18,6 +17,21 @@ let isFromSpacePort = false;
 
 const startButton = document.querySelector(".start-btn");
 if (startButton) startButton.style.display = "none";
+
+function areAllShipsPlaced(gameboard) {
+  return gameboard.ships.length === 5;
+}
+
+function checkAllShipsPlaced(gameboard) {
+  const allShipsPlaced = areAllShipsPlaced(gameboard);
+  if (window.handleShipPlacementComplete) {
+    window.handleShipPlacementComplete(allShipsPlaced);
+  }
+  if (window.buttonsToDisplay) {
+    window.buttonsToDisplay();
+  }
+  return allShipsPlaced;
+}
 
 const createGridCells = (gridContainer) => {
   for (let i = 0; i < 100; i++) {
@@ -399,5 +413,7 @@ export {
   placeComputerShipsRandomly,
   createGridCells,
   shipData,
-  markShipHit
+  markShipHit,
+  checkAllShipsPlaced,
+  areAllShipsPlaced
 };

@@ -455,6 +455,19 @@ body {
   box-shadow: 0 2px 0 darkgreen;
 }
 
+.blue{
+  outline: none;
+  background-color: #0066ff;
+  border-color: #0066ff;
+  box-shadow: 0 4px 0 darkblue;
+}
+.blue:hover {
+  box-shadow: 0 6px 0 darkblue;
+}
+.blue:active {
+  box-shadow: 0 2px 0 darkblue;
+}
+
 .after {
   display: flex;
   gap: 2rem;

@@ -1,5 +1,6 @@
 import { createSinglePlayerController } from "./single-player-controller.js";
 import { createMultiPlayerController } from "./multiplayer-controller.js";
+import { areAllShipsPlaced } from "./ship-movement.js";
 
 let isMultiPlayer = false;
 let gameController = null;
@@ -37,6 +38,7 @@ export function initializeGame() {
     winnerDialog: safeQuerySelector(".finish"),
     shipDeploymentTitle: safeQuerySelector(".ship-placement-title"),
     endGame: safeQuerySelector(".end"),
+    start: safeQuerySelector(".start-btn"),
   };
 
   let playerNames = {
@@ -153,10 +155,9 @@ function setupRulesDialog(elements, playerNames) {
 
 function setupStartButton(elements, playerNames) {
   function startGame() {
-    const start = safeQuerySelector(".start-btn");
-    if (!start) return;
+    if (!elements.start) return;
     
-    start.addEventListener("click", () => {
+    elements.start.addEventListener("click", () => {
       gameStarted = true;
       currentTurn = playerNames.player1Name;
       if (elements.currentPlayerTurn) {
@@ -236,6 +237,33 @@ function addConfetti() {
   }, 250);
 }
 
+export function buttonsToDisplay(){
+  if (!gameController) return;
+  
+  const player1Board = isMultiPlayer ? gameController.player1?.gameBoard : gameController.player?.gameBoard;
+  const player2Board = isMultiPlayer ? gameController.player2()?.gameBoard : gameController.enemy?.gameBoard;
+  const startBtn = safeQuerySelector('.start-btn');
+  
+  if (!player1Board || !startBtn) return;
+  
+  const allShipsPlaced = areAllShipsPlaced(player1Board);
+  const allShipsPlaced2 = isMultiPlayer ? areAllShipsPlaced(player2Board) : true;
+  
+  if(!isMultiPlayer){
+    startBtn.style.display = allShipsPlaced ? "block" : "none";
+  } else if(isMultiPlayer && allShipsPlaced && !allShipsPlaced2){
+    const container = safeQuerySelector('.button-container');
+    if (container && !container.querySelector('.pass-to-p2-btn')) {
+      const passToP2Btn = document.createElement('div');
+      passToP2Btn.classList.add('pass-to-p2-btn');
+      passToP2Btn.innerHTML = '<button class="clickable blue" type="button">Pass to Player 2</button>';
+      container.appendChild(passToP2Btn);
+    }
+  } else if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
+    startBtn.style.display = "block";
+  }
+}
+
 function initializeGameController(elements, playerNames) {
   if (isMultiPlayer) {
     gameController = createMultiPlayerController(elements, playerNames, addConfetti);
@@ -245,4 +273,7 @@ function initializeGameController(elements, playerNames) {
     gameController = createSinglePlayerController(elements, playerNames, addConfetti);
     gameController.handlePlayerAttack();
   }
+  
+  // Make buttonsToDisplay globally available
+  window.buttonsToDisplay = buttonsToDisplay;
 }
