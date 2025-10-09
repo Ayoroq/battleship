@@ -177,15 +177,18 @@ function setupStartButton(elements, playerNames) {
 
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("start-btn")) {
+      if(!isMultiPlayer){
         elements.enemyDeployment.style.display = "flex";
         elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
-    }
-
-    if (e.target.classList.contains("ready-btn-p2") && gameController) {
-      gameController.onPlayer2Ready();
-      gameController.startGame();
+      } else if(isMultiPlayer){
+        elements.userPlacementScreen.style.display = "none";
+        elements.enemyDeployment.style.display = "flex";
+        elements.turnsController.style.display = "flex";
+        gameController.onPlayer2Ready();
+        gameController.startGame();
+      }
     }
 
     if (e.target.closest(".pass-to-p2-btn") && gameController) {
@@ -260,10 +263,11 @@ export function buttonsToDisplay(){
       container.appendChild(passToP2Btn);
     }
   } else if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
+    startBtn.remove();
     const p2Container = safeQuerySelector('.ship-deployment-p2 .button-container');
     if (p2Container && !p2Container.querySelector('.start-btn')) {
       const startGameBtn = document.createElement('div');
-      startGameBtn.innerHTML = '<button class="start-btn clickable" type="button">Start Game</button>';
+      startGameBtn.innerHTML = '<button class="start-btn clickable green" type="button">Start Game</button>';
       p2Container.appendChild(startGameBtn);
     }
   }
