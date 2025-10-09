@@ -177,14 +177,10 @@ function setupStartButton(elements, playerNames) {
 
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("start-btn")) {
-      if (isMultiPlayer) {
-        gameController.showPlayer2Placement();
-      } else {
         elements.enemyDeployment.style.display = "flex";
         elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
-      }
     }
 
     if (e.target.classList.contains("ready-btn-p2") && gameController) {
@@ -264,7 +260,12 @@ export function buttonsToDisplay(){
       container.appendChild(passToP2Btn);
     }
   } else if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
-    startBtn.style.display = "block";
+    const p2Container = safeQuerySelector('.ship-deployment-p2 .button-container');
+    if (p2Container && !p2Container.querySelector('.start-btn')) {
+      const startGameBtn = document.createElement('div');
+      startGameBtn.innerHTML = '<button class="start-btn clickable" type="button">Start Game</button>';
+      p2Container.appendChild(startGameBtn);
+    }
   }
 }
 

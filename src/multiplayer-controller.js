@@ -33,13 +33,12 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
 
   function setupPlayer2ShipPlacement() {
     const player2PlacementHTML = `
-      <div class="player2-ship-placement" style="display: none;">
-        <h2>${playerNames.player2Name}, place your ships!</h2>
+      <div class="ship-deployment-p2" style="display: none;">
         <div class="grid-container">
           <div class="grid-container-player2 grid"></div>
           <div class="button-container">
             <button class="random-placement-btn-p2 clickable">Random Placement</button>
-            <button class="ready-btn-p2 clickable" style="display: none;">Ready!</button>
+            <button class="ready-btn-p2 clickable green" style="display: none;">Ready!</button>
           </div>
         </div>
         <div class="ship-placement">
@@ -188,14 +187,16 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
   }
 
   function showPlayer2Placement() {
-    const userPlacement = document.querySelector('.user-ship-placement');
-    const player2Placement = document.querySelector('.player2-ship-placement');
-    if (userPlacement) userPlacement.style.display = 'none';
+    const player1Placement = document.querySelector('.ship-deployment');
+    const userPlacement = document.querySelector('.user');
+    const player2Placement = document.querySelector('.ship-deployment-p2');
+    if (player1Placement) player1Placement.style.display = 'none';
+    if (userPlacement) userPlacement.textContent = `${playerNames.player2Name}, place your ships`;
     if (player2Placement) player2Placement.style.display = 'flex';
   }
 
   function onPlayer2Ready() {
-    const player2Placement = document.querySelector('.player2-ship-placement');
+    const player2Placement = document.querySelector('.ship-deployment-p2');
     if (player2Placement) player2Placement.style.display = 'none';
     if (elements.enemyDeployment) elements.enemyDeployment.style.display = "flex";
     if (elements.turnsController) elements.turnsController.style.display = "flex";
