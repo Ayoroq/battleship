@@ -191,6 +191,10 @@ function setupStartButton(elements, playerNames) {
       gameController.onPlayer2Ready();
       gameController.startGame();
     }
+
+    if (e.target.closest(".pass-to-p2-btn") && gameController) {
+      gameController.showPlayer2Placement();
+    }
   });
   
   // Expose function to re-setup start button after restart
