@@ -262,11 +262,13 @@ export function buttonsToDisplay(){
       passToP2Btn.innerHTML = '<button class="clickable blue" type="button">Pass to Player 2</button>';
       container.appendChild(passToP2Btn);
     }
-  } else if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
-    startBtn.remove();
+  }
+
+  if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
     const p2Container = safeQuerySelector('.ship-deployment-p2 .button-container');
-    if (p2Container && !p2Container.querySelector('.start-btn')) {
+    if (p2Container && !p2Container.querySelector('.start-game')) {
       const startGameBtn = document.createElement('div');
+      startGameBtn.classList.add('start-game');
       startGameBtn.innerHTML = '<button class="start-btn clickable green" type="button">Start Game</button>';
       p2Container.appendChild(startGameBtn);
     }
