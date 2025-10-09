@@ -265,7 +265,7 @@ export function buttonsToDisplay(){
   }
 
   if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
-    const p2Container = safeQuerySelector('.ship-deployment-p2 .button-container');
+    const p2Container = safeQuerySelector('.enemy-deployment .button-container');
     if (p2Container && !p2Container.querySelector('.start-game')) {
       const startGameBtn = document.createElement('div');
       startGameBtn.classList.add('start-game');

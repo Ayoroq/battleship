@@ -1,10 +1,21 @@
 import { Gameboard } from "./game.js";
-import { shipRotation, shipDragAndDrop, shipGridRotation, setupRandomPlacement, createGridCells, markShipHit } from "./ship-movement.js";
+import {
+  shipRotation,
+  shipDragAndDrop,
+  shipGridRotation,
+  setupRandomPlacement,
+  createGridCells,
+  markShipHit,
+} from "./ship-movement.js";
 
-export function createMultiPlayerController(elements, playerNames, addConfetti) {
+export function createMultiPlayerController(
+  elements,
+  playerNames,
+  addConfetti
+) {
   const player1 = initializePlayer1();
   const player2 = initializePlayer2();
-  
+
   let gameStarted = false;
   let currentTurn = playerNames.player1Name;
   let player2ShipsPlaced = false;
@@ -25,24 +36,24 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
   }
 
   function initializePlayer2() {
-    const gridContainer = document.querySelector(".grid-container-2");
     const gameBoard = new Gameboard();
-    createGridCells(gridContainer);
-    return { gameBoard, gridContainer };
+    return { gameBoard, gridContainer: null };
   }
 
   function setupPlayer2ShipPlacement() {
-    const player2PlacementHTML = `
-      <div class="ship-deployment-p2" style="display: none;">
+    // Set up player 2 ship placement in enemy deployment area
+    if (elements.enemyDeployment) {
+      elements.enemyDeployment.innerHTML = `
         <div class="grid-container">
-          <div class="grid-container-player2 grid"></div>
+          <div class="grid-container-player-2 grid"></div>
           <div class="button-container">
-            <button class="random-placement-btn-p2 clickable">Random Placement</button>
-            <button class="ready-btn-p2 clickable green" style="display: none;">Ready!</button>
+            <div class="random-placement">
+              <button class="random-placement-btn-p2 clickable">Random Placement</button>
+            </div>
           </div>
         </div>
-        <div class="ship-placement">
-          <div class="space-port-p2">
+        <div class="enemy-ship-placement">
+          <div class="enemy-space-port">
             <div class="ship-class">
               <div class="ship" data-ship-name="Dreadnought" draggable="true" data-ship-size="5" data-ship-direction="horizontal"></div>
               <button class="rotate-ship"><img src="0318bfb7c1037aa6bc68.svg" alt=""></button>
@@ -65,40 +76,46 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
             </div>
           </div>
         </div>
-      </div>
-    `;
-    
-    elements.shipPlacementScreen.insertAdjacentHTML('beforeend', player2PlacementHTML);
-    
-    const player2Grid = document.querySelector('.grid-container-player2');
-    const player2SpacePort = document.querySelector('.space-port-p2');
-    const player2RandomBtn = document.querySelector('.random-placement-btn-p2');
-    
-    createGridCells(player2Grid);
-    shipRotation(player2SpacePort);
-    shipDragAndDrop(player2SpacePort, player2Grid, player2.gameBoard);
-    shipGridRotation(player2Grid, player2.gameBoard);
-    
-    if (player2RandomBtn) {
-      setupRandomPlacement(player2RandomBtn, player2.gameBoard, player2Grid, player2SpacePort);
+      `;
+
+      const player2Grid = elements.enemyDeployment.querySelector(".grid-container-player-2");
+      const player2SpacePort = elements.enemyDeployment.querySelector(".enemy-space-port");
+      const player2RandomBtn = elements.enemyDeployment.querySelector(".random-placement-btn-p2");
+
+      createGridCells(player2Grid);
+      player2.gridContainer = player2Grid;
+
+      shipRotation(player2SpacePort);
+      shipDragAndDrop(player2SpacePort, player2Grid, player2.gameBoard);
+      shipGridRotation(player2Grid, player2.gameBoard);
+
+      if (player2RandomBtn) {
+        setupRandomPlacement(player2RandomBtn,player2.gameBoard,player2Grid,player2SpacePort);
+      }
     }
   }
 
   function handlePlayerAttacks() {
     // Player 1 attacks Player 2
     player2.gridContainer.addEventListener("click", (e) => {
-      if (gameStarted && currentTurn === playerNames.player1Name && 
-          e.target.classList.contains("grid-cell") && 
-          !e.target.classList.contains("hit") && 
-          !e.target.classList.contains("miss")) {
-        
+      if (
+        gameStarted &&
+        currentTurn === playerNames.player1Name &&
+        e.target.classList.contains("grid-cell") &&
+        !e.target.classList.contains("hit") &&
+        !e.target.classList.contains("miss")
+      ) {
         const x = parseInt(e.target.dataset.x);
         const y = parseInt(e.target.dataset.y);
         const attackResult = player2.gameBoard.receiveAttack(x, y);
-        
+
         if (attackResult.result === "hit") {
           e.target.classList.add("hit");
-          markShipHit(player2.gridContainer,attackResult.ship,attackResult.cellIndex);
+          markShipHit(
+            player2.gridContainer,
+            attackResult.ship,
+            attackResult.cellIndex
+          );
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
@@ -108,18 +125,24 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
 
     // Player 2 attacks Player 1
     player1.gridContainer.addEventListener("click", (e) => {
-      if (gameStarted && currentTurn === playerNames.player2Name && 
-          e.target.classList.contains("grid-cell") && 
-          !e.target.classList.contains("hit") && 
-          !e.target.classList.contains("miss")) {
-        
+      if (
+        gameStarted &&
+        currentTurn === playerNames.player2Name &&
+        e.target.classList.contains("grid-cell") &&
+        !e.target.classList.contains("hit") &&
+        !e.target.classList.contains("miss")
+      ) {
         const x = parseInt(e.target.dataset.x);
         const y = parseInt(e.target.dataset.y);
         const attackResult = player1.gameBoard.receiveAttack(x, y);
-        
+
         if (attackResult.result === "hit") {
           e.target.classList.add("hit");
-          markShipHit(player1.gridContainer,attackResult.ship,attackResult.cellIndex);
+          markShipHit(
+            player1.gridContainer,
+            attackResult.ship,
+            attackResult.cellIndex
+          );
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
@@ -130,8 +153,11 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
 
   function switchTurn() {
     if (detectWinner()) return;
-    
-    currentTurn = currentTurn === playerNames.player1Name ? playerNames.player2Name : playerNames.player1Name;
+
+    currentTurn =
+      currentTurn === playerNames.player1Name
+        ? playerNames.player2Name
+        : playerNames.player1Name;
     if (elements.currentPlayerTurn) {
       elements.currentPlayerTurn.textContent = `${currentTurn}'s turn`;
     }
@@ -167,13 +193,14 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
   function setupForfeit() {
     const forfeitButton = document.querySelector(".forfeit-btn");
     if (!forfeitButton) return;
-    
+
     forfeitButton.addEventListener("click", () => {
       gameStarted = false;
-      const winner = currentTurn === playerNames.player1Name
-        ? playerNames.player2Name
-        : playerNames.player1Name;
-      
+      const winner =
+        currentTurn === playerNames.player1Name
+          ? playerNames.player2Name
+          : playerNames.player1Name;
+
       if (elements.winnerDisplay && elements.winnerDialog) {
         elements.winnerDisplay.textContent = `${winner} wins by forfeit!`;
         elements.winnerDialog.showModal();
@@ -187,19 +214,33 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
   }
 
   function showPlayer2Placement() {
-    const player1Placement = document.querySelector('.ship-deployment');
-    const userPlacement = document.querySelector('.user');
-    const player2Placement = document.querySelector('.ship-deployment-p2');
-    if (player1Placement) player1Placement.style.display = 'none';
-    if (userPlacement) userPlacement.textContent = `${playerNames.player2Name}, place your ships`;
-    if (player2Placement) player2Placement.style.display = 'flex';
+    const player1Placement = document.querySelector(".player-deployment");
+    const userPlacement = document.querySelector(".user");
+    if (player1Placement) player1Placement.style.display = "none";
+    if (userPlacement)
+      userPlacement.textContent = `${playerNames.player2Name}, place your ships`;
+    if (elements.enemyDeployment)
+      elements.enemyDeployment.style.display = "flex";
   }
 
   function onPlayer2Ready() {
-    const player2Placement = document.querySelector('.ship-deployment-p2');
-    if (player2Placement) player2Placement.style.display = 'none';
-    if (elements.enemyDeployment) elements.enemyDeployment.style.display = "flex";
-    if (elements.turnsController) elements.turnsController.style.display = "flex";
+    // Remove ship placement UI, keep only the grid for gameplay
+    const shipPlacement = elements.enemyDeployment.querySelector(
+      ".enemy-ship-placement"
+    );
+    if (shipPlacement) {
+      shipPlacement.innerHTML = '<div class="enemy-space-port"></div>';
+    }
+
+    // Remove button container
+    const buttonContainer =
+      elements.enemyDeployment.querySelector(".button-container");
+    if (buttonContainer) {
+      buttonContainer.remove();
+    }
+
+    if (elements.turnsController)
+      elements.turnsController.style.display = "flex";
     player2ShipsPlaced = true;
   }
 
@@ -213,6 +254,6 @@ export function createMultiPlayerController(elements, playerNames, addConfetti) 
     startGame,
     player1,
     player2: () => player2,
-    markShipHit
+    markShipHit,
   };
 }

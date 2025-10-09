@@ -151,7 +151,7 @@ body {
 }
 
 /* Grid Container Styling */
-.ship-deployment,.ship-deployment-p2 {
+.ship-deployment{
   display: flex;
   gap: 5rem;
 }
@@ -186,9 +186,10 @@ body {
 
 .enemy-deployment {
   display: none;
+  gap: 5rem;
 }
 
-.space-port,.space-port-p2 {
+.space-port,.enemy-space-port {
   display: flex;
   height: 89%;
   justify-content: space-evenly;

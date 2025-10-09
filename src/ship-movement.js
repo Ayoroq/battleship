@@ -75,8 +75,9 @@ function setupRandomPlacement(randomizeButton, gameboard, gridContainer, spacePo
       // Some ships placed - keep existing, place remaining randomly
       placeRemainingShipsRandomly(gameboard, gridContainer);
     }
-    const shipPlacement = document.querySelector(".ship-placement");
-    if (shipPlacement) shipPlacement.remove(); // Remove space-port after random placement
+    // Remove the ship placement container that contains this spacePort
+    const shipPlacementContainer = spacePort.closest('.ship-placement, .enemy-ship-placement');
+    if (shipPlacementContainer) shipPlacementContainer.remove();
   });
 }
 
