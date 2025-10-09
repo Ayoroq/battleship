@@ -223,34 +223,12 @@ export function createMultiPlayerController(
       elements.enemyDeployment.style.display = "flex";
   }
 
-  function onPlayer2Ready() {
-    // Remove ship placement UI, keep only the grid for gameplay
-    const shipPlacement = elements.enemyDeployment.querySelector(
-      ".enemy-ship-placement"
-    );
-    if (shipPlacement) {
-      shipPlacement.innerHTML = '<div class="enemy-space-port"></div>';
-    }
-
-    // Remove button container
-    const buttonContainer =
-      elements.enemyDeployment.querySelector(".button-container");
-    if (buttonContainer) {
-      buttonContainer.remove();
-    }
-
-    if (elements.turnsController)
-      elements.turnsController.style.display = "flex";
-    player2ShipsPlaced = true;
-  }
-
   setupForfeit();
 
   return {
     handlePlayerAttacks,
     setupPlayer2ShipPlacement,
     showPlayer2Placement,
-    onPlayer2Ready,
     startGame,
     player1,
     player2: () => player2,

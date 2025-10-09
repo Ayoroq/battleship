@@ -186,7 +186,6 @@ function setupStartButton(elements, playerNames) {
         elements.userPlacementScreen.style.display = "none";
         elements.enemyDeployment.style.display = "flex";
         elements.turnsController.style.display = "flex";
-        gameController.onPlayer2Ready();
         gameController.startGame();
       }
     }
