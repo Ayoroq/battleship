@@ -30,6 +30,16 @@ function checkAllShipsPlaced(gameboard) {
   if (window.buttonsToDisplay) {
     window.buttonsToDisplay();
   }
+  
+  // Remove ship placement container when all ships are placed
+  if (allShipsPlaced) {
+    const spacePort = document.querySelector('.space-port, .enemy-space-port');
+    if (spacePort) {
+      const shipPlacementContainer = spacePort.closest('.ship-placement, .enemy-ship-placement');
+      if (shipPlacementContainer) shipPlacementContainer.remove();
+    }
+  }
+  
   return allShipsPlaced;
 }
 
