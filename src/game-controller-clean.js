@@ -143,6 +143,10 @@ function setupNameForm(elements, playerNames) {
 
 function setupRulesDialog(elements, playerNames) {
   elements.beginMission.addEventListener("click", () => {
+    const userNameDisplay = safeQuerySelector(".user");
+    if (userNameDisplay) {
+      userNameDisplay.textContent = `${playerNames.player1Name}, place your ships`;
+    }
     elements.shipPlacementHeader.style.display = "flex";
     elements.shipPlacementScreen.style.display = "flex";
     elements.userPlacementScreen.style.display = "flex";
