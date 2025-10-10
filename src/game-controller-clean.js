@@ -154,37 +154,23 @@ function setupRulesDialog(elements, playerNames) {
 }
 
 function setupStartButton(elements, playerNames) {
-  function startGame() {
-    if (!elements.start) return;
-    
-    elements.start.addEventListener("click", () => {
-      gameStarted = true;
-      currentTurn = playerNames.player1Name;
-      if (elements.currentPlayerTurn) {
-        elements.currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
-      }
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("start-btn")) {
       if (elements.shipDeploymentTitle) {
         elements.shipDeploymentTitle.style.display = "none";
       }
-      const buttonContainer = safeQuerySelector(".button-container");
+      const buttonContainer = e.target.closest('.button-container');
       if (buttonContainer) {
         buttonContainer.remove();
       }
-    });
-  }
-
-  startGame();
-
-  document.addEventListener("click", (e) => {
-    if (e.target.classList.contains("start-btn")) {
+      
       if(!isMultiPlayer){
         elements.enemyDeployment.style.display = "flex";
         elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
-      } else if(isMultiPlayer){
-        elements.userPlacementScreen.style.display = "none";
-        elements.enemyDeployment.style.display = "flex";
+      } else if(isMultiPlayer && e.target.closest('.enemy-deployment')){
+        elements.enemyDeployment.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
       }
@@ -195,8 +181,7 @@ function setupStartButton(elements, playerNames) {
     }
   });
   
-  // Expose function to re-setup start button after restart
-  return { setupStartButton: startGame };
+  return { setupStartButton: () => {} };
 }
 
 function addConfetti() {
@@ -245,6 +230,7 @@ export function buttonsToDisplay(){
   const player1Board = isMultiPlayer ? gameController.player1?.gameBoard : gameController.player?.gameBoard;
   const player2Board = isMultiPlayer ? gameController.player2()?.gameBoard : gameController.enemy?.gameBoard;
   const startBtn = safeQuerySelector('.start-btn');
+  const startGame = safeQuerySelector('.start-game');
   
   if (!player1Board || !startBtn) return;
   
@@ -264,6 +250,7 @@ export function buttonsToDisplay(){
   }
 
   if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
+    startGame.remove();
     const p2Container = safeQuerySelector('.enemy-deployment .button-container');
     if (p2Container && !p2Container.querySelector('.start-game')) {
       const startGameBtn = document.createElement('div');
