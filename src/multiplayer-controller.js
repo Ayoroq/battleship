@@ -119,7 +119,11 @@ export function createMultiPlayerController(
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
-        switchTurn();
+        
+        // Add delay to show attack result before switching turns
+        setTimeout(() => {
+          switchTurn();
+        }, 1500);
       }
     });
 
@@ -146,7 +150,11 @@ export function createMultiPlayerController(
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
-        switchTurn();
+        
+        // Add delay to show attack result before switching turns
+        setTimeout(() => {
+          switchTurn();
+        }, 1500);
       }
     });
   }
@@ -158,8 +166,29 @@ export function createMultiPlayerController(
       currentTurn === playerNames.player1Name
         ? playerNames.player2Name
         : playerNames.player1Name;
+    
+    updateTurnDisplay();
+    updateGridStates();
+  }
+
+  function updateTurnDisplay() {
     if (elements.currentPlayerTurn) {
       elements.currentPlayerTurn.textContent = `${currentTurn}'s turn`;
+    }
+  }
+
+  function updateGridStates() {
+    const playerDeployment = document.querySelector('.player-deployment');
+    const enemyDeployment = document.querySelector('.enemy-deployment');
+    
+    if (currentTurn === playerNames.player1Name) {
+      // Player 1's turn - show player 2's grid for attacking
+      if (playerDeployment) playerDeployment.style.display = 'none';
+      if (enemyDeployment) enemyDeployment.style.display = 'flex';
+    } else {
+      // Player 2's turn - show player 1's grid for attacking  
+      if (enemyDeployment) enemyDeployment.style.display = 'none';
+      if (playerDeployment) playerDeployment.style.display = 'flex';
     }
   }
 
@@ -185,9 +214,8 @@ export function createMultiPlayerController(
   function startGame() {
     gameStarted = true;
     currentTurn = playerNames.player1Name;
-    if (elements.currentPlayerTurn) {
-      elements.currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
-    }
+    updateTurnDisplay();
+    updateGridStates();
   }
 
   function setupForfeit() {

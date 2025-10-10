@@ -153,7 +153,7 @@ function setupRulesDialog(elements, playerNames) {
   });
 }
 
-function setupStartButton(elements, playerNames) {
+function setupStartButton(elements) {
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("start-btn")) {
       if (elements.shipDeploymentTitle) {
@@ -169,8 +169,8 @@ function setupStartButton(elements, playerNames) {
         elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
-      } else if(isMultiPlayer && e.target.closest('.enemy-deployment')){
-        elements.enemyDeployment.style.display = "none";
+      } else if(isMultiPlayer){
+        elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
       }
