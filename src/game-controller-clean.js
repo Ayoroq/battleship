@@ -163,6 +163,8 @@ function setupStartButton(elements) {
       buttonContainers.forEach(container => container.remove());
       
       if(!isMultiPlayer){
+        const elementPlacement = document.querySelector(".enemy-ship-placement")
+        if (elementPlacement) elementPlacement.remove();
         elements.enemyDeployment.style.display = "flex";
         elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";

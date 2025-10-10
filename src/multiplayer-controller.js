@@ -209,9 +209,14 @@ export function createMultiPlayerController(
       elements.winnerDisplay.textContent = `${winnerName} wins!`;
       elements.winnerDialog.showModal();
     }
+    if (addConfetti) {
+      addConfetti();
+    }
   }
 
   function startGame() {
+    const ships = document.querySelectorAll(".ship");
+    ships.forEach((ship) => ship.remove());
     gameStarted = true;
     currentTurn = playerNames.player1Name;
     updateTurnDisplay();

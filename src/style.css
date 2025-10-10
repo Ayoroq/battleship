@@ -29,10 +29,11 @@ body {
 .main {
   flex: 1;
   display: flex;
-  gap: 8rem;
+  gap: 5rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-bottom: 5rem;
 }
 
 /* Loading Screen Styling*/
@@ -57,7 +58,7 @@ body {
 }
 
 .game-name {
-  margin-top: 3rem;
+  margin: 3rem 0 0 0;
   color: var(--primary-colour);
   font-size: clamp(3rem, 8vw, 8rem);
 }

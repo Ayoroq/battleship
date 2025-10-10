@@ -1,5 +1,13 @@
 import { Gameboard } from "./game.js";
-import { shipRotation, shipDragAndDrop,placeComputerShipsRandomly, shipGridRotation, setupRandomPlacement, createGridCells, markShipHit } from "./ship-movement.js";
+import {
+  shipRotation,
+  shipDragAndDrop,
+  placeComputerShipsRandomly,
+  shipGridRotation,
+  setupRandomPlacement,
+  createGridCells,
+  markShipHit,
+} from "./ship-movement.js";
 
 const SHIP_PLACEMENT_TEMPLATE = `
   <div class="grid-container">
@@ -53,11 +61,15 @@ const SHIP_PLACEMENT_TEMPLATE = `
   </div>
 `;
 
-export function createSinglePlayerController(elements, playerNames, addConfetti) {
+export function createSinglePlayerController(
+  elements,
+  playerNames,
+  addConfetti
+) {
   const player = initializePlayer();
   const enemy = initializeEnemy();
   const enemyAttacker = createEnemyAI();
-  
+
   let gameStarted = false;
   let currentTurn = playerNames.player1Name;
 
@@ -86,15 +98,17 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
 
   function handlePlayerAttack() {
     enemy.gridContainer.addEventListener("click", (e) => {
-      if (gameStarted && currentTurn === playerNames.player1Name && 
-          e.target.classList.contains("grid-cell") && 
-          !e.target.classList.contains("hit") && 
-          !e.target.classList.contains("miss")) {
-        
+      if (
+        gameStarted &&
+        currentTurn === playerNames.player1Name &&
+        e.target.classList.contains("grid-cell") &&
+        !e.target.classList.contains("hit") &&
+        !e.target.classList.contains("miss")
+      ) {
         const x = parseInt(e.target.dataset.x);
         const y = parseInt(e.target.dataset.y);
         const attackResult = enemy.gameBoard.receiveAttack(x, y);
-        
+
         if (attackResult.result === "hit") {
           e.target.classList.add("hit");
         } else if (attackResult.result === "miss") {
@@ -107,7 +121,7 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
 
   function playRound() {
     if (detectWinner()) return;
-    
+
     currentTurn = playerNames.player2Name;
     if (elements.currentPlayerTurn) {
       elements.currentPlayerTurn.textContent = `${playerNames.player2Name}'s turn`;
@@ -128,10 +142,10 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
 
   function createEnemyAI() {
     let huntTargets = [];
-    
+
     const makeSmartAttack = () => {
       let x, y;
-      
+
       if (huntTargets.length > 0) {
         const target = huntTargets.shift();
         x = target.x;
@@ -142,29 +156,45 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
           x = Math.floor(Math.random() * 10);
           y = Math.floor(Math.random() * 10);
           attempts++;
-        } while ((player.gameBoard.board[x][y] === "hit" || 
-                 player.gameBoard.board[x][y] === "miss" || 
-                 (attempts < 50 && (x + y) % 2 !== 0)) && attempts < 100);
+        } while (
+          (player.gameBoard.board[x][y] === "hit" ||
+            player.gameBoard.board[x][y] === "miss" ||
+            (attempts < 50 && (x + y) % 2 !== 0)) &&
+          attempts < 100
+        );
       }
 
       const attackResult = player.gameBoard.receiveAttack(x, y);
       if (attackResult.result === "already_attacked") {
         return makeSmartAttack();
       }
-      
-      const targetCell = player.gridContainer.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+
+      const targetCell = player.gridContainer.querySelector(
+        `[data-x="${x}"][data-y="${y}"]`
+      );
       if (!targetCell) return { hit: false };
 
       if (attackResult.result === "hit") {
         targetCell.classList.add("hit");
-        markShipHit(player.gridContainer,attackResult.ship,attackResult.cellIndex);
+        markShipHit(
+          player.gridContainer,
+          attackResult.ship,
+          attackResult.cellIndex
+        );
         if (!attackResult.ship.isSunk()) {
           const adjacent = [
-            {x: x-1, y}, {x: x+1, y}, {x, y: y-1}, {x, y: y+1}
-          ].filter(pos => 
-            pos.x >= 0 && pos.x < 10 && pos.y >= 0 && pos.y < 10 &&
-            player.gameBoard.board[pos.x][pos.y] !== "hit" &&
-            player.gameBoard.board[pos.x][pos.y] !== "miss"
+            { x: x - 1, y },
+            { x: x + 1, y },
+            { x, y: y - 1 },
+            { x, y: y + 1 },
+          ].filter(
+            (pos) =>
+              pos.x >= 0 &&
+              pos.x < 10 &&
+              pos.y >= 0 &&
+              pos.y < 10 &&
+              player.gameBoard.board[pos.x][pos.y] !== "hit" &&
+              player.gameBoard.board[pos.x][pos.y] !== "miss"
           );
           huntTargets.unshift(...adjacent);
         } else {
@@ -174,7 +204,7 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
         targetCell.classList.add("miss");
       }
     };
-    
+
     return { makeSmartAttack };
   }
 
@@ -191,7 +221,8 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
 
   function displayWinner(winner) {
     gameStarted = false;
-    const winnerName = winner === "player" ? playerNames.player1Name : playerNames.player2Name;
+    const winnerName =
+      winner === "player" ? playerNames.player1Name : playerNames.player2Name;
     if (elements.winnerDisplay && elements.winnerDialog) {
       elements.winnerDisplay.textContent = `${winnerName} wins!`;
       elements.winnerDialog.showModal();
@@ -207,19 +238,21 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
     if (elements.currentPlayerTurn) {
       elements.currentPlayerTurn.textContent = `${playerNames.player1Name}'s turn`;
     }
+    const ships = document.querySelectorAll(".ship");
+    ships.forEach((ship) => ship.setAttribute("draggable", "false"));
   }
 
   function setupForfeit() {
     const forfeitButton = document.querySelector(".forfeit-btn");
     if (!forfeitButton) return;
-    
+
     forfeitButton.addEventListener("click", () => {
       // Only allow forfeit during human player's turn
       if (currentTurn !== playerNames.player1Name) return;
-      
+
       gameStarted = false;
       const winner = playerNames.player2Name; // Computer always wins
-      
+
       if (elements.winnerDisplay && elements.winnerDialog) {
         elements.winnerDisplay.textContent = `${winner} wins by forfeit!`;
         elements.winnerDialog.showModal();
@@ -230,7 +263,7 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
   function handleRestart() {
     const restartButton = document.querySelector(".restart");
     if (!restartButton) return;
-    
+
     restartButton.addEventListener("click", () => {
       resetGameState();
       resetPlayerDeployment();
@@ -260,7 +293,7 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
 
     const newSpacePort = document.querySelector(".space-port");
     const newPlayerGrid = document.querySelector(".grid-container-player");
-    
+
     if (newSpacePort && newPlayerGrid) {
       createGridCells(newPlayerGrid);
       player.gridContainer = newPlayerGrid;
@@ -272,9 +305,14 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
 
       const randomizeButton = document.querySelector(".random-placement-btn");
       if (randomizeButton) {
-        setupRandomPlacement(randomizeButton, player.gameBoard, newPlayerGrid, newSpacePort);
+        setupRandomPlacement(
+          randomizeButton,
+          player.gameBoard,
+          newPlayerGrid,
+          newSpacePort
+        );
       }
-      
+
       // Re-setup start button functionality
       if (window.setupStartButton) {
         window.setupStartButton();
@@ -283,12 +321,18 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
   }
 
   function resetUIState() {
-    if (elements.shipDeploymentTitle) elements.shipDeploymentTitle.style.display = "block";
-    if (elements.turnsController) elements.turnsController.style.display = "none";
-    if (elements.enemyDeployment) elements.enemyDeployment.style.display = "none";
-    if (elements.shipPlacementHeader) elements.shipPlacementHeader.style.display = "flex";
-    if (elements.shipPlacementScreen) elements.shipPlacementScreen.style.display = "flex";
-    if (elements.userPlacementScreen) elements.userPlacementScreen.style.display = "flex";
+    if (elements.shipDeploymentTitle)
+      elements.shipDeploymentTitle.style.display = "block";
+    if (elements.turnsController)
+      elements.turnsController.style.display = "none";
+    if (elements.enemyDeployment)
+      elements.enemyDeployment.style.display = "none";
+    if (elements.shipPlacementHeader)
+      elements.shipPlacementHeader.style.display = "flex";
+    if (elements.shipPlacementScreen)
+      elements.shipPlacementScreen.style.display = "flex";
+    if (elements.userPlacementScreen)
+      elements.userPlacementScreen.style.display = "flex";
     if (elements.winnerDialog) elements.winnerDialog.close();
   }
 
@@ -301,6 +345,6 @@ export function createSinglePlayerController(elements, playerNames, addConfetti)
     player,
     enemy,
     markShipHit,
-    handleRestart
+    handleRestart,
   };
 }
