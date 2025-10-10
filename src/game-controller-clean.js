@@ -159,10 +159,8 @@ function setupStartButton(elements) {
       if (elements.shipDeploymentTitle) {
         elements.shipDeploymentTitle.style.display = "none";
       }
-      const buttonContainer = e.target.closest('.button-container');
-      if (buttonContainer) {
-        buttonContainer.remove();
-      }
+      const buttonContainers = document.querySelectorAll(".button-container");
+      buttonContainers.forEach(container => container.remove());
       
       if(!isMultiPlayer){
         elements.enemyDeployment.style.display = "flex";
