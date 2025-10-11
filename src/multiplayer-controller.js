@@ -221,7 +221,7 @@ export function createMultiPlayerController(
       elements.winnerDisplay.textContent = `${winnerName} wins!`;
       elements.winnerDialog.showModal();
     }
-    if (addConfetti) {
+    if (winnerName && addConfetti) {
       addConfetti();
     }
   }
@@ -289,6 +289,7 @@ export function createMultiPlayerController(
     if (!restartButton) return;
 
     restartButton.addEventListener("click", () => {
+      
       resetGameState();
       resetPlayerDeployment();
       reinitializeGameComponents();
@@ -405,7 +406,7 @@ export function createMultiPlayerController(
     if (elements.userPlacementScreen)
       elements.userPlacementScreen.style.display = "flex";
     if (elements.winnerDialog) elements.winnerDialog.close();
-    
+
     const userPlacement = document.querySelector(".user");
     if (userPlacement)
       userPlacement.textContent = `${playerNames.player1Name}, place your ships`;

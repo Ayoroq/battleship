@@ -77,6 +77,9 @@ function handleRestart(elements, playerNames) {
   if (!elements.restartButton) return;
 
   elements.restartButton.addEventListener("click", () => {
+    if (confettiInterval) {
+      clearInterval(confettiInterval);
+    }
     restartGame(elements, playerNames);
   });
 }
