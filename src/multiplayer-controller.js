@@ -18,6 +18,7 @@ export function createMultiPlayerController(
   let gameStarted = false;
   let currentTurn = playerNames.player1Name;
   let player2ShipsPlaced = false;
+  let isProcessingAttack = false;
 
   function initializePlayer1() {
     const spacePort = document.querySelector(".space-port");
@@ -105,11 +106,13 @@ export function createMultiPlayerController(
     player2.gridContainer.addEventListener("click", (e) => {
       if (
         gameStarted &&
+        !isProcessingAttack &&
         currentTurn === playerNames.player1Name &&
         e.target.classList.contains("grid-cell") &&
         !e.target.classList.contains("hit") &&
         !e.target.classList.contains("miss")
       ) {
+        isProcessingAttack = true;
         const x = parseInt(e.target.dataset.x);
         const y = parseInt(e.target.dataset.y);
         const attackResult = player2.gameBoard.receiveAttack(x, y);
@@ -128,6 +131,7 @@ export function createMultiPlayerController(
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
+          isProcessingAttack = false;
         }, 1500);
       }
     });
@@ -136,11 +140,13 @@ export function createMultiPlayerController(
     player1.gridContainer.addEventListener("click", (e) => {
       if (
         gameStarted &&
+        !isProcessingAttack &&
         currentTurn === playerNames.player2Name &&
         e.target.classList.contains("grid-cell") &&
         !e.target.classList.contains("hit") &&
         !e.target.classList.contains("miss")
       ) {
+        isProcessingAttack = true;
         const x = parseInt(e.target.dataset.x);
         const y = parseInt(e.target.dataset.y);
         const attackResult = player1.gameBoard.receiveAttack(x, y);
@@ -159,6 +165,7 @@ export function createMultiPlayerController(
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
+          isProcessingAttack = false;
         }, 1500);
       }
     });
