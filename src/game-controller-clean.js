@@ -105,6 +105,12 @@ function resetUI(elements, playerNames) {
     playerDeployment.style.display = "flex";
   }
 
+  // Reset enemy's grid
+  if (elements.enemyDeployment) {
+    const enemyGrid = elements.enemyDeployment.querySelector(".grid-container-2");
+    if (enemyGrid) enemyGrid.innerHTML = "";
+  }
+
   // Reset UI visibility
   if (elements.shipDeploymentTitle)
     elements.shipDeploymentTitle.style.display = "block";
