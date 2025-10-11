@@ -37,6 +37,7 @@ export function initializeGame() {
     winnerDisplay: safeQuerySelector(".winner"),
     winnerDialog: safeQuerySelector(".finish"),
     shipDeploymentTitle: safeQuerySelector(".ship-placement-title"),
+    restartButton: safeQuerySelector(".restart"),
     endGame: safeQuerySelector(".end"),
     start: safeQuerySelector(".start-btn"),
   };
@@ -50,12 +51,13 @@ export function initializeGame() {
   setupGameModeSelection(elements);
   setupNameForm(elements, playerNames);
   setupRulesDialog(elements, playerNames);
-  
+  handleRestart(elements, playerNames);
+
   const startButtonSetup = setupStartButton(elements, playerNames);
-  
+
   // Make setupStartButton available globally for restart
   window.setupStartButton = startButtonSetup.setupStartButton;
-  
+
   // View rules button
   if (elements.viewRulesBtn) {
     elements.viewRulesBtn.addEventListener("click", () => {
@@ -67,15 +69,65 @@ export function initializeGame() {
       }
     });
   }
-  
+
   handleEndGame(elements);
+}
+
+function handleRestart(elements, playerNames) {
+  if (!elements.restartButton) return;
+
+  elements.restartButton.addEventListener("click", () => {
+    restartGame(elements, playerNames);
+  });
+}
+
+function restartGame(elements, playerNames) {
+  // 1. Destroy the old game controller to remove old listeners
+  if (gameController && gameController.destroy) {
+    gameController.destroy();
+  }
+  gameController = null;
+
+  // 2. Reset the UI to its initial state
+  resetUI(elements, playerNames);
+
+  // 3. Initialize a new game controller
+  initializeGameController(elements, playerNames);
+}
+
+function resetUI(elements, playerNames) {
+  // Reset player 1's deployment area
+  const playerDeployment = safeQuerySelector(".player-deployment");
+  if (playerDeployment) {
+    playerDeployment.innerHTML = document.getElementById(
+      "ship-placement-template"
+    ).innerHTML;
+    playerDeployment.style.display = "flex";
+  }
+
+  // Reset UI visibility
+  if (elements.shipDeploymentTitle)
+    elements.shipDeploymentTitle.style.display = "block";
+  if (elements.turnsController) elements.turnsController.style.display = "none";
+  if (elements.enemyDeployment) elements.enemyDeployment.style.display = "none";
+  if (elements.shipPlacementHeader)
+    elements.shipPlacementHeader.style.display = "flex";
+  if (elements.shipPlacementScreen)
+    elements.shipPlacementScreen.style.display = "flex";
+  if (elements.userPlacementScreen)
+    elements.userPlacementScreen.style.display = "flex";
+  const userText = safeQuerySelector(".user.text");
+  if (userText)
+    userText.textContent = `${playerNames.player1Name}, place your ships`;
+
+  if (elements.winnerDialog) elements.winnerDialog.close();
 }
 
 function handleEndGame(elements) {
   if (!elements.endGame) return;
-  
+
   elements.endGame.addEventListener("click", () => {
-    sessionStorage.setItem('skipLoading', 'true');
+    sessionStorage.setItem("skipLoading", "true");
     location.reload();
   });
 }
@@ -151,7 +203,16 @@ function setupRulesDialog(elements, playerNames) {
     elements.shipPlacementScreen.style.display = "flex";
     elements.userPlacementScreen.style.display = "flex";
     elements.rulesDialog.close();
-    
+
+    // Populate the initial player deployment UI from the template
+    const playerDeployment = safeQuerySelector(".player-deployment");
+    if (playerDeployment) {
+      playerDeployment.innerHTML = document.getElementById(
+        "ship-placement-template"
+      ).innerHTML;
+      playerDeployment.style.display = "flex";
+    }
+
     // Initialize game controller after user selections are made
     initializeGameController(elements, playerNames);
   });
@@ -164,16 +225,18 @@ function setupStartButton(elements) {
         elements.shipDeploymentTitle.style.display = "none";
       }
       const buttonContainers = document.querySelectorAll(".button-container");
-      buttonContainers.forEach(container => container.remove());
-      
-      if(!isMultiPlayer){
-        const elementPlacement = document.querySelector(".enemy-ship-placement")
+      buttonContainers.forEach((container) => container.remove());
+
+      if (!isMultiPlayer) {
+        const elementPlacement = document.querySelector(
+          ".enemy-ship-placement"
+        );
         if (elementPlacement) elementPlacement.remove();
         elements.enemyDeployment.style.display = "flex";
         elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
-      } else if(isMultiPlayer){
+      } else if (isMultiPlayer) {
         elements.userPlacementScreen.style.display = "none";
         elements.turnsController.style.display = "flex";
         gameController.startGame();
@@ -184,7 +247,7 @@ function setupStartButton(elements) {
       gameController.showPlayer2Placement();
     }
   });
-  
+
   return { setupStartButton: () => {} };
 }
 
@@ -228,38 +291,48 @@ function addConfetti() {
   }, 250);
 }
 
-export function buttonsToDisplay(){
+export function buttonsToDisplay() {
   if (!gameController) return;
-  
-  const player1Board = isMultiPlayer ? gameController.player1?.gameBoard : gameController.player?.gameBoard;
-  const player2Board = isMultiPlayer ? gameController.player2()?.gameBoard : gameController.enemy?.gameBoard;
-  const startBtn = safeQuerySelector('.start-btn');
-  const startGame = safeQuerySelector('.start-game');
-  
+
+  const player1Board = isMultiPlayer
+    ? gameController.player1?.gameBoard
+    : gameController.player?.gameBoard;
+  const player2Board = isMultiPlayer
+    ? gameController.player2()?.gameBoard
+    : gameController.enemy?.gameBoard;
+  const startBtn = safeQuerySelector(".start-btn");
+  const startGame = safeQuerySelector(".start-game");
+
   if (!player1Board || !startBtn) return;
-  
+
   const allShipsPlaced = areAllShipsPlaced(player1Board);
-  const allShipsPlaced2 = isMultiPlayer ? areAllShipsPlaced(player2Board) : true;
-  
-  if(!isMultiPlayer){
+  const allShipsPlaced2 = isMultiPlayer
+    ? areAllShipsPlaced(player2Board)
+    : true;
+
+  if (!isMultiPlayer) {
     startBtn.style.display = allShipsPlaced ? "block" : "none";
-  } else if(isMultiPlayer && allShipsPlaced && !allShipsPlaced2){
-    const container = safeQuerySelector('.button-container');
-    if (container && !container.querySelector('.pass-to-p2-btn')) {
-      const passToP2Btn = document.createElement('div');
-      passToP2Btn.classList.add('pass-to-p2-btn');
-      passToP2Btn.innerHTML = '<button class="clickable blue" type="button">Pass to Player 2</button>';
+  } else if (isMultiPlayer && allShipsPlaced && !allShipsPlaced2) {
+    const container = safeQuerySelector(".button-container");
+    if (container && !container.querySelector(".pass-to-p2-btn")) {
+      const passToP2Btn = document.createElement("div");
+      passToP2Btn.classList.add("pass-to-p2-btn");
+      passToP2Btn.innerHTML =
+        '<button class="clickable blue" type="button">Pass to Player 2</button>';
       container.appendChild(passToP2Btn);
     }
   }
 
-  if(isMultiPlayer && allShipsPlaced && allShipsPlaced2){
+  if (isMultiPlayer && allShipsPlaced && allShipsPlaced2) {
     startGame.remove();
-    const p2Container = safeQuerySelector('.enemy-deployment .button-container');
-    if (p2Container && !p2Container.querySelector('.start-game')) {
-      const startGameBtn = document.createElement('div');
-      startGameBtn.classList.add('start-game');
-      startGameBtn.innerHTML = '<button class="start-btn clickable green" type="button">Start Game</button>';
+    const p2Container = safeQuerySelector(
+      ".enemy-deployment .button-container"
+    );
+    if (p2Container && !p2Container.querySelector(".start-game")) {
+      const startGameBtn = document.createElement("div");
+      startGameBtn.classList.add("start-game");
+      startGameBtn.innerHTML =
+        '<button class="start-btn clickable green" type="button">Start Game</button>';
       p2Container.appendChild(startGameBtn);
     }
   }
@@ -267,14 +340,25 @@ export function buttonsToDisplay(){
 
 function initializeGameController(elements, playerNames) {
   if (isMultiPlayer) {
-    gameController = createMultiPlayerController(elements, playerNames, addConfetti);
+    gameController = createMultiPlayerController(
+      elements,
+      playerNames,
+      addConfetti
+    );
     gameController.setupPlayer2ShipPlacement();
-    gameController.handlePlayerAttacks();
   } else {
-    gameController = createSinglePlayerController(elements, playerNames, addConfetti);
-    gameController.handlePlayerAttack();
+    gameController = createSinglePlayerController(
+      elements,
+      playerNames,
+      addConfetti
+    );
   }
-  
+
+  // The controller should handle its own attacks
+  if (gameController.handleAttacks) {
+    gameController.handleAttacks();
+  }
+
   // Make buttonsToDisplay globally available
   window.buttonsToDisplay = buttonsToDisplay;
 }

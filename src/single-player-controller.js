@@ -96,7 +96,7 @@ export function createSinglePlayerController(
     return { gameBoard, gridContainer };
   }
 
-  function handlePlayerAttack() {
+  function handleAttacks() {
     enemy.gridContainer.addEventListener("click", (e) => {
       if (
         gameStarted &&
@@ -260,91 +260,26 @@ export function createSinglePlayerController(
     });
   }
 
-  function handleRestart() {
-    const restartButton = document.querySelector(".restart");
-    if (!restartButton) return;
-
-    restartButton.addEventListener("click", () => {
-      resetGameState();
-      resetPlayerDeployment();
-      reinitializeGameComponents();
-      resetUIState();
-    });
-  }
-
-  function resetGameState() {
-    gameStarted = false;
-    currentTurn = playerNames.player1Name;
-    player.gameBoard.resetBoard();
-    enemy.gameBoard.resetBoard();
-  }
-
-  function resetPlayerDeployment() {
-    const playerDeployment = document.querySelector(".player-deployment");
-    if (playerDeployment) {
-      playerDeployment.innerHTML = SHIP_PLACEMENT_TEMPLATE;
+  function destroy() {
+    // This function is for cleaning up event listeners to prevent memory leaks
+    // For now, the main grid click listener is the most important.
+    // A more robust implementation would use AbortController to clean up all listeners.
+    if (enemy.gridContainer) {
+      // By replacing the node with its clone, we remove all listeners.
+      enemy.gridContainer.parentNode.replaceChild(
+        enemy.gridContainer.cloneNode(true),
+        enemy.gridContainer
+      );
     }
-  }
-
-  function reinitializeGameComponents() {
-    enemy.gridContainer.innerHTML = "";
-    createGridCells(enemy.gridContainer);
-    placeComputerShipsRandomly(enemy.gameBoard);
-
-    const newSpacePort = document.querySelector(".space-port");
-    const newPlayerGrid = document.querySelector(".grid-container-player");
-
-    if (newSpacePort && newPlayerGrid) {
-      createGridCells(newPlayerGrid);
-      player.gridContainer = newPlayerGrid;
-      player.spacePort = newSpacePort;
-
-      shipRotation(newSpacePort);
-      shipDragAndDrop(newSpacePort, newPlayerGrid, player.gameBoard);
-      shipGridRotation(newPlayerGrid, player.gameBoard);
-
-      const randomizeButton = document.querySelector(".random-placement-btn");
-      if (randomizeButton) {
-        setupRandomPlacement(
-          randomizeButton,
-          player.gameBoard,
-          newPlayerGrid,
-          newSpacePort
-        );
-      }
-
-      // Re-setup start button functionality
-      if (window.setupStartButton) {
-        window.setupStartButton();
-      }
-    }
-  }
-
-  function resetUIState() {
-    if (elements.shipDeploymentTitle)
-      elements.shipDeploymentTitle.style.display = "block";
-    if (elements.turnsController)
-      elements.turnsController.style.display = "none";
-    if (elements.enemyDeployment)
-      elements.enemyDeployment.style.display = "none";
-    if (elements.shipPlacementHeader)
-      elements.shipPlacementHeader.style.display = "flex";
-    if (elements.shipPlacementScreen)
-      elements.shipPlacementScreen.style.display = "flex";
-    if (elements.userPlacementScreen)
-      elements.userPlacementScreen.style.display = "flex";
-    if (elements.winnerDialog) elements.winnerDialog.close();
   }
 
   setupForfeit();
-  handleRestart();
 
   return {
-    handlePlayerAttack,
+    handleAttacks,
     startGame,
     player,
     enemy,
-    markShipHit,
-    handleRestart,
+    destroy,
   };
 }

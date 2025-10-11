@@ -14,7 +14,6 @@ export function createMultiPlayerController(
   addConfetti
 ) {
   const player1 = initializePlayer1();
-  const player2 = initializePlayer2();
 
   let gameStarted = false;
   let currentTurn = playerNames.player1Name;
@@ -35,11 +34,7 @@ export function createMultiPlayerController(
     return { gameBoard, gridContainer, spacePort };
   }
 
-  function initializePlayer2() {
-    const gameBoard = new Gameboard();
-    return { gameBoard, gridContainer: null };
-  }
-
+  const player2 = { gameBoard: new Gameboard(), gridContainer: null };
   function setupPlayer2ShipPlacement() {
     // Set up player 2 ship placement in enemy deployment area
     if (elements.enemyDeployment) {
@@ -78,9 +73,14 @@ export function createMultiPlayerController(
         </div>
       `;
 
-      const player2Grid = elements.enemyDeployment.querySelector(".grid-container-player-2");
-      const player2SpacePort = elements.enemyDeployment.querySelector(".enemy-space-port");
-      const player2RandomBtn = elements.enemyDeployment.querySelector(".random-placement-btn-p2");
+      const player2Grid = elements.enemyDeployment.querySelector(
+        ".grid-container-player-2"
+      );
+      const player2SpacePort =
+        elements.enemyDeployment.querySelector(".enemy-space-port");
+      const player2RandomBtn = elements.enemyDeployment.querySelector(
+        ".random-placement-btn-p2"
+      );
 
       createGridCells(player2Grid);
       player2.gridContainer = player2Grid;
@@ -90,12 +90,17 @@ export function createMultiPlayerController(
       shipGridRotation(player2Grid, player2.gameBoard);
 
       if (player2RandomBtn) {
-        setupRandomPlacement(player2RandomBtn,player2.gameBoard,player2Grid,player2SpacePort);
+        setupRandomPlacement(
+          player2RandomBtn,
+          player2.gameBoard,
+          player2Grid,
+          player2SpacePort
+        );
       }
     }
   }
 
-  function handlePlayerAttacks() {
+  function handleAttacks() {
     // Player 1 attacks Player 2
     player2.gridContainer.addEventListener("click", (e) => {
       if (
@@ -119,7 +124,7 @@ export function createMultiPlayerController(
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
-        
+
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
@@ -150,7 +155,7 @@ export function createMultiPlayerController(
         } else if (attackResult.result === "miss") {
           e.target.classList.add("miss");
         }
-        
+
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
@@ -166,7 +171,7 @@ export function createMultiPlayerController(
       currentTurn === playerNames.player1Name
         ? playerNames.player2Name
         : playerNames.player1Name;
-    
+
     updateTurnDisplay();
     updateGridStates();
   }
@@ -178,17 +183,17 @@ export function createMultiPlayerController(
   }
 
   function updateGridStates() {
-    const playerDeployment = document.querySelector('.player-deployment');
-    const enemyDeployment = document.querySelector('.enemy-deployment');
-    
+    const playerDeployment = document.querySelector(".player-deployment");
+    const enemyDeployment = document.querySelector(".enemy-deployment");
+
     if (currentTurn === playerNames.player1Name) {
       // Player 1's turn - show player 2's grid for attacking
-      if (playerDeployment) playerDeployment.style.display = 'none';
-      if (enemyDeployment) enemyDeployment.style.display = 'flex';
+      if (playerDeployment) playerDeployment.style.display = "none";
+      if (enemyDeployment) enemyDeployment.style.display = "flex";
     } else {
-      // Player 2's turn - show player 1's grid for attacking  
-      if (enemyDeployment) enemyDeployment.style.display = 'none';
-      if (playerDeployment) playerDeployment.style.display = 'flex';
+      // Player 2's turn - show player 1's grid for attacking
+      if (enemyDeployment) enemyDeployment.style.display = "none";
+      if (playerDeployment) playerDeployment.style.display = "flex";
     }
   }
 
@@ -256,15 +261,31 @@ export function createMultiPlayerController(
       elements.enemyDeployment.style.display = "flex";
   }
 
+  function destroy() {
+    // Clean up event listeners by replacing the grid containers
+    if (player1.gridContainer && player1.gridContainer.parentNode) {
+      player1.gridContainer.parentNode.replaceChild(
+        player1.gridContainer.cloneNode(true),
+        player1.gridContainer
+      );
+    }
+    if (player2.gridContainer && player2.gridContainer.parentNode) {
+      player2.gridContainer.parentNode.replaceChild(
+        player2.gridContainer.cloneNode(true),
+        player2.gridContainer
+      );
+    }
+  }
+
   setupForfeit();
 
   return {
-    handlePlayerAttacks,
+    handleAttacks,
     setupPlayer2ShipPlacement,
     showPlayer2Placement,
     startGame,
     player1,
     player2: () => player2,
-    markShipHit,
+    destroy,
   };
 }
