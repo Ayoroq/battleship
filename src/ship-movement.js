@@ -30,30 +30,32 @@ function checkAllShipsPlaced(gameboard) {
   if (window.buttonsToDisplay) {
     window.buttonsToDisplay();
   }
-  
+
   // Remove ship placement container when all ships are placed
   if (allShipsPlaced) {
-    const spacePort = document.querySelector('.space-port, .enemy-space-port');
+    const spacePort = document.querySelector(".space-port, .enemy-space-port");
     if (spacePort) {
-      const shipPlacementContainer = spacePort.closest('.ship-placement, .enemy-ship-placement');
+      const shipPlacementContainer = spacePort.closest(
+        ".ship-placement, .enemy-ship-placement"
+      );
       if (shipPlacementContainer) shipPlacementContainer.remove();
     }
   }
-  
+
   return allShipsPlaced;
 }
 
 const createGridCells = (gridContainer) => {
   for (let i = 0; i < 100; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('grid-cell');
+    const cell = document.createElement("div");
+    cell.classList.add("grid-cell");
     cell.dataset.x = Math.floor(i / 10);
     cell.dataset.y = i % 10;
-    cell.style.width = '3rem';
-    cell.style.height = '3rem';
+    cell.style.width = "3rem";
+    cell.style.height = "3rem";
     gridContainer.appendChild(cell);
   }
-}
+};
 
 function isValidPlacement(ship, x, y, direction, gameboard) {
   return gameboard.validatePlacement(ship, x, y, direction);
@@ -74,7 +76,12 @@ function shipRotation(spacePort) {
   });
 }
 
-function setupRandomPlacement(randomizeButton, gameboard, gridContainer, spacePort) {
+function setupRandomPlacement(
+  randomizeButton,
+  gameboard,
+  gridContainer,
+  spacePort
+) {
   randomizeButton.addEventListener("click", () => {
     if (gameboard.ships.length === 5 || gameboard.ships.length === 0) {
       // All ships placed - reset and place all randomly
@@ -86,7 +93,9 @@ function setupRandomPlacement(randomizeButton, gameboard, gridContainer, spacePo
       placeRemainingShipsRandomly(gameboard, gridContainer);
     }
     // Remove the ship placement container that contains this spacePort
-    const shipPlacementContainer = spacePort.closest('.ship-placement, .enemy-ship-placement');
+    const shipPlacementContainer = spacePort.closest(
+      ".ship-placement, .enemy-ship-placement"
+    );
     if (shipPlacementContainer) shipPlacementContainer.remove();
   });
 }
@@ -105,70 +114,99 @@ function clearVisualShips(gridContainer, spacePort) {
 function placeAllShipsRandomly(gameboard, gridContainer, spacePort = null) {
   const ships = shipData.map((data) => new Ship(data.name, data.size));
   gameboard.placeShipsRandomly(ships);
-  
+
   const shipPlacements = gameboard.getShipPlacements();
-  shipPlacements.forEach(placement => renderShip(placement, gridContainer, spacePort));
+  shipPlacements.forEach((placement) =>
+    renderShip(placement, gridContainer, spacePort)
+  );
   checkAllShipsPlaced(gameboard);
 }
 
-function placeComputerShipsRandomly(gameboard, gridContainer, spacePort = null) {
+function placeComputerShipsRandomly(
+  gameboard,
+  gridContainer,
+  spacePort = null
+) {
   const ships = shipData.map((data) => new Ship(data.name, data.size));
   gameboard.placeShipsRandomly(ships);
 }
 
-function placeRemainingShipsRandomly(gameboard, gridContainer, spacePort = null) {
+function placeRemainingShipsRandomly(
+  gameboard,
+  gridContainer,
+  spacePort = null
+) {
   const currentPlacements = gameboard.getShipPlacements();
   const missingShips = shipData.filter(
     (shipData) =>
-      !currentPlacements.some((placement) => placement.ship.name === shipData.name)
+      !currentPlacements.some(
+        (placement) => placement.ship.name === shipData.name
+      )
   );
 
   // Create Ship objects and place them randomly
-  const shipsToPlace = missingShips.map(data => new Ship(data.name, data.size));
+  const shipsToPlace = missingShips.map(
+    (data) => new Ship(data.name, data.size)
+  );
   gameboard.placeShipsRandomly(shipsToPlace);
 
   // Get the new placements and create visuals
-  const newPlacements = gameboard.getShipPlacements().filter(
-    placement => missingShips.some(data => data.name === placement.ship.name)
-  );
+  const newPlacements = gameboard
+    .getShipPlacements()
+    .filter((placement) =>
+      missingShips.some((data) => data.name === placement.ship.name)
+    );
 
-  newPlacements.forEach(placement => renderShip(placement, gridContainer, spacePort));
+  newPlacements.forEach((placement) =>
+    renderShip(placement, gridContainer, spacePort)
+  );
   checkAllShipsPlaced(gameboard);
 }
 
 function clearPreviewHighlights(gridContainer) {
-  const previewCells = gridContainer.querySelectorAll('.ship-preview, .invalid-preview');
-  previewCells.forEach(cell => cell.remove());
+  const previewCells = gridContainer.querySelectorAll(
+    ".ship-preview, .invalid-preview"
+  );
+  previewCells.forEach((cell) => cell.remove());
 }
 
-function highlightShipCells(startX, startY, size, direction, isValid, gridContainer) {
-  const className = isValid ? 'ship-preview' : 'invalid-preview';
-  
+function highlightShipCells(
+  startX,
+  startY,
+  size,
+  direction,
+  isValid,
+  gridContainer
+) {
+  const className = isValid ? "ship-preview" : "invalid-preview";
+
   for (let i = 0; i < size; i++) {
     let cellX, cellY;
-    if (direction === 'horizontal') {
+    if (direction === "horizontal") {
       cellX = startX;
       cellY = startY + i;
     } else {
       cellX = startX + i;
       cellY = startY;
     }
-    
+
     // Only highlight if within bounds
     if (cellX >= 0 && cellX < 10 && cellY >= 0 && cellY < 10) {
       // Create a temporary highlight div
-      const highlight = document.createElement('div');
+      const highlight = document.createElement("div");
       highlight.classList.add(className);
-      highlight.style.position = 'absolute';
+      highlight.style.position = "absolute";
       highlight.style.left = `${cellY * 3}rem`;
       highlight.style.top = `${cellX * 3}rem`;
-      highlight.style.width = '3rem';
-      highlight.style.height = '3rem';
-      highlight.style.pointerEvents = 'none';
-      highlight.style.zIndex = '5';
-      isValid ? highlight.classList.add('valid-preview') : highlight.classList.add('invalid-preview');
-      highlight.style.border = isValid ? '2px solid green' : '2px solid red';
-      
+      highlight.style.width = "3rem";
+      highlight.style.height = "3rem";
+      highlight.style.pointerEvents = "none";
+      highlight.style.zIndex = "5";
+      isValid
+        ? highlight.classList.add("valid-preview")
+        : highlight.classList.add("invalid-preview");
+      highlight.style.border = isValid ? "2px solid green" : "2px solid red";
+
       gridContainer.appendChild(highlight);
     }
   }
@@ -178,14 +216,14 @@ function calculateDropPosition(e, gridContainer) {
   const gridRect = gridContainer.getBoundingClientRect();
   const offsetX = e.clientX - gridRect.left;
   const offsetY = e.clientY - gridRect.top;
-  
+
   const cellSize = gridRect.width / 10;
   const dropGridX = Math.floor(offsetY / cellSize);
   const dropGridY = Math.floor(offsetX / cellSize);
-  
+
   const shipSize = parseInt(draggedShip.getAttribute("data-ship-size"));
   const shipDirection = draggedShip.getAttribute("data-ship-direction");
-  
+
   // Calculate ship start position
   let shipStartX, shipStartY;
   if (shipDirection === "horizontal") {
@@ -195,7 +233,7 @@ function calculateDropPosition(e, gridContainer) {
     shipStartX = dropGridX - draggedCellIndex;
     shipStartY = dropGridY;
   }
-  
+
   return { shipStartX, shipStartY, shipSize, shipDirection };
 }
 
@@ -226,37 +264,46 @@ function getShipCellIndex(e) {
 
 function shipGridRotation(gridContainer, gameboard) {
   gridContainer.addEventListener("dblclick", (e) => {
-    if (e.target.classList.contains("ship")) {
-      console.log("Double-clicked ship for rotation");
+    // Only allow rotation if the game has not started (i.e., ships are still draggable)
+    if (
+      e.target.classList.contains("ship") &&
+      e.target.getAttribute("draggable") === "true"
+    ) {
       const ship = e.target;
       const shipName = ship.getAttribute("data-ship-name");
       const currentDirection = ship.getAttribute("data-ship-direction");
-      const newDirection = currentDirection === "horizontal" ? "vertical" : "horizontal";
+      const newDirection =
+        currentDirection === "horizontal" ? "vertical" : "horizontal";
       const currentX = parseInt(ship.getAttribute("grid-row"));
       const currentY = parseInt(ship.getAttribute("grid-col"));
       const shipSize = parseInt(ship.getAttribute("data-ship-size"));
-      
+
       // Remove ship from gameboard temporarily
-      const shipToRemove = gameboard.ships.find(s => s.name === shipName);
+      const shipToRemove = gameboard.ships.find((s) => s.name === shipName);
       if (shipToRemove) {
         gameboard.removeShip(shipToRemove);
       }
-      
+
       // Create temporary ship for validation
       const tempShip = new Ship(shipName, shipSize);
-      
+
       // Check if rotation is valid
-      if (isValidPlacement(tempShip, currentX, currentY, newDirection, gameboard)) {
+      if (
+        isValidPlacement(tempShip, currentX, currentY, newDirection, gameboard)
+      ) {
         // Update gameboard with new direction
         gameboard.placeShip(tempShip, currentX, currentY, newDirection);
-        
+
         // Update visual ship
         ship.setAttribute("data-ship-direction", newDirection);
-        ship.style.gridTemplate = newDirection === "horizontal" ? `1fr / repeat(${shipSize}, 1fr)` : `repeat(${shipSize}, 1fr) / 1fr`;
+        ship.style.gridTemplate =
+          newDirection === "horizontal"
+            ? `1fr / repeat(${shipSize}, 1fr)`
+            : `repeat(${shipSize}, 1fr) / 1fr`;
       } else {
         // Restore original placement if rotation invalid
         gameboard.placeShip(shipToRemove, currentX, currentY, currentDirection);
-        
+
         // Flash red to indicate invalid rotation
         const originalBackground = ship.style.backgroundColor;
         ship.style.backgroundColor = "red";
@@ -299,14 +346,16 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
       draggedShip = e.target;
       draggedCellIndex = getShipCellIndex(e);
       isFromSpacePort = false;
-      
+
       // Remove ship from gameboard temporarily
       const shipName = e.target.getAttribute("data-ship-name");
-      const shipToRemove = gameboard.ships.find(ship => ship.name === shipName);
+      const shipToRemove = gameboard.ships.find(
+        (ship) => ship.name === shipName
+      );
       if (shipToRemove) {
         gameboard.removeShip(shipToRemove);
       }
-      
+
       e.dataTransfer.setData("text/plain", e.target.outerHTML);
     }
   });
@@ -323,22 +372,36 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
 
   gridContainer.addEventListener("dragover", (e) => {
     e.preventDefault();
-    
+
     if (!draggedShip) return;
-    
+
     // Clear previous highlights
     clearPreviewHighlights(gridContainer);
-    
-    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e, gridContainer);
-    
+
+    const { shipStartX, shipStartY, shipSize, shipDirection } =
+      calculateDropPosition(e, gridContainer);
+
     // Create temporary ship for validation
     const shipName = draggedShip.getAttribute("data-ship-name");
     const tempShip = new Ship(shipName, shipSize);
-    
-    const isValid = isValidPlacement(tempShip, shipStartX, shipStartY, shipDirection, gameboard);
-    
+
+    const isValid = isValidPlacement(
+      tempShip,
+      shipStartX,
+      shipStartY,
+      shipDirection,
+      gameboard
+    );
+
     // Highlight the cells
-    highlightShipCells(shipStartX, shipStartY, shipSize, shipDirection, isValid, gridContainer);
+    highlightShipCells(
+      shipStartX,
+      shipStartY,
+      shipSize,
+      shipDirection,
+      isValid,
+      gridContainer
+    );
   });
 
   gridContainer.addEventListener("drop", (e) => {
@@ -346,7 +409,8 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
 
     if (!draggedShip) return;
 
-    const { shipStartX, shipStartY, shipSize, shipDirection } = calculateDropPosition(e, gridContainer);
+    const { shipStartX, shipStartY, shipSize, shipDirection } =
+      calculateDropPosition(e, gridContainer);
 
     // Create ship object for validation and placement
     const shipName = draggedShip.getAttribute("data-ship-name");
@@ -369,12 +433,20 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
       // Check if dragging from space-port or repositioning on grid
       if (isFromSpacePort) {
         // Create new ship on grid using existing function
-        const placement = { ship, x: shipStartX, y: shipStartY, direction: shipDirection };
+        const placement = {
+          ship,
+          x: shipStartX,
+          y: shipStartY,
+          direction: shipDirection,
+        };
         renderShip(placement, gridContainer, draggedShip.parentElement);
 
         // Hide the ship in space-port
-        const shipElement = spacePort.querySelector(`[data-ship-name="${shipName}"]`);
-        if (shipElement) shipElement.closest('.ship-class').style.display = "none";
+        const shipElement = spacePort.querySelector(
+          `[data-ship-name="${shipName}"]`
+        );
+        if (shipElement)
+          shipElement.closest(".ship-class").style.display = "none";
       } else {
         // Repositioning existing ship on grid
         draggedShip.style.left = `${shipStartY * 3}rem`;
@@ -386,7 +458,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
     } else {
       // Reset opacity if placement failed
       draggedShip.style.opacity = "1";
-      
+
       // If repositioning failed, restore ship to gameboard
       if (draggedShip.parentElement === gridContainer) {
         const oldX = parseInt(draggedShip.getAttribute("grid-row"));
@@ -398,16 +470,12 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
   });
 }
 
-
-
 function markShipHit(gridContainer, ship, cellIndex) {
   const shipElement = gridContainer.querySelector(
     `[data-ship-name="${ship.name}"]`
   );
   if (shipElement) {
-    const cell = shipElement.querySelector(
-      `[data-cell-index="${cellIndex}"]`
-    );
+    const cell = shipElement.querySelector(`[data-cell-index="${cellIndex}"]`);
     if (cell) {
       cell.style.backgroundColor = "red";
       cell.classList.add("hit");
@@ -415,10 +483,10 @@ function markShipHit(gridContainer, ship, cellIndex) {
   }
 }
 
-export { 
-  shipRotation, 
-  shipDragAndDrop, 
-  shipGridRotation, 
+export {
+  shipRotation,
+  shipDragAndDrop,
+  shipGridRotation,
   setupRandomPlacement,
   placeAllShipsRandomly,
   placeComputerShipsRandomly,
@@ -426,5 +494,5 @@ export {
   shipData,
   markShipHit,
   checkAllShipsPlaced,
-  areAllShipsPlaced
+  areAllShipsPlaced,
 };
