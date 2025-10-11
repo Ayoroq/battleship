@@ -39,6 +39,9 @@ export function initializeGame() {
     shipDeploymentTitle: safeQuerySelector(".ship-placement-title"),
     restartButton: safeQuerySelector(".restart"),
     endGame: safeQuerySelector(".end"),
+    passDeviceDialog: safeQuerySelector(".pass-device-dialog"),
+    passDeviceText: safeQuerySelector(".pass-device-text"),
+    passDeviceBtn: safeQuerySelector(".pass-device-btn"),
     start: safeQuerySelector(".start-btn"),
   };
 
@@ -110,8 +113,7 @@ function resetUI(elements, playerNames) {
 
   // Reset enemy's grid
   if (elements.enemyDeployment) {
-    const enemyGrid = elements.enemyDeployment.querySelector(".grid-container-2");
-    if (enemyGrid) enemyGrid.innerHTML = "";
+    elements.enemyDeployment.innerHTML = "";
   }
 
   // Reset UI visibility

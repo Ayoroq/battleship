@@ -131,7 +131,6 @@ export function createMultiPlayerController(
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
-          isProcessingAttack = false;
         }, 1500);
       }
     });
@@ -165,8 +164,7 @@ export function createMultiPlayerController(
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
-          isProcessingAttack = false;
-        }, 1500);
+        }, 500);
       }
     });
   }
@@ -174,13 +172,40 @@ export function createMultiPlayerController(
   function switchTurn() {
     if (detectWinner()) return;
 
-    currentTurn =
+    const nextPlayer =
       currentTurn === playerNames.player1Name
         ? playerNames.player2Name
         : playerNames.player1Name;
 
-    updateTurnDisplay();
-    updateGridStates();
+    showPassDeviceScreen(nextPlayer, () => {
+      currentTurn = nextPlayer;
+      updateTurnDisplay();
+      updateGridStates();
+    });
+  }
+
+  function showPassDeviceScreen(nextPlayerName, onReadyCallback) {
+    // Hide both game boards first
+    const playerDeployment = document.querySelector(".player-deployment");
+    const enemyDeployment = document.querySelector(".enemy-deployment");
+    if (playerDeployment) playerDeployment.style.display = "none";
+    if (enemyDeployment) enemyDeployment.style.display = "none";
+
+    // Show the pass device dialog
+    if (elements.passDeviceDialog) {
+      elements.passDeviceText.textContent = `Pass the device to ${nextPlayerName}`;
+      elements.passDeviceDialog.showModal();
+
+      elements.passDeviceBtn.onclick = () => {
+        elements.passDeviceDialog.close();
+        onReadyCallback();
+        isProcessingAttack = false; // Allow next player to attack
+        elements.passDeviceBtn.onclick = null; // Remove listener
+      };
+    } else {
+      // Fallback if the dialog doesn't exist
+      onReadyCallback();
+    }
   }
 
   function updateTurnDisplay() {
@@ -259,13 +284,17 @@ export function createMultiPlayerController(
   }
 
   function showPlayer2Placement() {
-    const player1Placement = document.querySelector(".player-deployment");
-    const userPlacement = document.querySelector(".user");
-    if (player1Placement) player1Placement.style.display = "none";
-    if (userPlacement)
-      userPlacement.textContent = `${playerNames.player2Name}, place your ships`;
-    if (elements.enemyDeployment)
-      elements.enemyDeployment.style.display = "flex";
+    showPassDeviceScreen(playerNames.player2Name, () => {
+      const player1Placement = document.querySelector(".player-deployment");
+      const userPlacement = document.querySelector(".user");
+      if (player1Placement) player1Placement.style.display = "none";
+      if (userPlacement) {
+        userPlacement.textContent = `${playerNames.player2Name}, place your ships`;
+      }
+      if (elements.enemyDeployment) {
+        elements.enemyDeployment.style.display = "flex";
+      }
+    });
   }
 
   function destroy() {
@@ -284,136 +313,7 @@ export function createMultiPlayerController(
     }
   }
 
-  function handleRestart() {
-    const restartButton = document.querySelector(".restart");
-    if (!restartButton) return;
-
-    restartButton.addEventListener("click", () => {
-      
-      resetGameState();
-      resetPlayerDeployment();
-      reinitializeGameComponents();
-      resetUIState();
-    });
-  }
-
-  function resetGameState() {
-    gameStarted = false;
-    currentTurn = playerNames.player1Name;
-    player2ShipsPlaced = false;
-    player1.gameBoard.resetBoard();
-    player2.gameBoard.resetBoard();
-  }
-
-  function resetPlayerDeployment() {
-    const playerDeployment = document.querySelector(".player-deployment");
-    if (playerDeployment) {
-      playerDeployment.innerHTML = `
-        <div class="grid-container">
-          <div class="grid-container-player grid"></div>
-          <div class="button-container">
-            <div class="random-placement">
-              <button class="random-placement-btn clickable" type="button">
-                Random Placement
-              </button>
-            </div>
-            <div class="start-game">
-              <button class="start-btn clickable green" type="button" style="display: none;">
-                Start Game
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="ship-placement">
-          <div class="space-port">
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Dreadnought" draggable="true" data-ship-size="5" data-ship-direction="horizontal"></div>
-              <button class="rotate-ship" type="button">
-                <img src="0318bfb7c1037aa6bc68.svg" alt="">
-              </button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Battlecruiser" draggable="true" data-ship-size="4" data-ship-direction="horizontal"></div>
-              <button class="rotate-ship" type="button">
-                <img src="0318bfb7c1037aa6bc68.svg" alt="">
-              </button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Heavy Cruiser" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
-              <button class="rotate-ship" type="button">
-                <img src="0318bfb7c1037aa6bc68.svg" alt="">
-              </button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Stealth Frigate" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
-              <button class="rotate-ship" type="button">
-                <img src="0318bfb7c1037aa6bc68.svg" alt="">
-              </button>
-            </div>
-            <div class="ship-class">
-              <div class="ship" data-ship-name="Interceptor" draggable="true" data-ship-size="2" data-ship-direction="horizontal"></div>
-              <button class="rotate-ship" type="button">
-                <img src="0318bfb7c1037aa6bc68.svg" alt="">
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-  }
-
-  function reinitializeGameComponents() {
-    const newSpacePort = document.querySelector(".space-port");
-    const newPlayerGrid = document.querySelector(".grid-container-player");
-
-    if (newSpacePort && newPlayerGrid) {
-      createGridCells(newPlayerGrid);
-      player1.gridContainer = newPlayerGrid;
-      player1.spacePort = newSpacePort;
-
-      shipRotation(newSpacePort);
-      shipDragAndDrop(newSpacePort, newPlayerGrid, player1.gameBoard);
-      shipGridRotation(newPlayerGrid, player1.gameBoard);
-
-      const randomizeButton = document.querySelector(".random-placement-btn");
-      if (randomizeButton) {
-        setupRandomPlacement(
-          randomizeButton,
-          player1.gameBoard,
-          newPlayerGrid,
-          newSpacePort
-        );
-      }
-    }
-
-    if (elements.enemyDeployment) {
-      elements.enemyDeployment.innerHTML = "";
-      player2.gridContainer = null;
-    }
-  }
-
-  function resetUIState() {
-    if (elements.shipDeploymentTitle)
-      elements.shipDeploymentTitle.style.display = "block";
-    if (elements.turnsController)
-      elements.turnsController.style.display = "none";
-    if (elements.enemyDeployment)
-      elements.enemyDeployment.style.display = "none";
-    if (elements.shipPlacementHeader)
-      elements.shipPlacementHeader.style.display = "flex";
-    if (elements.shipPlacementScreen)
-      elements.shipPlacementScreen.style.display = "flex";
-    if (elements.userPlacementScreen)
-      elements.userPlacementScreen.style.display = "flex";
-    if (elements.winnerDialog) elements.winnerDialog.close();
-
-    const userPlacement = document.querySelector(".user");
-    if (userPlacement)
-      userPlacement.textContent = `${playerNames.player1Name}, place your ships`;
-  }
-
   setupForfeit();
-  handleRestart();
 
   return {
     handleAttacks,
@@ -423,6 +323,5 @@ export function createMultiPlayerController(
     player1,
     player2: () => player2,
     destroy,
-    handleRestart,
   };
 }
