@@ -131,7 +131,7 @@ export function createMultiPlayerController(
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
-        }, 1500);
+        }, 1000);
       }
     });
 
@@ -164,7 +164,7 @@ export function createMultiPlayerController(
         // Add delay to show attack result before switching turns
         setTimeout(() => {
           switchTurn();
-        }, 500);
+        }, 1000);
       }
     });
   }
@@ -255,10 +255,13 @@ export function createMultiPlayerController(
   function startGame() {
     const ships = document.querySelectorAll(".ship");
     ships.forEach((ship) => ship.remove());
+
     gameStarted = true;
-    currentTurn = playerNames.player1Name;
-    updateTurnDisplay();
-    updateGridStates();
+    showPassDeviceScreen(playerNames.player1Name, () => {
+      currentTurn = playerNames.player1Name;
+      updateTurnDisplay();
+      updateGridStates();
+    });
   }
 
   function setupForfeit() {
