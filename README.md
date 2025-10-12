@@ -1,28 +1,33 @@
 # Galactic Siege - A Battleship Game
 
-A modern, web-based implementation of the classic Battleship board game, built with vanilla JavaScript, HTML, and CSS. This project was completed as part of The Odin Project's curriculum.
+> A modern, space-themed implementation of the classic Battleship board game with immersive gameplay and polished UI.
 
-**Live Demo:** [Link to live demo](https://ayoroq.github.io/battleship/)
+**[Play Live Demo](https://ayoroq.github.io/battleship/)**
 
 ![Galactic Siege Gameplay Screenshot](assets/Battleship.jpeg)
 
 ## Features
 
-- **Two Game Modes:**
-  - **Single Player:** Test your skills against a computer AI.
-  - **Local Multiplayer:** Play against a friend on the same device with a "pass the device" screen to keep boards hidden.
-- **Interactive Ship Placement:**
-  - Drag and drop your fleet onto the board.
-  - Double-click ships on the grid to rotate them.
-  - Click the "Random Placement" button for a quick setup.
-- **Engaging Gameplay:**
-  - Clean, intuitive user interface.
-  - Clear visual feedback for hits, misses, and sunken ships.
-  - Responsive design that works on various screen sizes.
-- **Modern Tooling:**
-  - Built with modern JavaScript (ES6+).
-  - Bundled with Webpack.
-  - Tested with Jest.
+### Game Modes
+- **Single Player**: Battle against an intelligent AI opponent
+- **Local Multiplayer**: Hot-seat gameplay with device passing for hidden ship placement
+
+### Interactive Ship Placement
+- **Drag & Drop**: Intuitive ship positioning system
+- **Rotation**: Double-click ships or use rotate buttons
+- **Auto-placement**: Random fleet deployment for quick starts
+- **Visual Feedback**: Real-time placement validation
+
+### Polished Experience
+- **Space Theme**: Immersive galactic warfare aesthetic
+- **Victory Celebrations**: Confetti animations for winners
+- **Loading Screens**: Smooth transitions between game states
+
+### Technical Excellence
+- **Modern JavaScript**: ES6+ modules and clean architecture
+- **Test-Driven Development**: Comprehensive Jest test suite
+- **Webpack Bundling**: Optimized build process
+- **Modular Design**: Separation of concerns with dedicated controllers
 
 ## Built With
 
@@ -33,69 +38,117 @@ A modern, web-based implementation of the classic Battleship board game, built w
 - [Jest](https://jestjs.io/)
 - [tsparticles-confetti](https://github.com/tsparticles/confetti) for the victory celebration!
 
-## Getting Started
+## Tech Stack
 
-To get a local copy up and running, follow these simple steps.
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript (ES6+)
+- **Build Tool**: Webpack 5
+- **Testing**: Jest
+- **Animations**: tsparticles-confetti
+
+## Project Structure
+
+```
+battleship/
+├── src/
+│   ├── game-controller.js      # Main game orchestration
+│   ├── single-player-controller.js
+│   ├── multiplayer-controller.js
+│   ├── ship-movement.js        # Drag & drop logic
+│   ├── gameboard.js           # Game state management
+│   └── styles/                # CSS modules
+├── assets/                    # Images and audio
+├── tests/                     # Jest test files
+└── dist/                      # Built files
+```
+
+## Quick Start
 
 ### Prerequisites
-
-- Node.js and npm
-  ```sh
-  npm install npm@latest -g
-  ```
+- Node.js (v14+)
+- npm or yarn
 
 ### Installation
 
-1.  Clone the repo
-    ```sh
-    git clone https://github.com/your_username/battleship.git
-    ```
-2.  Install NPM packages
-    ```sh
-    npm install
-    ```
+```bash
+# Clone the repository
+git clone https://github.com/ayoroq/battleship.git
+cd battleship
 
-### Usage
+# Install dependencies
+npm install
 
-- To start the development server:
-  ```sh
-  npm start
-  ```
-- To run tests:
-  ```sh
-  npm test
-  ```
+# Start development server
+npm start
+
+# Run tests
+npm test
+
+# Build for production
+npm run build
+```
 
 ## How to Play
 
-### 1. Objective
+### Objective
+Destroy all enemy ships before they destroy yours!
 
-Be the first player to sink all 5 of your opponent's ships.
+### Your Fleet
+| Ship | Size | Quantity |
+|------|------|----------|
+| Dreadnought | 5 cells | 1 |
+| Battlecruiser | 4 cells | 1 |
+| Heavy Cruiser | 3 cells | 1 |
+| Stealth Frigate | 3 cells | 1 |
+| Interceptor | 2 cells | 1 |
 
-### 2. Fleet Setup
+### Setup Phase
+1. **Drag & Drop**: Move ships from the dock to your grid
+2. **Rotate**: Double-click ships or use rotate buttons
+3. **Auto-Deploy**: Use "Random Placement" for instant setup
+4. **Validate**: Ensure no ships overlap or go off-grid
 
-- Place your 5 ships on the grid. Your fleet consists of: Dreadnought (5), Battlecruiser (4), Heavy Cruiser (3), Stealth Frigate (3), and Interceptor (2).
-- Ships can be placed horizontally or vertically, but cannot overlap.
-- Drag and drop ships from the dock to the grid. You can also drag ships already on the grid to reposition them.
-- Double-click a ship on the grid to rotate it.
-- Use "Random Placement" to have the computer set up your board for you.
+### Combat Phase
+- **Turn-based**: Players alternate firing shots
+- **Target**: Click enemy grid coordinates to attack
+- **Feedback**: 
+  - **Red** = Direct hit
+  - **Blue** = Miss
+- **Victory**: First to sink all enemy ships wins!
 
-### 3. Gameplay
+## Development Notes
 
-- Players take turns firing one shot at a time to try and hit the opponent's ships.
-- On your turn, click a coordinate on the opponent's grid to fire.
-- A **hit** is marked in red.
-- A **miss** is marked in light blue.
+### Key Features Implemented
+- **Modular Architecture**: Separate controllers for single/multiplayer modes
+- **Event-Driven Design**: Clean separation between UI and game logic
+- **Responsive Grid System**: CSS Grid for perfect board alignment
+- **Accessibility**: ARIA labels and keyboard navigation support
+- **Performance**: Efficient DOM manipulation and event delegation
 
-### 4. Victory
+### Testing Strategy
+- Unit tests for game logic (gameboard, ship placement)
+- Integration tests for player interactions
+- Edge case handling (invalid moves, boundary conditions)
 
-The first player to sink all 5 of their opponent's ships wins the game!
+## Future Enhancements
+- Online multiplayer with WebSockets
+- Responsiveness across all device types
+- AI difficulty levels
+- Audio feedback for shots and ship sunk
+- Custom fleet configurations
+- Tournament mode
+- Mobile app version
 
 ## Acknowledgements
 
-- [The Odin Project](https://www.theodinproject.com/)
-- All the creators of the libraries and tools used in this project.
+- [The Odin Project](https://www.theodinproject.com/) - Curriculum and guidance
+- [tsparticles](https://github.com/tsparticles/confetti) - Victory animations
+- [Webpack](https://webpack.js.org/) - Module bundling
+- [Jest](https://jestjs.io/) - Testing framework
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+MIT License - see [LICENSE](/LICENSE) file for details.
+
+---
+
+**Built by [Ayo](https://github.com/ayoroq) as part of The Odin Project journey**
