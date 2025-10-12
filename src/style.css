@@ -47,6 +47,12 @@ body {
   animation: fadeOut 1s ease-in-out 5s forwards;
 }
 
+.loading-screen img {
+  max-width: 70vw;
+  max-height: 50vh;
+  object-fit: contain;
+}
+
 @keyframes fadeOut {
   from {
     opacity: 1;
