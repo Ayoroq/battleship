@@ -113,7 +113,9 @@ function resetUI(elements, playerNames) {
 
   // Reset enemy's grid
   if (elements.enemyDeployment) {
-    elements.enemyDeployment.innerHTML = "";
+    const enemyGrid =
+      elements.enemyDeployment.querySelector(".grid-container-2");
+    if (enemyGrid) enemyGrid.innerHTML = "";
   }
 
   // Reset UI visibility
