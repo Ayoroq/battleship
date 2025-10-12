@@ -479,7 +479,7 @@ body {
 
 .pass-device-dialog {
   position: absolute;
-  padding: 7rem 14rem;
+  padding: 7rem 10rem;
   top: 60%;
   left: 50%;
   border-radius: 1.5rem;
@@ -494,7 +494,7 @@ body {
   align-items: center;
   gap: 2rem;
   text-align: center;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(2rem, 5vw, 3.5rem);
 }
 
 .after {

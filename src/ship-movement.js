@@ -264,11 +264,8 @@ function getShipCellIndex(e) {
 
 function shipGridRotation(gridContainer, gameboard) {
   gridContainer.addEventListener("dblclick", (e) => {
-    // Only allow rotation if the game has not started (i.e., ships are still draggable)
-    if (
-      e.target.classList.contains("ship") &&
-      e.target.getAttribute("draggable") === "true"
-    ) {
+    if (e.target.classList.contains("ship")) {
+      console.log("Double-clicked ship for rotation");
       const ship = e.target;
       const shipName = ship.getAttribute("data-ship-name");
       const currentDirection = ship.getAttribute("data-ship-direction");
@@ -428,7 +425,7 @@ function shipDragAndDrop(spacePort, gridContainer, gameboard) {
     if (isValid) {
       // Update gameboard with ship placement
       gameboard.placeShip(ship, shipStartX, shipStartY, shipDirection);
-      checkAllShipsPlaced(gameboard);
+      checkAllShipsPlaced(gameboard, gridContainer);
 
       // Check if dragging from space-port or repositioning on grid
       if (isFromSpacePort) {

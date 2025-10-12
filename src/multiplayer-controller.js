@@ -171,6 +171,7 @@ export function createMultiPlayerController(
 
   function switchTurn() {
     if (detectWinner()) return;
+    if (!gameStarted) return;
 
     const nextPlayer =
       currentTurn === playerNames.player1Name
