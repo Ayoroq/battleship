@@ -8,6 +8,7 @@ import {
   createGridCells,
   markShipHit,
 } from "./ship-movement.js";
+import rotateIcon from "/assets/rotate.svg";
 
 const SHIP_PLACEMENT_TEMPLATE = `
   <div class="grid-container">
@@ -30,31 +31,31 @@ const SHIP_PLACEMENT_TEMPLATE = `
       <div class="ship-class">
         <div class="ship" data-ship-name="Dreadnought" draggable="true" data-ship-size="5" data-ship-direction="horizontal"></div>
         <button class="rotate-ship" type="button">
-          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+          <img src="${rotateIcon}" alt="Rotate Ship">
         </button>
       </div>
       <div class="ship-class">
         <div class="ship" data-ship-name="Battlecruiser" draggable="true" data-ship-size="4" data-ship-direction="horizontal"></div>
         <button class="rotate-ship" type="button">
-          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+          <img src="${rotateIcon}" alt="Rotate Ship">
         </button>
       </div>
       <div class="ship-class">
         <div class="ship" data-ship-name="Heavy Cruiser" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
         <button class="rotate-ship" type="button">
-          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+          <img src="${rotateIcon}" alt="Rotate Ship">
         </button>
       </div>
       <div class="ship-class">
         <div class="ship" data-ship-name="Stealth Frigate" draggable="true" data-ship-size="3" data-ship-direction="horizontal"></div>
         <button class="rotate-ship" type="button">
-          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+          <img src="${rotateIcon}" alt="Rotate Ship">
         </button>
       </div>
       <div class="ship-class">
         <div class="ship" data-ship-name="Interceptor" draggable="true" data-ship-size="2" data-ship-direction="horizontal"></div>
         <button class="rotate-ship" type="button">
-          <img src="0318bfb7c1037aa6bc68.svg" alt="">
+          <img src="${rotateIcon}" alt="Rotate Ship">
         </button>
       </div>
     </div>
