@@ -42,7 +42,6 @@ export function initializeGame() {
     passDeviceDialog: safeQuerySelector(".pass-device-dialog"),
     passDeviceText: safeQuerySelector(".pass-device-text"),
     passDeviceBtn: safeQuerySelector(".pass-device-btn"),
-    start: safeQuerySelector(".start-btn"),
   };
 
   let playerNames = {
@@ -313,10 +312,15 @@ export function buttonsToDisplay() {
   const player2Board = isMultiPlayer
     ? gameController.player2()?.gameBoard
     : gameController.enemy?.gameBoard;
-  const startBtn = safeQuerySelector(".start-btn");
-  const startGame = safeQuerySelector(".start-game");
 
-  if (!player1Board || !startBtn) return;
+  if (!player1Board) return;
+
+  // Find the start button within the context of the current player's setup area
+  const p1Setup = safeQuerySelector(".player-deployment");
+  const p2Setup = safeQuerySelector(".enemy-deployment");
+
+  const p1StartBtn = p1Setup ? p1Setup.querySelector(".start-btn") : null;
+  const p2StartBtn = p2Setup ? p2Setup.querySelector(".start-btn") : null;
 
   const allShipsPlaced = areAllShipsPlaced(player1Board);
   const allShipsPlaced2 = isMultiPlayer
@@ -324,7 +328,8 @@ export function buttonsToDisplay() {
     : true;
 
   if (!isMultiPlayer) {
-    startBtn.style.display = allShipsPlaced ? "block" : "none";
+    if (p1StartBtn)
+      p1StartBtn.style.display = allShipsPlaced ? "block" : "none";
   } else if (isMultiPlayer && allShipsPlaced && !allShipsPlaced2) {
     const container = safeQuerySelector(".button-container");
     if (container && !container.querySelector(".pass-to-p2-btn")) {
@@ -337,7 +342,10 @@ export function buttonsToDisplay() {
   }
 
   if (isMultiPlayer && allShipsPlaced && allShipsPlaced2) {
-    startGame.remove();
+    const p1StartGameContainer = p1Setup
+      ? p1Setup.querySelector(".start-game")
+      : null;
+    if (p1StartGameContainer) p1StartGameContainer.remove();
     const p2Container = safeQuerySelector(
       ".enemy-deployment .button-container"
     );
