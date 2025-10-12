@@ -2,9 +2,9 @@
 
 A modern, web-based implementation of the classic Battleship board game, built with vanilla JavaScript, HTML, and CSS. This project was completed as part of The Odin Project's curriculum.
 
-**Live Demo:** [Link to live demo](https://ayo-battleship.netlify.app/)
+**Live Demo:** [Link to live demo](https://ayoroq.github.io/battleship/)
 
-![Galactic Siege Gameplay Screenshot](./gameplay-screenshot.png)
+![Galactic Siege Gameplay Screenshot](assets/Battleship.jpeg)
 
 ## Features
 
